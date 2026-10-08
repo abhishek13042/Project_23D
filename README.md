@@ -1,0 +1,23 @@
+# Project_23D — Renal CT 3D Segmentation
+
+Research-grade 3D semantic segmentation of kidneys, renal tumors, and renal
+cysts from contrast-enhanced CT volumes using the KiTS23 dataset.
+
+## Status
+
+SPEC 001 — Foundation & Feasibility is complete locally. Implementation has not
+started; SPEC 002 has not started.
+
+The development process is spec-driven:
+
+```text
+PROJECT → PHASE → SPEC → TASK → IMPLEMENTATION → TEST → VERIFICATION → EVIDENCE → QUALITY GATE
+```
+
+See [`docs/project-overview.md`](docs/project-overview.md) for the locked project
+definition and [`specs/phase-00/001-foundation/spec.md`](specs/phase-00/001-foundation/spec.md)
+for the complete foundation contract.
+
+The original project brief was not present in the empty project folder. The
+foundation therefore records the current project definition from the kickoff
+requirements and verifies the KiTS23 primary dataset against its official sources.

@@ -1,0 +1,49 @@
+# Python and tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Raw, derived, and large data
+data/raw/
+data/interim/
+data/processed/
+data/splits/generated/
+data/metadata/generated/
+
+# Model weights and generated artifacts
+models/checkpoints/
+models/exported/
+models/metadata/generated/
+outputs/predictions/
+outputs/visualizations/generated/
+outputs/metrics/generated/
+outputs/benchmarks/generated/
+experiments/runs/
+
+# Reports that contain large generated files
+reports/**/generated/
+*.nii
+*.nii.gz
+*.mha
+*.mhd
+*.nrrd
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+
+# Notebook/runtime files
+.ipynb_checkpoints/
+wandb/
+mlruns/
