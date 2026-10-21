@@ -15,8 +15,8 @@
 
 ## Architecture conclusion
 
-The project will use a compact 3D U-Net baseline and a single strong nnU-Net-style
-reference. V-Net and Swin UNETR remain literature context unless a later experiment
+The project trains one model, the official nnU-Net v2 (D-012). A compact 3D U-Net
+baseline is future work. V-Net and Swin UNETR remain literature context unless a later experiment
 has a specific hypothesis that needs them.
 
 ## Dataset-specific source links

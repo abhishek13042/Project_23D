@@ -23,8 +23,9 @@ physical spacing.
 ## 4. Why nnU-Net is a reference rather than an automatic answer
 
 nnU-Net demonstrates that preprocessing and training configuration are part of the
-method. It is used as a strong, defensible reference point, but the project still
-needs its own baseline and controlled experiments to explain why results differ.
+method. It is used as a strong, defensible reference point. Under the compute limit
+(D-012) it is the only trained model; explaining *why* it works through a
+hand-built baseline and ablations is future work.
 
 ## 5. Why public test data is not automatically usable
 

@@ -15,10 +15,11 @@
 - primary dataset: KiTS23 v0.1.4
 - classes: background, kidney, tumor, cyst
 - independence unit: anonymized case ID
-- split policy: subject/case-level, fixed seed 42; stratified by tumor/cyst
-  presence (phase is unavailable, D-010)
-- primary evaluation: per-case macro Dice across KiTS HECs
-- model strategy: compact 3D U-Net baseline and nnU-Net-style strong reference
+- split policy: subject/case-level, fixed seed 42, 70/15/15; stratified by cohort
+  proxy, tumor-size bin and cyst presence (D-010, D-012)
+- primary evaluation: per-case macro Dice and surface Dice across KiTS HECs,
+  official evaluator
+- model strategy: official nnU-Net v2 only, fold 0, 100 epochs (D-012)
 - local/Kaggle division of work
 - reproducibility and Git hygiene policy
 - full dataset staged on Kaggle only, from pinned and checksummed URLs (D-011)

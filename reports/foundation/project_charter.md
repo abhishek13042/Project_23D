@@ -22,9 +22,10 @@ case-disjoint internal test set.
 ## Core hypothesis
 
 A properly configured 3D segmentation pipeline can produce reproducible kidney,
-tumor, and cyst segmentations on a case-disjoint KiTS23 holdout. A self-configuring
-nnU-Net-style reference is expected to match or exceed a compact hand-configured
-3D U-Net baseline.
+tumor, and cyst segmentations on a case-disjoint KiTS23 holdout. Under a budget of
+about 15 GPU-hours (D-012), the official nnU-Net v2 trained for 100 epochs is
+expected to segment the kidney well, with most of the remaining error in tumor and
+cyst.
 
 ## Success definition
 
@@ -32,7 +33,7 @@ Success means:
 
 - valid data and geometry contracts;
 - no patient/case leakage;
-- reproducible baseline and strong-reference experiments;
+- one reproducible nnU-Net v2 run with its budget recorded;
 - KiTS-aligned primary metrics;
 - per-case and failure analysis;
 - documented limitations;

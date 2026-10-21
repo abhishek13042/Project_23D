@@ -37,7 +37,7 @@ E-001 to E-004 below are kept as future work and are not run in this project.
 
 ### E-001 — Baseline versus strong reference
 
-**Hypothesis:** A self-configuring nnU-Net-style pipeline improves or stabilizes
+**Hypothesis (future work):** The official nnU-Net v2 pipeline improves or stabilizes
 case-level segmentation performance compared with a compact hand-configured 3D
 U-Net under the same split.
 

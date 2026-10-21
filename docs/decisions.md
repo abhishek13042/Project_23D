@@ -38,6 +38,7 @@
 - **Decision:** Compare a compact 3D U-Net baseline with an nnU-Net-style reference.
 - **Reason:** This provides a meaningful baseline/reference comparison without an
   unplanned architecture zoo.
+- **Status:** Superseded by D-012 (official nnU-Net v2 only; baseline is future work).
 
 ## D-007 — Use the same code path locally and on Kaggle
 
@@ -68,6 +69,7 @@
   `dataset/kits23.json` metadata (489 records) has no contrast-phase field. The
   challenge homepage states that cases are corticomedullary or nephrogenic but does
   not give a per-case mapping. SPEC 001 forbids guessing the phase.
+- **Status:** Stratification extended by D-012 (cohort proxy and tumor-size bin added).
 
 ## D-011 — Acquire the full dataset on Kaggle, not locally
 

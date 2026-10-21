@@ -143,9 +143,10 @@ method and metadata requirements are locked here.
 - Never split slices, patches, augmented copies, or adjacent studies independently.
 - Use file hashes and case IDs to detect duplicate or repeated cases.
 - Do not merge KiTS19/KiTS21 cases into the primary KiTS23 dataset.
-- Stratify where feasible by acquisition phase and presence of tumor/cyst labels.
-  Phase is not available in the official metadata, so phase stratification is
-  currently infeasible (D-010).
+- Stratify by cohort (cases 0-299 vs 400-588), tumor-size bin, and cyst presence.
+  Per-case phase is not in the official metadata (D-010); the cohort is a
+  documented proxy, not a phase label (D-012).
+- Train and validation cases form fold 0 of a custom nnU-Net `splits_final.json`.
 - Freeze and hash the generated split manifest before training.
 - If a future external dataset is used, it receives a separate evaluation role and
   is never merged into the internal test result.
@@ -154,7 +155,9 @@ method and metadata requirements are locked here.
 
 ### Primary
 
-Per-case macro Dice across official KiTS hierarchical evaluation classes:
+Co-primary (D-012): per-case macro Dice and per-case macro surface Dice (official
+tolerances), computed with the official `kits23_compute_metrics` evaluator across
+the official KiTS hierarchical evaluation classes:
 
 - `kidney_and_mass = {1, 2, 3}`
 - `mass = {2, 3}`
@@ -162,19 +165,18 @@ Per-case macro Dice across official KiTS hierarchical evaluation classes:
 
 ### Secondary
 
-- official surface Dice for the three HECs;
 - per-class Dice and IoU for kidney, tumor, and cyst;
 - precision and recall/sensitivity;
 - specificity where meaningful;
-- HD95 in millimetres;
+- HD95 in millimetres, where both masks are non-empty;
 - volume error;
 - per-case distributions and worst-case analysis.
 
 ### Empty masks
 
-Both empty → perfect overlap score. Exactly one empty → zero overlap score. Both
-non-empty → standard formula. Boundary metrics include explicit undefined/empty
-handling and denominators.
+Official KiTS23 rule, for Dice, IoU and surface Dice: both empty → 1. Exactly one
+empty → 0. Both non-empty → standard formula. HD95 is undefined when either mask
+is empty. Denominators are always reported.
 
 ## 8. Research basis
 
@@ -183,7 +185,7 @@ The project uses:
 - U-Net for the encoder-decoder and skip-connection baseline concept;
 - 3D U-Net for volumetric operations and patch/memory reasoning;
 - V-Net for volumetric Dice-aware loss reasoning;
-- nnU-Net for the strong self-configuring reference;
+- nnU-Net v2 (official implementation) as the only trained model (D-012);
 - KiTS19/KiTS21/KiTS23 papers for renal labels, challenge design, and HEC metrics;
 - Swin UNETR as a reviewed modern method, not an initial implementation target.
 
@@ -204,11 +206,15 @@ Full research notes are in `docs/research.md` and
 
 ### Kaggle responsibilities
 
-- baseline training;
-- strong-reference training;
-- controlled experiments and ablations;
-- final model selection;
-- full evaluation and benchmark runs.
+- preprocessing in a CPU-only notebook (no GPU quota);
+- a timed pilot of about 5 epochs;
+- one nnU-Net v2 `3d_fullres` training run: fold 0, `nnUNetTrainer_100epochs`,
+  resumed across 12-hour sessions with `--c`;
+- inference on the internal test set and official evaluation.
+
+Budget (D-012): about 15 Kaggle GPU-hours in total. If the pilot shows 100 epochs
+will not fit in about 14 hours, use `3d_lowres` or 50 epochs and record it. Prefer
+the T4 GPU, where mixed precision (AMP) is effective; nnU-Net enables it by default.
 
 Plan for a variable 16-GB-class GPU environment. Patch-based 3D training is the
 default feasibility strategy because CT volume shapes and GPU memory are variable.

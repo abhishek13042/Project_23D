@@ -194,11 +194,11 @@ Changes to consider:
 |---|---|---|
 | 11 files | About 20 sentences cut off mid-line | Fixed 2026-10-21 |
 | datasets, spec, research review | arXiv 2307.01984 mislabelled as the KiTS23 paper | Fixed |
-| spec §6, evaluation.md | Phase stratification is infeasible | D-010; cohort proxy proposed in §5 |
-| evaluation.md | Empty-mask rule for boundary metrics differs from the official one | Proposal §7.3 |
-| project-overview / architecture | "nnU-Net-style" is ambiguous | Proposal §6 |
-| experiments.md | E-005 title does not match its content | Proposal §8 |
-| spec §9 | No compute budget figures | Proposal §4 |
+| spec §6, evaluation.md | Phase stratification is infeasible | Fixed (D-010, D-012) |
+| evaluation.md | Empty-mask rule for boundary metrics differs from the official one | Fixed (D-012) |
+| project-overview / architecture | "nnU-Net-style" is ambiguous | Fixed (D-012) |
+| experiments.md | E-005 title does not match its content | Fixed (D-012) |
+| spec §9 | No compute budget figures | Fixed (D-012) |
 
 ## 10. Decisions needed from the project owner
 

@@ -14,7 +14,7 @@ Subject-level train/validation/test split
         ↓
 Canonical orientation and model-space preprocessing
         ↓
-3D U-Net baseline / nnU-Net reference
+nnU-Net v2 (3d_fullres, fold 0)
         ↓
 Patch or whole-volume inference
         ↓
@@ -38,11 +38,10 @@ Qualitative and failure analysis
 
 ## Model strategy
 
-The first comparison is deliberately small:
-
-1. compact 3D U-Net baseline;
-2. nnU-Net-style/reference configuration using its documented self-configuration
-   principles or official nnU-Net implementation if adopted after the smoke test.
+Because of the compute limit (D-012), one model is trained: the **official
+nnU-Net v2** implementation, `3d_fullres` configuration, fold 0, 100 epochs
+(`3d_lowres` fallback). No hand-built baseline is trained. nnU-Net handles
+resampling, intensity normalization, patch size and export back to source geometry.
 
 V-Net and transformer models are research references, not automatic additional
 implementations. A third architecture requires a documented hypothesis.

@@ -16,4 +16,8 @@ small technical concept.
 | 4 | 006 Inference and Productization | Reusable inference pipeline and appropriate demo/interface |
 | 4 | 007 Release and Reproducibility | Packaging, documentation, artifacts, and final audit |
 
+Under D-012 (compute limit, one week), SPEC 002-004 cover the single nnU-Net v2
+run and its evaluation. SPEC 005 is reduced to the no-GPU case analysis (E-005);
+SPEC 006-007 are reduced to a short reproducibility write-up.
+
 No implementation begins until the relevant specification is approved and locked.

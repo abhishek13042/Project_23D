@@ -99,17 +99,15 @@ Brain Tumors in MRI Images,” 2022. <https://arxiv.org/abs/2201.01266>
 
 It is not selected for the initial project because it introduces substantially
 higher memory and training complexity without a project-specific hypothesis. It
-may be considered only after the baseline and nnU-Net reference are understood.
+may be considered only after the nnU-Net reference is understood.
 
 ## Architecture conclusion
 
 The initial scientific comparison is:
 
-```text
-compact 3D U-Net baseline
-        versus
-nnU-Net-style strong reference
-```
+Under the compute limit (D-012), the project trains one model: the official
+nnU-Net v2, which *nnU-Net Revisited* (arXiv 2404.09556) shows to be a strong,
+well-validated choice on KiTS23. A hand-built 3D U-Net comparison is future work.
 
 V-Net, transformer models, and ensembles remain literature context rather than
 unplanned implementation work.
