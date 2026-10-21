@@ -22,6 +22,9 @@ case-disjoint internal test set.
 ## Core hypothesis
 
 A properly configured 3D segmentation pipeline can produce reproducible kidney,
+tumor, and cyst segmentations on a case-disjoint KiTS23 holdout. A self-configuring
+nnU-Net-style reference is expected to match or exceed a compact hand-configured
+3D U-Net baseline.
 
 ## Success definition
 
@@ -38,3 +41,5 @@ Success means:
 ## Boundaries
 
 The project will not claim diagnosis, malignancy classification, treatment benefit,
+clinical validity, or performance on the official KiTS23 challenge test set.
+

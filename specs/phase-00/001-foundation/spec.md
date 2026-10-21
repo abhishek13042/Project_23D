@@ -1,9 +1,9 @@
 # SPEC 001 — Foundation & Feasibility
 
-**Status:** VERIFIED LOCALLY — REMOTE SYNC PENDING
-**Phase:** 0 — Foundation
-**Project:** Project_23D — Renal CT 3D Segmentation
-**Date:** 2026-10-08
+- **Status:** VERIFIED LOCALLY — REMOTE SYNC PENDING
+- **Phase:** 0 — Foundation
+- **Project:** Project_23D — Renal CT 3D Segmentation
+- **Date:** 2026-10-08 (documentation repaired and dataset availability re-checked 2026-10-21)
 
 ## 1. Purpose
 
@@ -14,6 +14,7 @@ requirements before implementation begins.
 ## 2. Scope
 
 This specification covers foundation decisions for semantic segmentation of kidney,
+renal tumor, and renal cyst regions in contrast-enhanced CT volumes.
 
 It does not implement data ingestion, preprocessing code, model code, training,
 evaluation code, APIs, frontend, or deployment.
@@ -68,7 +69,8 @@ Official sources:
 - <https://kits-challenge.org/kits23/>
 - <https://github.com/neheller/kits23>
 - <https://huggingface.co/datasets/neheller/KiTS-Challenge-Imaging>
-- <https://arxiv.org/abs/2307.01984>
+- KiTS21 challenge paper, cited by the official KiTS23 repository:
+  <https://arxiv.org/abs/2307.01984>
 
 The official sources report 599 cases, with 489 training cases and 110 test cases.
 The data license is CC BY-NC-SA 4.0. The official repository code is MIT. The
@@ -97,6 +99,8 @@ Each volume record must include:
 
 CT intensities are read using the file’s physical-value scaling metadata. The raw
 dtype and scaling are preserved in the manifest. Intensity clipping/windowing is a
+preprocessing decision made in SPEC 002 from measured intensity distributions, not
+a property of the source data.
 
 ### 5.2 Mask contract
 
@@ -128,7 +132,8 @@ method and metadata requirements are locked here.
 - unknown label value: reject and report;
 - duplicate `case_id`: fail the manifest gate;
 - empty mask: retain only if the official case is valid and record the fact;
-- missing phase metadata: keep as unknown and report, never guess silently.
+- missing phase metadata: keep as unknown and report, never guess silently. The
+  official `kits23.json` has no phase field (verified 2026-10-21, D-010).
 
 ## 6. Split and leakage policy
 
@@ -139,6 +144,8 @@ method and metadata requirements are locked here.
 - Use file hashes and case IDs to detect duplicate or repeated cases.
 - Do not merge KiTS19/KiTS21 cases into the primary KiTS23 dataset.
 - Stratify where feasible by acquisition phase and presence of tumor/cyst labels.
+  Phase is not available in the official metadata, so phase stratification is
+  currently infeasible (D-010).
 - Freeze and hash the generated split manifest before training.
 - If a future external dataset is used, it receives a separate evaluation role and
   is never merged into the internal test result.

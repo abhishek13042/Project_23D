@@ -41,3 +41,6 @@ does not exist. Denominators are always reported.
 ## Qualitative evidence
 
 Every final report includes orthogonal overlays, 3D views, successful cases,
+median cases, worst cases, and explicit false-positive and false-negative
+examples.
+

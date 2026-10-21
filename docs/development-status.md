@@ -2,10 +2,11 @@
 
 ## Current status
 
-**SPEC 001 — Foundation & Feasibility:** verified locally
-**SPEC 002 — Volume Data Pipeline:** not started
-**Model training:** not started
-**API/frontend/deployment:** not started
+- **SPEC 001 — Foundation & Feasibility:** verified locally; dataset availability
+  re-checked 2026-10-21
+- **SPEC 002 — Volume Data Pipeline:** not started
+- **Model training:** not started
+- **API/frontend/deployment:** not started
 
 ## Completed foundation decisions
 
@@ -14,11 +15,16 @@
 - primary dataset: KiTS23 v0.1.4
 - classes: background, kidney, tumor, cyst
 - independence unit: anonymized case ID
-- split policy: subject/case-level, fixed seed 42
+- split policy: subject/case-level, fixed seed 42; stratified by tumor/cyst
+  presence (phase is unavailable, D-010)
 - primary evaluation: per-case macro Dice across KiTS HECs
 - model strategy: compact 3D U-Net baseline and nnU-Net-style strong reference
 - local/Kaggle division of work
 - reproducibility and Git hygiene policy
+- full dataset staged on Kaggle only, from pinned and checksummed URLs (D-011)
+- foundation approach review completed: `reports/foundation/approach_review.md`
+  (its four decisions approved in lean form as D-012)
+- scope cut to one nnU-Net v2 run (fold 0, 100 epochs, about 15 GPU-hours) (D-012)
 
 ## Explicitly not started
 

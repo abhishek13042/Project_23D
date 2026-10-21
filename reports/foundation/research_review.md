@@ -10,18 +10,20 @@
 | Isensee et al., nnU-Net, 2021 | Self-configuring preprocessing, network, training, and postprocessing | Strong reference and reproducibility model |
 | Simpson et al., MSD, 2019 | Standardized benchmark/data-card mindset | Dataset and evaluation discipline |
 | Heller et al., KiTS19, 2019 | Renal CT segmentation dataset and clinical context | Renal task background and leakage caution |
-| Heller et al., KiTS21, 2023 | Kidney/tumor/cyst labels, external testing, hierarchical evaluation | Label and metric basis for KiTS23 |
+| Heller et al., KiTS21, 2023 (arXiv 2307.01984) | Kidney/tumor/cyst labels, external testing, hierarchical evaluation | Label and metric basis for KiTS23; the paper the official KiTS23 repository asks users to cite |
 | Hatamizadeh et al., Swin UNETR, 2022 | Transformer encoder for 3D segmentation | Modern method reviewed but deferred due compute/scope |
 
 ## Architecture conclusion
 
 The project will use a compact 3D U-Net baseline and a single strong nnU-Net-style
+reference. V-Net and Swin UNETR remain literature context unless a later experiment
+has a specific hypothesis that needs them.
 
 ## Dataset-specific source links
 
-- KiTS23 challenge: <https://kits-challenge.org/kits23/>
+- KiTS23 challenge: <https://kits23.kits-challenge.org/>
 - KiTS23 repository: <https://github.com/neheller/kits23>
-- KiTS23 paper: <https://arxiv.org/abs/2307.01984>
+- KiTS21 challenge paper (cited by the KiTS23 repository): <https://arxiv.org/abs/2307.01984>
 - KiTS19 paper: <https://arxiv.org/abs/1904.00445>
 - nnU-Net paper: <https://doi.org/10.1038/s41592-020-01008-z>
 - 3D U-Net paper: <https://arxiv.org/abs/1606.06650>
