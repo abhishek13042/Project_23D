@@ -114,7 +114,10 @@ Real-data smoke run (2026-10-22), on the 5 smallest real cases with `--subset`:
 - all 10 files verified OK;
 - features correct (for example, case_00061: 29×512×512, 5.0 mm slices, tumor 111.6 ml);
 - split 3/1/1;
-- raw folder layout and `dataset.json` as specified.
+- raw folder layout and `dataset.json` as specified;
+- `nnUNetv2_plan_and_preprocess --verify_dataset_integrity` (nnunetv2 2.8.1, CPU torch)
+  accepted the folder and wrote compressed `.b2nd` arrays for the 4 train/val cases.
+  The plans themselves are not representative (only 4 thick-slice cases).
 
 Kaggle: the full run, checked against §10.
 
