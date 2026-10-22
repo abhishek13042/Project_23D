@@ -106,3 +106,16 @@
   The cuts remove GPU cost but keep the parts that make the result trustworthy: a
   locked test set, the official evaluator and confidence intervals. This approves
   the four questions in `reports/foundation/approach_review.md` §10 in lean form.
+
+## D-013 — nnU-Net raw dataset format for SPEC 002
+
+- **Date:** 2026-10-22
+- **Decision:** Pin `nnunetv2==2.8.1`. Write `Dataset220_KiTS2023` in the format of
+  nnU-Net's official KiTS23 conversion: region-based labels (`kidney=[1,2,3]`,
+  `masses=[2,3]`, `tumor=2`, `regions_class_order=[1,3,2]`) with
+  `NibabelIOWithReorient`. Only train and validation cases go into `imagesTr`;
+  locked test images go to `imagesTs` with no labels. Fold 0 of a custom
+  `splits_final.json` holds our train/validation split. Files are symlinked on Kaggle.
+- **Reason:** The regions are the official KiTS evaluation classes, so training
+  optimizes what is scored. Keeping test cases out of `imagesTr` stops them from
+  influencing nnU-Net's fingerprint and plans. The pin makes the plans repeatable.

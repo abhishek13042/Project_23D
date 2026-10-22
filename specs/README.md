@@ -1,7 +1,7 @@
 # Specification Index
 
 Current status: **SPEC 001 verified locally; remote synchronization pending because
-no intended remote URL is configured.** SPEC 002 has not started.
+no intended remote URL is configured.** SPEC 002 is implemented and tested locally; its Kaggle CPU run is pending.
 
 Specifications are organized by major engineering milestone rather than by every
 small technical concept.

@@ -5,8 +5,9 @@ cysts from contrast-enhanced CT volumes using the KiTS23 dataset.
 
 ## Status
 
-SPEC 001 — Foundation & Feasibility is complete locally. Implementation has not
-started; SPEC 002 has not started.
+SPEC 001 — Foundation & Feasibility is complete locally. SPEC 002 — Volume Data
+Pipeline is implemented and tested locally; its Kaggle CPU run
+(`notebooks/01_prepare_data.ipynb`) is pending.
 
 The development process is spec-driven:
 

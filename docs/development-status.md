@@ -4,7 +4,9 @@
 
 - **SPEC 001 — Foundation & Feasibility:** verified locally; dataset availability
   re-checked 2026-10-21
-- **SPEC 002 — Volume Data Pipeline:** not started
+- **SPEC 002 — Volume Data Pipeline:** implemented and tested locally (25 tests,
+  real-data smoke run on 5 cases); Kaggle CPU run pending
+  (`notebooks/01_prepare_data.ipynb`)
 - **Model training:** not started
 - **API/frontend/deployment:** not started
 
@@ -29,10 +31,7 @@
 
 ## Explicitly not started
 
-- dataset download
-- raw data ingestion
-- manifest generation
-- preprocessing implementation
+- full-dataset run on Kaggle (SPEC 002 notebook ready)
 - model implementation
 - training
 - evaluation code
