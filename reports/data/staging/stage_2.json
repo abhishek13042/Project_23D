@@ -1,0 +1,11 @@
+{
+  "shard": 2,
+  "n_shards": 3,
+  "files": 146,
+  "images": 146,
+  "segmentations": 0,
+  "gb": 14.13,
+  "ok": 146,
+  "failed": [],
+  "minutes": 0.8
+}
