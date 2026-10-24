@@ -49,16 +49,19 @@ The run checks:
 - the locked split, 343/73/73, seed 42;
 - nnU-Net's own dataset integrity check.
 
-## 3. SPEC 003 — train (Kaggle GPU, about 14 h)
-
-Not written yet. When it exists:
+## 3. SPEC 003 — train (Kaggle GPU, about 15 h over 2 sessions)
 
 | | |
 |---|---|
-| Configuration | nnU-Net v2 2.8.1, `nnUNetTrainer_100epochs`, `3d_fullres`, fold 0 |
-| Input | `kits23-nnunet-preprocessed` |
-| Save output as | a private dataset holding `.../fold_0/checkpoint_final.pth` and `fold_0/validation/` |
-| Copy back | its run record → `reports/training/spec003_run_record.json` |
+| Notebooks | `notebooks/02_train_pilot.ipynb` (5 epochs), then `notebooks/02_train.ipynb` (100 epochs) |
+| Configuration | nnU-Net v2 2.8.1, `nnUNetTrainer_100epochs_kaggle` (D-016), `3d_fullres`, fold 0 |
+| Inputs | the `kits23-prepare-data` output; from session 2 on, also the previous training session's output |
+| Settings | Accelerator GPU T4 x1, Internet On |
+| Copy back | `spec003/run_record.json` → `reports/training/spec003_run_record.json` |
+
+Push the 100-epoch notebook as `kits23-train-1`, `kits23-train-2`, and so on.
+Each one prints `NOT FINISHED` (push the next session), `DONE` or `STOP`.
+The SPEC 004 notebook takes the output of the session that printed `DONE`.
 
 ## 4. SPEC 004 + 005 — evaluate (Kaggle GPU, about 1–3 h)
 

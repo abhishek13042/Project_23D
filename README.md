@@ -7,8 +7,8 @@ cysts from contrast-enhanced CT volumes using the KiTS23 dataset.
 
 SPEC 001 — Foundation & Feasibility is complete locally. SPEC 002 — Volume Data
 Pipeline is implemented and tested locally; its Kaggle CPU run
-(`notebooks/01_prepare_data.ipynb`) is pending. SPEC 003 (training) is not written
-yet. SPEC 004 (evaluation) and SPEC 005 (case analysis) are implemented and tested
+(`notebooks/01_prepare_data.ipynb`) is pending. SPEC 003 (training) is implemented
+(`notebooks/02_train*.ipynb`); its Kaggle GPU run is pending. SPEC 004 (evaluation) and SPEC 005 (case analysis) are implemented and tested
 locally; they run on Kaggle in `notebooks/03_evaluate.ipynb` once a model exists. SPEC 007
 (report and reproducibility, with SPEC 006 merged in) is implemented: see
 [`docs/REPRODUCE.md`](docs/REPRODUCE.md) and

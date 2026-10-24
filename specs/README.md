@@ -2,7 +2,7 @@
 
 Current status: **SPEC 001 verified locally; remote synchronization pending because
 no intended remote URL is configured.** SPEC 002 is implemented and tested locally; its Kaggle CPU run is pending.
-SPEC 003 (training) is not written yet. SPEC 004 and SPEC 005 are implemented and
+SPEC 003 (training) is implemented and tested locally; its Kaggle GPU run is pending. SPEC 004 and SPEC 005 are implemented and
 tested locally; their Kaggle run (`notebooks/03_evaluate.ipynb`) needs the SPEC 003 model.
 SPEC 006 is merged into SPEC 007, which is implemented; its report fills in from the run records.
 

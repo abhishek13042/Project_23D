@@ -149,3 +149,19 @@
 - **Reason:** Everything runs through the Kaggle CLI, with no web-UI import and no
   local download. Kaggle saves about 20 GB of output per notebook, and the images
   are 42 GB.
+
+## D-016 — Train in resumable Kaggle sessions
+
+- **Date:** 2026-10-24
+- **Decision:**
+  - Train with `nnUNetTrainer_100epochs_kaggle`. It is identical to nnU-Net's
+    `nnUNetTrainer_100epochs`, except it saves `checkpoint_latest.pth` every 5 epochs
+    instead of every 50.
+  - Each Kaggle session trains for at most 11.25 h, then stops. The next session
+    attaches the previous output and resumes with `--c`.
+  - GPU: T4. `torch.compile` off; 4 data-augmentation workers.
+  - Run a 5-epoch pilot (`nnUNetTrainer_5epochs`) first.
+- **Reason:** 100 epochs of 3d_fullres take longer than Kaggle's 12-hour session.
+  With 50-epoch checkpoints, a stopped session could throw away hours of GPU time,
+  and the weekly quota is only 30 h. The training recipe itself is unchanged.
+  Recent PyTorch no longer supports the P100.
