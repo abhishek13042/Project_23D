@@ -66,6 +66,15 @@ def test_detect_roots(fake_kits, monkeypatch):
         pytest.skip("fake file sizes do not separate at the test threshold")
     images, segs = prepare_kits23.detect_roots(fake_kits["tmp"] / "in")
     assert images == fake_kits["images"] and segs == fake_kits["segs"]
+    # a small extra folder of label files (e.g. validation predictions) is ignored
+    extra = fake_kits["tmp"] / "in" / "results" / "validation"
+    extra.mkdir(parents=True)
+    first = sorted(fake_kits["segs"].iterdir())[0]
+    (extra / first.name).write_bytes(first.read_bytes())
+    with pytest.raises(SystemExit):
+        prepare_kits23.detect_roots(fake_kits["tmp"] / "in")
+    n = len(list(fake_kits["segs"].iterdir()))
+    assert prepare_kits23.detect_roots(fake_kits["tmp"] / "in", min_files=n) == (images, segs)
 
 
 def test_leak_check_catches_test_case(fake_kits):
@@ -81,7 +90,7 @@ def test_leak_check_catches_test_case(fake_kits):
 def test_stops_on_geometry_mismatch(fake_kits, capsys):
     import hashlib
 
-    from conftest import make_seg, write_nifti
+    from helpers import make_seg, write_nifti
     p = write_nifti(fake_kits["segs"] / "case_00002.nii.gz", make_seg(tumor=5), spacing=(1.0, 1.0, 3.0))
     lines = fake_kits["manifest"].read_text().splitlines()
     for i, line in enumerate(lines):  # re-pin the changed file so only geometry fails

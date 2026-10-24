@@ -137,17 +137,24 @@ def code_cell(text: str) -> dict:
             "source": text.splitlines(keepends=True)}
 
 
-def build() -> dict:
-    cells = [md_cell(INTRO), code_cell(ENV_CHECK)]
-    cells.append(md_cell("Write the project code (generated from the repository)."))
-    for rel in EMBEDDED:
+def writefile_cells(embedded: list[str]) -> list[dict]:
+    cells = [md_cell("Write the project code (generated from the repository).")]
+    for rel in embedded:
         body = (ROOT / rel).read_text(encoding="utf-8").replace("\r\n", "\n")
         cells.append(code_cell(f"%%writefile /kaggle/working/project23d/{rel}\n{body}"))
-    cells += [code_cell(INSTALL), code_cell(PREPARE), code_cell(PREPROCESS), code_cell(SAVE)]
+    return cells
+
+
+def notebook(cells: list[dict]) -> dict:
     return {"cells": cells, "nbformat": 4, "nbformat_minor": 5,
             "metadata": {"kernelspec": {"name": "python3", "display_name": "Python 3",
                                         "language": "python"},
                          "language_info": {"name": "python"}}}
+
+
+def build() -> dict:
+    return notebook([md_cell(INTRO), code_cell(ENV_CHECK), *writefile_cells(EMBEDDED),
+                     code_cell(INSTALL), code_cell(PREPARE), code_cell(PREPROCESS), code_cell(SAVE)])
 
 
 def render() -> str:

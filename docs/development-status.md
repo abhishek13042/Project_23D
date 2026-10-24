@@ -7,7 +7,13 @@
 - **SPEC 002 — Volume Data Pipeline:** implemented and tested locally (25 tests,
   real-data smoke run on 5 cases); Kaggle CPU run pending
   (`notebooks/01_prepare_data.ipynb`)
-- **Model training:** not started
+- **SPEC 003 — Training:** not started (notebook not written yet)
+- **SPEC 004 — Evaluation:** implemented and tested locally (official evaluator
+  wrapper, secondary metrics, bootstrap CIs, validation-only post-processing);
+  real-data smoke run on 5 cases; Kaggle GPU run pending
+  (`notebooks/03_evaluate.ipynb`, needs the SPEC 003 model)
+- **SPEC 005 — Case analysis (E-005):** implemented and tested locally; runs in the
+  same notebook
 - **API/frontend/deployment:** not started
 
 ## Completed foundation decisions
@@ -34,7 +40,6 @@
 - full-dataset run on Kaggle (SPEC 002 notebook ready)
 - model implementation
 - training
-- evaluation code
 - deployment
 
 ## Operational note

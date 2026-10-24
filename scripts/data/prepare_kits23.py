@@ -29,12 +29,17 @@ from project3d.data import features, manifest, nnunet_export, split  # noqa: E40
 IMAGE_MIN_BYTES = 10 * 1024 * 1024  # CT volumes are tens of MB; label files are ~1 MB
 
 
-def detect_roots(input_root: Path) -> tuple[Path, Path]:
-    """Find the images folder and the segmentations folder by typical file size."""
+def detect_roots(input_root: Path, min_files: int = 1) -> tuple[Path, Path]:
+    """Find the images folder and the segmentations folder by typical file size.
+
+    Folders with fewer than ``min_files`` case files are ignored (e.g. nnU-Net's
+    validation predictions sitting next to the full dataset).
+    """
     by_dir: dict[Path, list[int]] = {}
     for paths in manifest.find_case_files(input_root).values():
         for p in paths:
             by_dir.setdefault(p.parent, []).append(p.stat().st_size)
+    by_dir = {d: s for d, s in by_dir.items() if len(s) >= min_files}
     if not by_dir:
         raise SystemExit(f"no case_XXXXX.nii(.gz) files found under {input_root}")
     big = [d for d, s in by_dir.items() if statistics.median(s) >= IMAGE_MIN_BYTES]

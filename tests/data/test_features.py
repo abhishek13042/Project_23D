@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from conftest import make_seg, write_nifti
+from helpers import make_seg, write_nifti
 
 from project3d.data import features as f
 

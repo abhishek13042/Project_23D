@@ -119,3 +119,20 @@
 - **Reason:** The regions are the official KiTS evaluation classes, so training
   optimizes what is scored. Keeping test cases out of `imagesTr` stops them from
   influencing nnU-Net's fingerprint and plans. The pin makes the plans repeatable.
+
+## D-014 — Evaluation details for SPEC 004–005
+
+- **Date:** 2026-10-24
+- **Decision:**
+  - Post-processing: nnU-Net's own `determine_postprocessing` on the fold-0
+    validation predictions, applied unchanged to test. Post-processed predictions
+    are the primary result; raw predictions are reported next to them.
+  - HD95: the larger of the two directed 95th-percentile surface distances, in mm,
+    using the voxel spacing; undefined (NaN, counted) when either mask is empty.
+  - Geometry: our shape/affine check runs before the official evaluator, and our
+    Dice must match the official Dice within 1e-3, or the run stops.
+  - CIs: case bootstrap, 10 000 resamples, seed 42, only with at least 10 cases.
+  - Case analysis (SPEC 005) is descriptive, with groups fixed before test results.
+- **Reason:** These choices are fixed in writing before the test set is scored, so
+  the one test evaluation cannot be steered. HD95 definitions differ between
+  libraries; the symmetric max form is the common one (MONAI, KiTS literature).
