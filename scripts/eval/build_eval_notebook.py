@@ -42,7 +42,7 @@ cases, scores them with the official KiTS23 evaluator, and writes the case
 analysis and figures.
 
 **Before running**
-1. *Add Input*: the KiTS23 images and segmentations datasets, `kits23-nnunet-preprocessed`
+1. *Add Input*: the outputs of `kits23-stage-1..3` (KiTS23 images and segmentations), `kits23-nnunet-preprocessed`
    (from SPEC 002, it holds `spec002/split.json`), and the training output dataset
    (the folder that holds `fold_0/checkpoint_final.pth`).
 2. *Settings*: **Accelerator = GPU T4 x1** (or P100), **Internet = On**.
@@ -82,7 +82,7 @@ sys.path[:0] = [f"{{WORK}}/src", f"{{WORK}}/scripts/data", f"{{WORK}}/scripts/ev
 import prepare_kits23
 from project3d.data import manifest
 INPUT = Path("/kaggle/input")
-IMAGES, SEGS = prepare_kits23.detect_roots(INPUT, min_files={N_CASES})
+IMAGES, SEGS = prepare_kits23.detect_roots(INPUT, min_files={N_CASES}, link_dir=Path("/tmp/kits23_merged"))
 ckpts = sorted(INPUT.rglob("fold_0/checkpoint_final.pth"))
 assert len(ckpts) == 1, f"need exactly one fold_0/checkpoint_final.pth, found {{ckpts}}"
 FOLD = ckpts[0].parent

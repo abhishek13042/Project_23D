@@ -5,9 +5,10 @@ import pytest
 
 import build_eval_notebook
 import build_kaggle_notebook
+import build_stage_notebook
 
-BUILDERS = pytest.mark.parametrize("b", [build_kaggle_notebook, build_eval_notebook],
-                                   ids=["01_prepare_data", "03_evaluate"])
+BUILDERS = pytest.mark.parametrize("b", [build_stage_notebook, build_kaggle_notebook, build_eval_notebook],
+                                   ids=["00_stage_data", "01_prepare_data", "03_evaluate"])
 
 
 @BUILDERS
@@ -51,3 +52,12 @@ def test_eval_notebook_embeds_every_eval_module():
     root = build_eval_notebook.ROOT
     for py in (root / "src/project3d/eval").glob("*.py"):
         assert py.relative_to(root).as_posix() in build_eval_notebook.EMBEDDED
+
+
+def test_every_stage_shard_notebook_is_up_to_date():
+    for k in range(1, build_stage_notebook.N_SHARDS + 1):
+        nb = build_stage_notebook.path(k)
+        assert nb.read_text(encoding="utf-8") == build_stage_notebook.render(k), (
+            f"notebook is stale: run python {build_stage_notebook.__file__}")
+        sources = ["".join(c["source"]) for c in json.loads(nb.read_text(encoding="utf-8"))["cells"]]
+        assert any(s.startswith(f"SHARD = {k}\n") for s in sources)

@@ -136,3 +136,16 @@
 - **Reason:** These choices are fixed in writing before the test set is scored, so
   the one test evaluation cannot be steered. HD95 definitions differ between
   libraries; the symmetric max form is the common one (MONAI, KiTS literature).
+
+## D-015 — Stage KiTS23 with three download notebooks
+
+- **Date:** 2026-10-24
+- **Decision:** Plan B of D-011. Three private CPU notebooks
+  (`notebooks/00_stage_data_{1,2,3}.ipynb`, from `scripts/data/stage_kits23.py`)
+  download contiguous image shards of about 14 GB each from the pinned URLs; shard 1
+  also holds all 489 segmentations. Every file is checked for size and SHA-256 while
+  it downloads. Later notebooks take the three notebook outputs as inputs, and
+  `detect_roots` links the image folders into one.
+- **Reason:** Everything runs through the Kaggle CLI, with no web-UI import and no
+  local download. Kaggle saves about 20 GB of output per notebook, and the images
+  are 42 GB.

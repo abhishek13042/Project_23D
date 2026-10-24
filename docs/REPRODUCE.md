@@ -22,15 +22,22 @@ A test fails if a notebook is out of date, so the notebooks you upload always ru
 
 ## 1. Data on Kaggle (once)
 
-Stage KiTS23 v0.1.4 as two private Kaggle datasets, images and segmentations, from the pinned URLs (D-011, `reports/foundation/approach_review.md` §3).
-The manifest `data/sources/kits23_v0.1.4_files.tsv` holds the size and SHA-256 of all 978 files.
+Run the three private staging notebooks `notebooks/00_stage_data_{1,2,3}.ipynb` (Accelerator None, Internet On, about 15–30 min each, no GPU quota). Each downloads about 14 GB of KiTS23 v0.1.4 from the pinned HuggingFace URLs into its output and checks every file against the manifest `data/sources/kits23_v0.1.4_files.tsv` (size and SHA-256 of all 978 files). Shard 1 also holds all segmentations (D-015).
+
+With the Kaggle CLI, each notebook is pushed from a folder holding it and a `kernel-metadata.json` (`"is_private": true`, `"enable_internet": true`, `"enable_gpu": false`):
+
+```bash
+kaggle kernels push -p <folder>
+```
+
+Later notebooks list `abhishekg14/kits23-stage-1`, `-2` and `-3` under `kernel_sources`. The pipeline links the three image folders into one.
 
 ## 2. SPEC 002 — prepare (Kaggle CPU, about 1–4 h, no GPU quota)
 
 | | |
 |---|---|
 | Notebook | `notebooks/01_prepare_data.ipynb` |
-| Inputs | the two KiTS23 datasets |
+| Inputs | the outputs of `kits23-stage-1..3` |
 | Settings | Accelerator None, Internet On |
 | Save output as | private dataset `kits23-nnunet-preprocessed` |
 | Copy back | `spec002/run_record.json` → `reports/data/spec002_run_record.json` |
@@ -58,7 +65,7 @@ Not written yet. When it exists:
 | | |
 |---|---|
 | Notebook | `notebooks/03_evaluate.ipynb` |
-| Inputs | both KiTS23 datasets, `kits23-nnunet-preprocessed`, the training output |
+| Inputs | `kits23-stage-1..3`, `kits23-nnunet-preprocessed`, the training output |
 | Settings | GPU T4 x1, Internet On |
 
 What it does:

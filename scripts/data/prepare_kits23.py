@@ -16,6 +16,7 @@ import argparse
 import csv
 import hashlib
 import json
+import shutil
 import statistics
 import sys
 import time
@@ -29,26 +30,45 @@ from project3d.data import features, manifest, nnunet_export, split  # noqa: E40
 IMAGE_MIN_BYTES = 10 * 1024 * 1024  # CT volumes are tens of MB; label files are ~1 MB
 
 
-def detect_roots(input_root: Path, min_files: int = 1) -> tuple[Path, Path]:
+def detect_roots(input_root: Path, min_files: int = 1,
+                 link_dir: Path | None = None, link_mode: str = "symlink") -> tuple[Path, Path]:
     """Find the images folder and the segmentations folder by typical file size.
 
-    Folders with fewer than ``min_files`` case files are ignored (e.g. nnU-Net's
-    validation predictions sitting next to the full dataset).
+    Segmentation folders with fewer than ``min_files`` case files are ignored (e.g.
+    nnU-Net's validation predictions sitting next to the full dataset). Images may
+    be split over several folders (one per Kaggle staging shard, D-015); they are
+    then linked into ``link_dir/images`` so the pipeline sees one folder.
     """
     by_dir: dict[Path, list[int]] = {}
     for paths in manifest.find_case_files(input_root).values():
         for p in paths:
             by_dir.setdefault(p.parent, []).append(p.stat().st_size)
-    by_dir = {d: s for d, s in by_dir.items() if len(s) >= min_files}
     if not by_dir:
         raise SystemExit(f"no case_XXXXX.nii(.gz) files found under {input_root}")
-    big = [d for d, s in by_dir.items() if statistics.median(s) >= IMAGE_MIN_BYTES]
-    small = [d for d, s in by_dir.items() if statistics.median(s) < IMAGE_MIN_BYTES]
-    if len(big) != 1 or len(small) != 1:
+    big = sorted(d for d, s in by_dir.items() if statistics.median(s) >= IMAGE_MIN_BYTES)
+    small = [d for d, s in by_dir.items()
+             if statistics.median(s) < IMAGE_MIN_BYTES and len(s) >= min_files]
+    n_images = sum(len(by_dir[d]) for d in big)
+    if not big or n_images < min_files or len(small) != 1:
         raise SystemExit(f"could not tell images from segmentations; folders found: "
                          f"{ {str(d): len(s) for d, s in by_dir.items()} }. "
                          f"Pass --images-root and --segs-root explicitly.")
-    return big[0], small[0]
+    if len(big) == 1:
+        return big[0], small[0]
+    if link_dir is None:
+        raise SystemExit(f"images are split over {len(big)} folders; pass a link folder")
+    merged = Path(link_dir) / "images"
+    if merged.exists():
+        shutil.rmtree(merged)
+    for d in big:
+        for p in sorted(d.iterdir()):
+            if not manifest.CASE_FILE_RE.match(p.name):
+                continue
+            if (merged / p.name).exists():
+                raise SystemExit(f"{p.name} appears in more than one image folder")
+            nnunet_export._place(p, merged / p.name, link_mode)
+    print(f"linked {n_images} images from {len(big)} folders into {merged}")
+    return merged, small[0]
 
 
 def write_csv(path: Path, rows: list[dict]) -> None:
@@ -78,7 +98,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.images_root and args.segs_root:
         images_root, segs_root = args.images_root, args.segs_root
     elif args.input_root:
-        images_root, segs_root = detect_roots(args.input_root)
+        images_root, segs_root = detect_roots(args.input_root, link_dir=args.raw_root.parent / "kits23_merged",
+                                              link_mode=args.link_mode)
     else:
         ap.error("give --input-root, or both --images-root and --segs-root")
     print(f"images: {images_root}\nsegmentations: {segs_root}")

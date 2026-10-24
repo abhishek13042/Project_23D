@@ -30,7 +30,8 @@ This notebook verifies the data, makes the locked split, and runs nnU-Net's
 planning and preprocessing. **It uses no GPU quota.**
 
 **Before running**
-1. *Add Input*: attach your two private datasets (KiTS23 images and segmentations).
+1. *Add Input*: attach the outputs of the three staging notebooks `kits23-stage-1..3`
+   (`notebooks/00_stage_data_*.ipynb`, D-015).
 2. *Settings*: **Accelerator = None** (CPU), **Internet = On** (to install nnU-Net).
 3. Click **Save Version → Save & Run All (Commit)**. Don't run it interactively
    first: the commit run does the work once, in the background, for up to 12 hours.

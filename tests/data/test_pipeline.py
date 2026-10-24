@@ -75,6 +75,18 @@ def test_detect_roots(fake_kits, monkeypatch):
         prepare_kits23.detect_roots(fake_kits["tmp"] / "in")
     n = len(list(fake_kits["segs"].iterdir()))
     assert prepare_kits23.detect_roots(fake_kits["tmp"] / "in", min_files=n) == (images, segs)
+    # images split over two staging shards are merged into one linked folder
+    shard = fake_kits["tmp"] / "in" / "shard2" / "images"
+    shard.mkdir(parents=True)
+    for p in sorted(images.iterdir())[:3]:
+        p.rename(shard / p.name)
+    with pytest.raises(SystemExit):
+        prepare_kits23.detect_roots(fake_kits["tmp"] / "in", min_files=n)
+    link = fake_kits["tmp"] / "merged"
+    merged, segs2 = prepare_kits23.detect_roots(fake_kits["tmp"] / "in", min_files=n,
+                                                link_dir=link, link_mode="copy")
+    assert segs2 == segs and merged == link / "images"
+    assert sorted(p.name for p in merged.iterdir()) == [f"{c}.nii.gz" for c in fake_kits["ids"]]
 
 
 def test_leak_check_catches_test_case(fake_kits):
