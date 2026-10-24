@@ -85,12 +85,20 @@ split_record = json.load(open(f"{OUT}/split.json"))
 print(json.dumps(split_record["summary"], indent=1))"""
 
 PREPROCESS = """# Step 3 - nnU-Net fingerprint, plan and preprocess (3d_fullres only).
-# CPU-heavy: expect roughly 1-4 hours. If the kernel dies from memory, set
-# NUM_PROCESSES = 2 and run again.
-NUM_PROCESSES = 3
+# CPU-heavy: expect roughly 2-5 hours. Kaggle's 34 GB of RAM ran out with 3
+# preprocessing workers on the largest KiTS23 scans, so use 2 and, if a worker
+# still dies, redo the preprocessing with 1.
 t = time.time()
 sh(["nnUNetv2_plan_and_preprocess", "-d", "220", "-c", "3d_fullres",
-    "-np", str(NUM_PROCESSES), "--verify_dataset_integrity"])
+    "--verify_dataset_integrity", "--no_pp"])
+for NUM_PROCESSES in (2, 1):
+    try:
+        sh(["nnUNetv2_preprocess", "-d", "220", "-c", "3d_fullres", "-np", str(NUM_PROCESSES)])
+        break
+    except subprocess.CalledProcessError:
+        if NUM_PROCESSES == 1:
+            raise
+        print(f"preprocessing failed with {NUM_PROCESSES} workers (likely out of RAM); retrying with 1")
 PRE = f"{os.environ['nnUNet_preprocessed']}/Dataset220_KiTS2023"
 shutil.copy(f"{OUT}/splits_final.json", f"{PRE}/splits_final.json")  # our locked fold 0
 preprocess_hours = (time.time() - t) / 3600
@@ -120,7 +128,8 @@ record = {
     "python": sys.version.split()[0], "cpus": os.cpu_count(),
     "split_fingerprint_sha256": split_record["fingerprint_sha256"],
     "split_totals": split_record["summary"]["total"],
-    "preprocess_hours": round(preprocess_hours, 2), "preprocessed_gb": round(size_gb, 2),
+    "preprocess_hours": round(preprocess_hours, 2), "preprocess_workers": NUM_PROCESSES,
+    "preprocessed_gb": round(size_gb, 2),
     "preprocessed_saved": saved, "total_hours": round((time.time() - T0) / 3600, 2),
     "fullres_patch_size": fullres["patch_size"], "fullres_spacing": fullres["spacing"],
 }
