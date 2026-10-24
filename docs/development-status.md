@@ -14,7 +14,9 @@
   (`notebooks/03_evaluate.ipynb`, needs the SPEC 003 model)
 - **SPEC 005 — Case analysis (E-005):** implemented and tested locally; runs in the
   same notebook
-- **API/frontend/deployment:** not started
+- **SPEC 006+007 — Report and reproducibility:** report builder, `docs/REPRODUCE.md`
+  and model card done; `reports/evaluation/results.md` is pending until the runs finish
+- **API/frontend/deployment:** out of scope (D-012)
 
 ## Completed foundation decisions
 

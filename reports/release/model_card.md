@@ -1,0 +1,38 @@
+# Model card — nnU-Net v2, KiTS23, fold 0
+
+**Status:** the model is not trained yet (SPEC 003). The numbers are in
+[`reports/evaluation/results.md`](../evaluation/results.md) once the runs are done.
+
+## What it is
+
+- **Task:** 3D semantic segmentation of contrast-enhanced abdominal CT.
+- **Outputs:** voxel labels 0 background, 1 kidney, 2 tumor, 3 cyst. The model is trained on the KiTS regions: kidney + masses, masses, tumor.
+- **Method:** the official nnU-Net v2 (2.8.1), `3d_fullres`, `nnUNetTrainer_100epochs`. One fold only (fold 0), with nnU-Net's automatic post-processing chosen on validation (D-012, D-014).
+- **Data:** KiTS23 v0.1.4, 489 labeled cases, split at case level into 343 train, 73 validation and 73 locked test cases (seed 42). The split is stratified by cohort proxy, tumor size and cyst presence.
+
+## Intended use
+
+This is a portfolio and research project, built to learn and to show a correctly measured 3D medical segmentation workflow. **It is not a medical device.**
+
+- It must not be used for diagnosis, treatment planning or any decision about a patient.
+- It has no regulatory clearance and no clinical validation.
+
+## How it was evaluated
+
+The model was run once on the 73 internal test cases. The co-primary metrics are the official KiTS23 Dice and surface Dice, averaged over the three regions per case and then over cases, each with a bootstrap 95% CI.
+
+The report also includes:
+
+- secondary metrics: IoU, precision, recall, HD95 and volume error;
+- an analysis by tumor size, cyst presence and cohort (SPEC 005).
+
+## Known limitations
+
+- **Short training:** one fold and 100 epochs instead of nnU-Net's 5 folds × 1000 epochs, so expect lower scores than the published nnU-Net KiTS23 results.
+- **Internal test set:** the test set comes from the public KiTS23 training cases. It is not the hidden challenge test set and not an external hospital, so the results can't be compared directly with the leaderboard.
+- **Small groups:** 73 test cases, so the sub-group results (for example small tumors) are uncertain. They are descriptive only.
+- **No contrast-phase data:** the contrast phase per case is unknown (D-010), so phase effects can't be measured.
+- **Dataset biases:** biases in patient population, scanners and annotation are inherited from KiTS23.
+- **License:** data CC BY-NC-SA 4.0. The model weights are derived from that data, so non-commercial use only.
+
+See also [`docs/limitations.md`](../../docs/limitations.md).

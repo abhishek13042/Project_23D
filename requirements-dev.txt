@@ -1,0 +1,6 @@
+# Local code, tests and report (no GPU). nnU-Net itself is installed only on Kaggle.
+matplotlib==3.11.2
+nibabel==5.4.2
+numpy==2.5.4
+pytest==9.1.1
+scipy==1.18.1
