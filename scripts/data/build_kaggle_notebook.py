@@ -19,15 +19,18 @@ EMBEDDED = [
     "src/project3d/data/features.py",
     "src/project3d/data/split.py",
     "src/project3d/data/nnunet_export.py",
+    "src/project3d/data/preprocess_plan.py",
     "scripts/data/prepare_kits23.py",
     "data/sources/kits23_v0.1.4_files.tsv",
 ]
 NNUNET_VERSION = "2.8.1"
+N_SHARDS = 4  # shard notebooks for the preprocessing (D-017)
 
 INTRO = """# SPEC 002 — Prepare KiTS23 for nnU-Net (Kaggle, CPU only)
 
 This notebook verifies the data, makes the locked split, and runs nnU-Net's
-planning and preprocessing. **It uses no GPU quota.**
+planning. The preprocessing itself runs in four shard notebooks afterwards
+(`01b_preprocess_1..4`, D-017). **It uses no GPU quota.**
 
 **Before running**
 1. *Add Input*: attach the outputs of the three staging notebooks `kits23-stage-1..3`
@@ -36,15 +39,15 @@ planning and preprocessing. **It uses no GPU quota.**
 3. Click **Save Version → Save & Run All (Commit)**. Don't run it interactively
    first: the commit run does the work once, in the background, for up to 12 hours.
 
-**After it finishes**, open the version's *Output* tab and click **New Dataset**.
-Name it `kits23-nnunet-preprocessed` and keep it **Private**. The training
-notebook (SPEC 003) uses that dataset.
+**After it finishes**, run the four shard notebooks with this notebook's output
+attached. The training notebook (SPEC 003) attaches this output and all four shards.
 
 The code cells below are generated from the project repository
 (`scripts/data/build_kaggle_notebook.py`). Edit the repository, not this notebook."""
 
 ENV_CHECK = """# Step 0 - what machine did Kaggle give us?
 import os, shutil, sys, platform, json, time
+from pathlib import Path
 print("python", sys.version.split()[0], "|", platform.platform())
 print("CPUs:", os.cpu_count())
 try:
@@ -84,58 +87,59 @@ sh([sys.executable, f"{WORK}/scripts/data/prepare_kits23.py",
 split_record = json.load(open(f"{OUT}/split.json"))
 print(json.dumps(split_record["summary"], indent=1))"""
 
-PREPROCESS = """# Step 3 - nnU-Net fingerprint, plan and preprocess (3d_fullres only).
-# CPU-heavy: expect roughly 2-5 hours. Kaggle's 34 GB of RAM ran out with 3
-# preprocessing workers on the largest KiTS23 scans, so use 2 and, if a worker
-# still dies, redo the preprocessing with 1.
+PREPROCESS = """# Step 3 - nnU-Net fingerprint and plan (3d_fullres), no preprocessing here.
+# The preprocessed data is about 50 GB, more than one notebook can save (about
+# 20 GB), so four shard notebooks (01b_preprocess_1..4) preprocess a quarter each
+# (D-017). This step writes the shard plan they follow. Expect about 1.5 hours.
+import csv
+sys.path.insert(0, f"{WORK}/src")
+from project3d.data import preprocess_plan
 t = time.time()
 sh(["nnUNetv2_plan_and_preprocess", "-d", "220", "-c", "3d_fullres",
     "--verify_dataset_integrity", "--no_pp"])
-for NUM_PROCESSES in (2, 1):
-    try:
-        sh(["nnUNetv2_preprocess", "-d", "220", "-c", "3d_fullres", "-np", str(NUM_PROCESSES)])
-        break
-    except subprocess.CalledProcessError:
-        if NUM_PROCESSES == 1:
-            raise
-        print(f"preprocessing failed with {NUM_PROCESSES} workers (likely out of RAM); retrying with 1")
 PRE = f"{os.environ['nnUNet_preprocessed']}/Dataset220_KiTS2023"
-shutil.copy(f"{OUT}/splits_final.json", f"{PRE}/splits_final.json")  # our locked fold 0
-preprocess_hours = (time.time() - t) / 3600
-print(f"preprocessing took {preprocess_hours:.2f} h")"""
-
-SAVE = """# Step 4 - move the preprocessed data into the saved output (limit about 20 GB).
-from pathlib import Path
-def folder_gb(path):
-    return sum(f.stat().st_size for f in Path(path).rglob("*") if f.is_file()) / 1e9
-size_gb = folder_gb(PRE)
-print(f"preprocessed size: {size_gb:.1f} GB")
 plans = json.load(open(f"{PRE}/nnUNetPlans.json"))
 fullres = plans["configurations"]["3d_fullres"]
 print("3d_fullres patch size", fullres["patch_size"], "| spacing", fullres["spacing"],
       "| batch size", fullres["batch_size"])
-saved = size_gb <= 19.0
-if saved:
-    shutil.move(PRE, "/kaggle/working/nnUNet_preprocessed/Dataset220_KiTS2023")
-else:
-    print("TOO BIG for /kaggle/working. Only the reports are saved. Tell Claude the size above;"
-          " the fallback is 3d_lowres or preprocessing inside the training notebook.")
-    os.makedirs("/kaggle/working/nnUNet_preprocessed/Dataset220_KiTS2023", exist_ok=True)
-    for name in ("dataset.json", "nnUNetPlans.json", "dataset_fingerprint.json", "splits_final.json"):
-        shutil.copy(f"{PRE}/{name}", f"/kaggle/working/nnUNet_preprocessed/Dataset220_KiTS2023/{name}")
+mvox = preprocess_plan.case_mvox(list(csv.DictReader(open(f"{OUT}/case_features.csv"))),
+                                 tuple(fullres["spacing"]))
+shard_plan = preprocess_plan.write_plan(Path(f"{PRE}/shard_plan.json"), split_record["roles"], mvox,
+                                        n_shards=N_SHARDS)
+splits = preprocess_plan.filter_splits(json.load(open(f"{OUT}/splits_final.json")),
+                                       list(shard_plan["excluded"]))
+json.dump(splits, open(f"{PRE}/splits_final.json", "w"), indent=2)  # our locked fold 0
+print("left out of training (too large for one Kaggle worker):", shard_plan["excluded"])
+print("cases per shard:", [len(s) for s in shard_plan["shards"]], "| Mvox per shard:", shard_plan["shard_mvox"])
+plan_hours = (time.time() - t) / 3600
+print(f"planning took {plan_hours:.2f} h")"""
+
+SAVE = """# Step 4 - save the plans, the shard plan, our splits and the reference labels
+# (gt_segmentations, used by nnU-Net's final validation). Real copies, not symlinks.
+DEST = Path("/kaggle/working/nnUNet_preprocessed/Dataset220_KiTS2023")
+DEST.mkdir(parents=True, exist_ok=True)
+for name in ("dataset.json", "nnUNetPlans.json", "dataset_fingerprint.json", "splits_final.json",
+             "shard_plan.json"):
+    shutil.copy(f"{PRE}/{name}", DEST / name)
+labels = Path(os.environ["nnUNet_raw"]) / "Dataset220_KiTS2023" / "labelsTr"
+(DEST / "gt_segmentations").mkdir(exist_ok=True)
+for f in sorted(labels.iterdir()):
+    shutil.copy(f, DEST / "gt_segmentations" / f.name)
+fold0 = splits[0]
 record = {
     "spec": "SPEC 002", "nnunetv2": md.version("nnunetv2"), "torch": md.version("torch"),
     "python": sys.version.split()[0], "cpus": os.cpu_count(),
     "split_fingerprint_sha256": split_record["fingerprint_sha256"],
     "split_totals": split_record["summary"]["total"],
-    "preprocess_hours": round(preprocess_hours, 2), "preprocess_workers": NUM_PROCESSES,
-    "preprocessed_gb": round(size_gb, 2),
-    "preprocessed_saved": saved, "total_hours": round((time.time() - T0) / 3600, 2),
+    "fold0_train": len(fold0["train"]), "fold0_val": len(fold0["val"]),
+    "excluded": shard_plan["excluded"], "n_shards": N_SHARDS, "shard_mvox": shard_plan["shard_mvox"],
+    "plan_hours": round(plan_hours, 2), "total_hours": round((time.time() - T0) / 3600, 2),
     "fullres_patch_size": fullres["patch_size"], "fullres_spacing": fullres["spacing"],
+    "fullres_batch_size": fullres["batch_size"],
 }
 json.dump(record, open(f"{OUT}/run_record.json", "w"), indent=2)
 print(json.dumps(record, indent=1))
-print("DONE. Copy the printed run_record above back to Claude.")"""
+print("DONE. Next: the four shard notebooks (01b_preprocess_1..4) with this output attached.")"""
 
 
 def md_cell(text: str) -> dict:
@@ -163,7 +167,7 @@ def notebook(cells: list[dict]) -> dict:
 
 
 def build() -> dict:
-    return notebook([md_cell(INTRO), code_cell(ENV_CHECK), *writefile_cells(EMBEDDED),
+    return notebook([md_cell(INTRO), code_cell(ENV_CHECK + f"\nN_SHARDS = {N_SHARDS}"), *writefile_cells(EMBEDDED),
                      code_cell(INSTALL), code_cell(PREPARE), code_cell(PREPROCESS), code_cell(SAVE)])
 
 

@@ -165,3 +165,31 @@
   With 50-epoch checkpoints, a stopped session could throw away hours of GPU time,
   and the weekly quota is only 30 h. The training recipe itself is unchanged.
   Recent PyTorch no longer supports the P100.
+
+## D-017 — Preprocess in four shard notebooks; leave out two oversized training scans
+
+- **Date:** 2026-10-25
+- **Decision:**
+  - `kits23-prepare-data` (notebook 01) verifies, splits and runs nnU-Net's
+    fingerprint and planning only (`--no_pp`). It saves the plans, our
+    `splits_final.json`, the reference labels (`gt_segmentations`) and a shard plan.
+  - Four CPU notebooks `kits23-preprocess-1..4` (`notebooks/01b_preprocess_*.ipynb`,
+    from `scripts/data/preprocess_shard.py`) each preprocess about a quarter of the
+    train+val cases, split by resampled voxel count. Each case runs in its own
+    process, 2 at a time, and a case that crashes is retried alone.
+  - Training cases larger than 350 million voxels after resampling to the 3d_fullres
+    spacing are left out of training and removed from fold 0 of `splits_final.json`.
+    With KiTS23 this drops two whole-body scans (expected: `case_00223`, about 556 M,
+    and `case_00412`, about 429 M; the median case is about 100 M). The run record
+    lists the exact cases.
+  - The training notebook links the prepare output and the four shard outputs into
+    one preprocessed folder (`train.py`, `assemble_preprocessed`).
+- **What does not change:** the locked 343/73/73 split and its fingerprint, the
+  validation and test cases (no validation or test case is ever excluded), the nnU-Net
+  plans and the training recipe.
+- **Reason:** The first full run failed twice. nnU-Net's preprocessing worker died on
+  `case_00223` (Kaggle's 34 GB of RAM ran out, with 2 workers and then with 1). Also,
+  the measured size of the preprocessed data, about 1.1 bytes per voxel, puts the
+  whole dataset at about 50 GB, while one notebook saves only about 20 GB.
+  Leaving 2 of 343 training cases out costs far less than any change of
+  configuration (for example 3d_lowres) would.

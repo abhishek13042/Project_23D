@@ -41,7 +41,8 @@ the GPU works and nnU-Net finishes and validates. It also measures **seconds per
 epoch**, and that number decides how many sessions the 100-epoch run needs.
 
 **Before running**
-1. *Add Input*: the output of `kits23-prepare-data` (SPEC 002).
+1. *Add Input*: the outputs of `kits23-prepare-data` and `kits23-preprocess-1..4`
+   (SPEC 002, D-017).
 2. *Settings*: **Accelerator = GPU T4 x1**, **Internet = On**.
 3. **Save Version → Save & Run All (Commit)**. Expected GPU time: about 1-1.5 hours,
    most of it for nnU-Net's validation of the 73 validation cases.""",
@@ -52,7 +53,8 @@ runs in **sessions**. Each session trains until its time budget runs out and kee
 a checkpoint every 5 epochs (D-016). The next session picks up from that checkpoint.
 
 **Before running**
-1. *Add Input*: the output of `kits23-prepare-data` (SPEC 002). **Sessions 2, 3, ...**
+1. *Add Input*: the outputs of `kits23-prepare-data` and `kits23-preprocess-1..4`
+   (SPEC 002, D-017). **Sessions 2, 3, ...**
    also attach the output of the *previous* training session (only that one).
 2. *Settings*: **Accelerator = GPU T4 x1**, **Internet = On**.
 3. **Save Version → Save & Run All (Commit)**.

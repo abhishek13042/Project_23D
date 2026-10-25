@@ -1,7 +1,7 @@
 """SPEC 003: train nnU-Net v2 fold 0 on Kaggle within one session's time budget.
 
-Finds the SPEC 002 preprocessed dataset under ``--input-root`` and copies it to
-local disk. If an earlier session's output is attached, it restores that results
+Assembles the SPEC 002 preprocessed dataset (prepare output plus the shard
+outputs, D-017) from ``--input-root`` into one local folder of links. If an earlier session's output is attached, it restores that results
 folder and resumes. Then it runs ``nnUNetv2_train`` until the training (and
 nnU-Net's own fold-0 validation) finishes or the budget runs out. A stopped run
 loses at most ``save_every`` epochs; attach this output to the next session.
@@ -37,12 +37,40 @@ def trainer_dir_name(trainer: str) -> str:
     return f"{trainer}__nnUNetPlans__{CONFIG}"
 
 
-def find_preprocessed(root: Path) -> Path:
-    hits = sorted(p.parent for p in root.rglob("nnUNetPlans.json")
-                  if p.parent.name == DATASET and (p.parent / f"nnUNetPlans_{CONFIG}").is_dir())
-    if len(hits) != 1:
-        raise SystemExit(f"need exactly one preprocessed {DATASET} with nnUNetPlans_{CONFIG}/, found {hits}")
-    return hits[0]
+def assemble_preprocessed(root: Path, dest: Path, link: bool = os.name != "nt") -> int:
+    """Build one preprocessed dataset at ``dest`` from the SPEC 002 outputs under ``root``.
+
+    The plans, splits and reference labels come from the prepare notebook; the
+    preprocessed cases come from the shard notebooks (D-017). Case files are
+    symlinked (copied when ``link`` is false), so nothing large is copied.
+    Returns the number of cases found.
+    """
+    plans = sorted(p.parent for p in root.rglob("nnUNetPlans.json")
+                   if p.parent.name == DATASET and (p.parent / "splits_final.json").exists())
+    if len(plans) != 1:
+        raise SystemExit(f"need exactly one {DATASET} folder with nnUNetPlans.json and splits_final.json, found {plans}")
+    shards = sorted(p for p in root.rglob(f"nnUNetPlans_{CONFIG}") if p.parent.name == DATASET and p.is_dir())
+    data = dest / f"nnUNetPlans_{CONFIG}"
+    data.mkdir(parents=True)
+    for f in plans[0].glob("*.json"):
+        shutil.copy(f, dest / f.name)
+    gt = plans[0] / "gt_segmentations"
+    if link:
+        (dest / "gt_segmentations").symlink_to(gt, target_is_directory=True)
+    else:
+        shutil.copytree(gt, dest / "gt_segmentations")
+    for shard in shards:
+        for f in sorted(shard.iterdir()):
+            if (data / f.name).exists():
+                raise SystemExit(f"{f.name} is in more than one shard output")
+            (data / f.name).symlink_to(f) if link else shutil.copy(f, data / f.name)
+    fold = json.loads((dest / "splits_final.json").read_text())[FOLD]
+    missing = [c for c in fold["train"] + fold["val"]
+               if not all((data / f"{c}{s}").exists() for s in (".b2nd", "_seg.b2nd", ".pkl"))]
+    if missing:
+        raise SystemExit(f"{len(missing)} fold-{FOLD} cases are not preprocessed (attach all shard outputs): "
+                         f"{missing[:5]}")
+    return len(list(data.glob("*.pkl")))
 
 
 def find_previous(root: Path, trainer: str) -> Path | None:
@@ -129,9 +157,8 @@ def main(argv: list[str] | None = None) -> int:
 
     pre = args.preprocessed_root / DATASET
     if not pre.exists():
-        src = find_preprocessed(args.input_root)
-        print(f"copying preprocessed data from {src}", flush=True)
-        shutil.copytree(src, pre)
+        n = assemble_preprocessed(args.input_root, pre)
+        print(f"linked {n} preprocessed cases into {pre}", flush=True)
     trainer_dir = args.results_root / DATASET / trainer_dir_name(args.trainer)
     prev = find_previous(args.input_root, args.trainer)
     if prev is not None and not trainer_dir.exists():

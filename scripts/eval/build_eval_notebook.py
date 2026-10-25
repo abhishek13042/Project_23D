@@ -42,7 +42,7 @@ cases, scores them with the official KiTS23 evaluator, and writes the case
 analysis and figures.
 
 **Before running**
-1. *Add Input*: the outputs of `kits23-stage-1..3` (KiTS23 images and segmentations), `kits23-nnunet-preprocessed`
+1. *Add Input*: the outputs of `kits23-stage-1..3` (KiTS23 images and segmentations), `kits23-prepare-data`
    (from SPEC 002, it holds `spec002/split.json`), and the training output dataset
    (the folder that holds `fold_0/checkpoint_final.pth`).
 2. *Settings*: **Accelerator = GPU T4 x1** (or P100), **Internet = On**.

@@ -16,17 +16,43 @@ def make_fold(root, trainer, files=()):
     return fold
 
 
-def test_find_preprocessed(tmp_path):
-    pre = tmp_path / "in" / "prep" / "nnUNet_preprocessed" / train.DATASET
-    (pre / "nnUNetPlans_3d_fullres").mkdir(parents=True)
-    (pre / "nnUNetPlans.json").write_text("{}")
-    other = tmp_path / "in" / "x" / train.DATASET  # plans only, no data folder
-    other.mkdir(parents=True)
-    (other / "nnUNetPlans.json").write_text("{}")
-    assert train.find_preprocessed(tmp_path / "in") == pre
-    (other / "nnUNetPlans_3d_fullres").mkdir()
-    with pytest.raises(SystemExit):
-        train.find_preprocessed(tmp_path / "in")
+def make_preprocessed(root, shards):
+    """Prepare output under root/prep plus one output per shard; returns the case IDs."""
+    plans = root / "prep" / train.DATASET
+    (plans / "gt_segmentations").mkdir(parents=True)
+    (plans / "gt_segmentations" / "case_00000.nii.gz").write_text("")
+    (plans / "nnUNetPlans.json").write_text("{}")
+    cases = [c for s in shards for c in s]
+    (plans / "splits_final.json").write_text(json.dumps([{"train": cases[1:], "val": cases[:1]}]))
+    for k, shard in enumerate(shards):
+        data = root / f"shard{k}" / train.DATASET / "nnUNetPlans_3d_fullres"
+        data.mkdir(parents=True)
+        for c in shard:
+            for s in (".b2nd", "_seg.b2nd", ".pkl"):
+                (data / f"{c}{s}").write_text("")
+    return cases
+
+
+def test_assemble_preprocessed(tmp_path):
+    make_preprocessed(tmp_path / "in", [["case_00000", "case_00001"], ["case_00002"]])
+    dest = tmp_path / "pre" / train.DATASET
+    assert train.assemble_preprocessed(tmp_path / "in", dest, link=False) == 3
+    assert (dest / "nnUNetPlans.json").exists() and (dest / "gt_segmentations" / "case_00000.nii.gz").exists()
+    assert (dest / "nnUNetPlans_3d_fullres" / "case_00002_seg.b2nd").exists()
+
+
+def test_assemble_preprocessed_needs_every_shard(tmp_path):
+    make_preprocessed(tmp_path / "in", [["case_00000"], ["case_00001"]])
+    for f in (tmp_path / "in" / "shard1").rglob("*.pkl"):
+        f.unlink()
+    with pytest.raises(SystemExit, match="not preprocessed"):
+        train.assemble_preprocessed(tmp_path / "in", tmp_path / "pre", link=False)
+
+
+def test_assemble_preprocessed_rejects_overlapping_shards(tmp_path):
+    make_preprocessed(tmp_path / "in", [["case_00000"], ["case_00000"]])
+    with pytest.raises(SystemExit, match="more than one shard"):
+        train.assemble_preprocessed(tmp_path / "in", tmp_path / "pre", link=False)
 
 
 def test_find_previous(tmp_path):
@@ -98,9 +124,7 @@ def test_run_with_budget_stops_a_long_process():
 def test_main_done_session_writes_record(tmp_path, monkeypatch):
     """An attached output that already finished is restored and only recorded."""
     t = "nnUNetTrainer_100epochs_kaggle"
-    pre = tmp_path / "in" / "prep" / train.DATASET
-    (pre / "nnUNetPlans_3d_fullres").mkdir(parents=True)
-    (pre / "nnUNetPlans.json").write_text("{}")
+    make_preprocessed(tmp_path / "in", [["case_00000", "case_00001"]])
     fold = make_fold(tmp_path / "in" / "s1", t, ["checkpoint_final.pth"])
     (fold / "validation").mkdir()
     (fold / "validation" / "summary.json").write_text(json.dumps({"foreground_mean": {"Dice": 0.81234}}))

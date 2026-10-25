@@ -22,8 +22,9 @@ In scope:
 - make the locked 70/15/15 split and fingerprint it;
 - write the nnU-Net v2 raw dataset (`Dataset220_KiTS2023`) and a one-fold
   `splits_final.json`;
-- run `nnUNetv2_plan_and_preprocess` for `3d_fullres` on Kaggle CPU;
-- save the preprocessed dataset as a private Kaggle dataset for SPEC 003.
+- run nnU-Net's fingerprint and planning for `3d_fullres` on Kaggle CPU;
+- preprocess the train+val cases in four Kaggle CPU shard notebooks, whose outputs
+  SPEC 003 attaches (D-017).
 
 Out of scope: training, inference, metrics (SPEC 003–004).
 
@@ -65,7 +66,11 @@ Outputs, in `/kaggle/working/spec002/`:
 - `splits_final.json`;
 - `run_record.json`.
 
-Output in `/kaggle/working/nnUNet_preprocessed/Dataset220_KiTS2023/`: the plans, the fingerprint, `splits_final.json` and the preprocessed arrays. If this folder exceeds 19 GB, only the JSON files are kept (see §9).
+Output in `/kaggle/working/nnUNet_preprocessed/Dataset220_KiTS2023/`: the plans, the fingerprint, `splits_final.json` (fold 0 without the excluded training cases), `shard_plan.json` and `gt_segmentations/`.
+
+Each shard notebook `kits23-preprocess-k` saves its cases in
+`nnUNet_preprocessed/Dataset220_KiTS2023/nnUNetPlans_3d_fullres/` and its record in
+`spec002/shard_k.json` (cases done, failed cases, size, hours).
 
 ## 6. Code
 
@@ -76,8 +81,11 @@ Output in `/kaggle/working/nnUNet_preprocessed/Dataset220_KiTS2023/`: the plans,
 | `src/project3d/data/split.py` | Stratified split, fingerprint, nnU-Net fold file |
 | `src/project3d/data/nnunet_export.py` | Raw dataset folder, `dataset.json`, leak check |
 | `scripts/data/prepare_kits23.py` | CLI running steps 1–4; stops on any failed check |
-| `scripts/data/build_kaggle_notebook.py` | Generates the notebook from the files above |
-| `notebooks/01_prepare_data.ipynb` | Kaggle notebook (generated; don't edit by hand) |
+| `src/project3d/data/preprocess_plan.py` | Resampled case sizes, excluded cases, shard plan (D-017) |
+| `scripts/data/preprocess_shard.py` | Preprocesses one shard, one process per case, with retry and resume |
+| `scripts/data/build_kaggle_notebook.py` | Generates the prepare notebook from the files above |
+| `scripts/data/build_preprocess_notebook.py` | Generates the four shard notebooks |
+| `notebooks/01_prepare_data.ipynb`, `notebooks/01b_preprocess_{1..4}.ipynb` | Kaggle notebooks (generated; don't edit by hand) |
 
 ## 7. Requirements
 
@@ -90,7 +98,8 @@ Output in `/kaggle/working/nnUNet_preprocessed/Dataset220_KiTS2023/`: the plans,
 - `S002-REQ-007`: No test case appears in `imagesTr`, `labelsTr` or `splits_final.json`. This is checked automatically after export.
 - `S002-REQ-008`: `dataset.json` follows the official nnU-Net KiTS23 region-based format.
 - `S002-REQ-009`: The notebook runs exactly the tested code, and a test fails if it is stale.
-- `S002-REQ-010`: `run_record.json` records versions, CPU count, split fingerprint, timings, preprocessed size, patch size and spacing.
+- `S002-REQ-010`: `run_record.json` records versions, CPU count, split fingerprint, timings, the excluded cases, shard sizes, patch size and spacing. Each shard writes its own record.
+- `S002-REQ-011`: Only training cases can be excluded (resampled size above 350 M voxels, D-017); validation and test cases never are.
 
 ## 8. Tests and verification
 
@@ -125,8 +134,8 @@ Kaggle: the full run, checked against §10.
 
 | Risk | Handling |
 |---|---|
-| The preprocessed data is larger than Kaggle's 20 GB saved-output limit | Measured in the notebook. If it is above 19 GB, only the plans are saved, and SPEC 003 preprocesses inside the training notebook (CPU time inside a GPU session) or falls back to `3d_lowres`. |
-| Out of RAM with `-np 3` | Set `NUM_PROCESSES = 2` and rerun. |
+| The preprocessed data (about 50 GB) is larger than Kaggle's 20 GB saved-output limit | Four shard notebooks of about 13 GB each (D-017). |
+| Out of RAM on whole-body scans (happened in the first run, on `case_00223`) | Those training cases are excluded; every case runs in its own process, 2 at a time; a crashed case is retried alone. |
 | Kaggle's preinstalled torch is incompatible with nnU-Net 2.8.1 (it excludes torch 2.9.x) | pip resolves it during install. The versions are printed and recorded. |
 | Dataset folder layout on Kaggle is unknown | Files are found recursively, and the images and segmentation folders are auto-detected by file size. |
 | Kaggle un-gzips files | `DECOMPRESSED_UNVERIFIED` status (REQ-002). |
@@ -137,17 +146,16 @@ Kaggle: the full run, checked against §10.
 - The split totals are 343/73/73, and the fingerprint is recorded in `run_record.json`.
 - `nnUNetv2_plan_and_preprocess --verify_dataset_integrity` passes.
 - `run_record.json` has been returned and is stored in `reports/spec002/`.
-- The preprocessed dataset is saved as the private Kaggle dataset `kits23-nnunet-preprocessed`, or the >19 GB fallback is recorded.
+- All four shard notebooks finish with no failed case, and the training notebook finds every fold-0 case.
 - All local tests pass.
 
 ## 11. How to run on Kaggle
 
-1. Upload `notebooks/01_prepare_data.ipynb` to Kaggle (*Create → Import Notebook*).
-2. *Add Input*: the two private KiTS23 datasets.
-3. Settings: Accelerator **None**, Internet **On**.
-4. Click **Save Version → Save & Run All (Commit)**. It takes roughly 1–4 hours.
-5. From the version's *Output*, create the private dataset `kits23-nnunet-preprocessed`.
-6. Copy the printed `run_record` back into the project.
+1. Push `notebooks/01_prepare_data.ipynb` as `kits23-prepare-data` with the outputs of `kits23-stage-1..3` attached.
+   Settings: Accelerator **None**, Internet **On**, private. It takes about 2 hours.
+2. Push `notebooks/01b_preprocess_{1..4}.ipynb` as `kits23-preprocess-1..4`, each with
+   `kits23-stage-1..3` and `kits23-prepare-data` attached. They can run at the same time; about 2 hours each.
+3. Copy the printed records back into the project (`reports/data/`).
 
 ## 12. Non-goals
 

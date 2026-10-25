@@ -32,15 +32,18 @@ kaggle kernels push -p <folder>
 
 Later notebooks list `abhishekg14/kits23-stage-1`, `-2` and `-3` under `kernel_sources`. The pipeline links the three image folders into one.
 
-## 2. SPEC 002 — prepare (Kaggle CPU, about 1–4 h, no GPU quota)
+## 2. SPEC 002 — prepare and preprocess (Kaggle CPU, no GPU quota)
 
 | | |
 |---|---|
-| Notebook | `notebooks/01_prepare_data.ipynb` |
-| Inputs | the outputs of `kits23-stage-1..3` |
-| Settings | Accelerator None, Internet On |
-| Save output as | private dataset `kits23-nnunet-preprocessed` |
-| Copy back | `spec002/run_record.json` → `reports/data/spec002_run_record.json` |
+| Notebooks | `notebooks/01_prepare_data.ipynb` (`kits23-prepare-data`, about 2 h), then `notebooks/01b_preprocess_{1..4}.ipynb` (`kits23-preprocess-1..4`, about 2 h each, in parallel) |
+| Inputs | prepare: the outputs of `kits23-stage-1..3`; shards: the same plus `kits23-prepare-data` |
+| Settings | Accelerator None, Internet On, private |
+| Copy back | `spec002/run_record.json` → `reports/data/spec002_run_record.json`; `spec002/shard_{k}.json` → `reports/data/spec002_shard_{k}.json` |
+
+The preprocessed data is about 50 GB, so it is split over four notebook outputs
+(D-017). Two oversized whole-body training scans are left out of training; the run
+record lists them.
 
 The run checks:
 
@@ -55,7 +58,7 @@ The run checks:
 |---|---|
 | Notebooks | `notebooks/02_train_pilot.ipynb` (5 epochs), then `notebooks/02_train.ipynb` (100 epochs) |
 | Configuration | nnU-Net v2 2.8.1, `nnUNetTrainer_100epochs_kaggle` (D-016), `3d_fullres`, fold 0 |
-| Inputs | the `kits23-prepare-data` output; from session 2 on, also the previous training session's output |
+| Inputs | the `kits23-prepare-data` and `kits23-preprocess-1..4` outputs; from session 2 on, also the previous training session's output |
 | Settings | Accelerator GPU T4 x1, Internet On |
 | Copy back | `spec003/run_record.json` → `reports/training/spec003_run_record.json` |
 
@@ -68,7 +71,7 @@ The SPEC 004 notebook takes the output of the session that printed `DONE`.
 | | |
 |---|---|
 | Notebook | `notebooks/03_evaluate.ipynb` |
-| Inputs | `kits23-stage-1..3`, `kits23-nnunet-preprocessed`, the training output |
+| Inputs | `kits23-stage-1..3`, `kits23-prepare-data`, the training output |
 | Settings | GPU T4 x1, Internet On |
 
 What it does:
