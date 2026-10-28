@@ -1,0 +1,39 @@
+{
+  "spec": "SPEC 002",
+  "nnunetv2": "2.8.1",
+  "torch": "2.11.0+cpu",
+  "python": "3.13.15",
+  "cpus": 4,
+  "split_fingerprint_sha256": "e681563482a412facbb16e6899ffb62ca6767c5e36f75c8ef78ba26f0538a5b2",
+  "split_totals": {
+    "train": 343,
+    "val": 73,
+    "test": 73
+  },
+  "fold0_train": 341,
+  "fold0_val": 73,
+  "excluded": {
+    "case_00223": 556,
+    "case_00412": 429
+  },
+  "n_shards": 4,
+  "shard_mvox": [
+    11385,
+    11232,
+    11416,
+    11303
+  ],
+  "plan_hours": 0.75,
+  "total_hours": 1.38,
+  "fullres_patch_size": [
+    128,
+    128,
+    128
+  ],
+  "fullres_spacing": [
+    1.0,
+    0.78125,
+    0.78125
+  ],
+  "fullres_batch_size": 2
+}

@@ -1,0 +1,11 @@
+{
+  "shard": 3,
+  "n_shards": 4,
+  "cases": 109,
+  "done": 109,
+  "failed": [],
+  "workers": 2,
+  "mean_case_seconds": 81.9,
+  "size_gb": 6.44,
+  "hours": 1.25
+}
