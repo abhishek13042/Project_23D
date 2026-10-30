@@ -193,3 +193,49 @@
   whole dataset at about 50 GB, while one notebook saves only about 20 GB.
   Leaving 2 of 343 training cases out costs far less than any change of
   configuration (for example 3d_lowres) would.
+
+## D-018 — Add a public research demo
+
+- **Date:** 2026-10-30
+- **Decision:** The project gains a product: a public website with a 3D gallery, live
+  inference and a small database. This reverses the part of D-012 that left the API,
+  frontend and deployment out of scope, and it adds phase 5 (SPEC 008–012).
+  - It is a research demo, with no clinical claims and a visible notice saying so.
+  - Weights and a small set of cropped test cases may be published on Hugging Face under
+    CC BY-NC-SA 4.0, with attribution. D-008 still holds: none of it goes in git.
+  - The demo must not change the measured result. Any faster inference setting is measured
+    on validation cases only, because the test set stays one-shot (D-014).
+- **Reason:** The owner wants this as a top computer-vision portfolio project that many
+  people can use. D-012 was about GPU cost, and the demo needs almost no extra GPU time.
+
+## D-019 — Host the demo for $0
+
+- **Date:** 2026-10-30
+- **Decision:**
+  - Website and small API: Next.js with NiiVue on Vercel Hobby.
+  - Live inference: a Gradio Space on Hugging Face ZeroGPU, called directly from the browser.
+  - Database: Neon Postgres Free, for run statistics only.
+  - Sample cases and weights: public Hugging Face repos.
+  - Fallback order if live inference fails: (A) ZeroGPU, (B) a linked "run on your own scan"
+    notebook, (C) the gallery alone. The gallery must work on its own.
+- **Reason:** The budget is zero and no card can be involved. Limits and sources are in
+  `docs/deployment.md`. As of this date, ZeroGPU was the only free GPU found with no card.
+  It replaces the earlier plan of a free Docker Space on CPU, because Hugging Face's docs
+  now say Docker and Gradio Spaces on compute need a paid plan to create. GitHub Actions was
+  rejected because of its terms, and Render's free tier has too little memory (512 MB).
+- **Risk:** ZeroGPU needs an account older than 30 days, and running nnU-Net on it is
+  unproven. SPEC 010 starts with a spike to test this before anything is built on it.
+
+## D-020 — Repository layout and license
+
+- **Date:** 2026-10-30
+- **Decision:**
+  - All notebook generators live in `scripts/notebooks/`, with shared helpers in
+    `notebook_tools.py`. Test paths and lint rules are in `pyproject.toml`.
+  - Deployable apps will live in `apps/`.
+  - Foundation reports that the maintained docs duplicate are deleted. The two that decisions
+    cite move to `docs/archive/`.
+  - Source code is MIT. Data, weights and sample cases stay CC BY-NC-SA 4.0 (`NOTICE.md`).
+- **Reason:** One clear home for each kind of file makes the project easier to read and to
+  review. MIT is a common default for portfolio code, and it can't cover the data or weights,
+  so they are listed separately.

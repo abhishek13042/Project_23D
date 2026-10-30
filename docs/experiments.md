@@ -31,6 +31,9 @@ Because of the compute limit (D-012), only two items run:
 - **E-005 — Performance by case characteristics:** a no-GPU analysis of the R-001
   test predictions.
 
+SPEC 008 adds one more: the speed and quality of faster inference settings, measured
+on validation cases only.
+
 E-001 to E-004 below are kept as future work and are not run in this project.
 
 ## Initial research questions

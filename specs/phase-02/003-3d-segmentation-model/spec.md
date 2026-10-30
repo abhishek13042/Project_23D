@@ -63,6 +63,6 @@ Outputs, in `/kaggle/working/`:
 ## 6. Acceptance
 
 - [x] Local tests pass (`pytest`).
-- [x] Pilot: 5 epochs finish, validation runs, epoch time is recorded.
+- [x] Pilot: 5 epochs finish, validation starts (the time budget stopped it), epoch time is recorded.
 - [ ] Full run: `state = done`, 100 epochs, `fold_0/validation/summary.json` present.
 - [ ] Run record copied to `reports/training/spec003_run_record.json`.

@@ -1,9 +1,6 @@
 # Project Overview
 
-## Status
-
-SPEC 001 — Foundation & Feasibility is verified locally. No data pipeline,
-training, API, frontend, or deployment implementation has started.
+Current progress is in [status.md](status.md).
 
 ## Problem definition
 
@@ -32,6 +29,10 @@ anatomy/tumor morphometry and model benchmarking.
 
 It is not a diagnostic system, treatment-planning system, or clinically validated
 decision tool. No clinical claim will be made from segmentation metrics alone.
+
+The project also has a public goal: a free, working demo that lets people explore the
+model's results in 3D and try it on an anonymized scan (D-018). The demo is for
+education and portfolio use only.
 
 ## Primary dataset
 
@@ -62,13 +63,14 @@ KiTS23 NIfTI CT + segmentation
 → whole-volume or patch-based inference
 → NIfTI mask with source geometry
 → overlap, boundary, per-case, and failure analysis
+→ public demo: 3D gallery, live inference, run statistics
 ```
 
 ## Non-goals
 
 - diagnosis or malignancy classification
 - treatment recommendation
-- clinical deployment
+- clinical deployment (the public demo is a research demo, not a clinical tool)
 - prediction of patient outcomes
 - radiomics or nephrometry claims without a separate validated contract
 - mixing KiTS19/KiTS21 cases into the KiTS23 primary evaluation

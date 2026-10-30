@@ -1,7 +1,7 @@
 # How to reproduce the results
 
 Everything heavy runs on Kaggle. A laptop is only used for code, tests and the
-final report. Total cost: about 15 Kaggle GPU-hours plus a few CPU-hours (D-012).
+final report. Total cost: about 23 Kaggle GPU-hours as measured, plus a few CPU-hours.
 
 ## 0. Local setup (any machine, no GPU)
 
@@ -14,8 +14,7 @@ python -m venv .venv
 All tests must pass. The notebooks are generated from the tested code:
 
 ```bash
-.venv/Scripts/python scripts/data/build_kaggle_notebook.py
-.venv/Scripts/python scripts/eval/build_eval_notebook.py
+.venv/Scripts/python scripts/notebooks/build_all.py
 ```
 
 A test fails if a notebook is out of date, so the notebooks you upload always run the tested code.
@@ -54,24 +53,26 @@ The run checks:
 
 ## 3. SPEC 003 — train (Kaggle GPU, about 15 h over 2 sessions)
 
+Measured on a T4: about 209 s per epoch (5.9 h for 100 epochs), then final validation at about 5.6 min per case (about 7 h for 73 cases).
+
 | | |
 |---|---|
 | Notebooks | `notebooks/02_train_pilot.ipynb` (5 epochs), then `notebooks/02_train.ipynb` (100 epochs) |
 | Configuration | nnU-Net v2 2.8.1, `nnUNetTrainer_100epochs_kaggle` (D-016), `3d_fullres`, fold 0 |
 | Inputs | the `kits23-prepare-data` and `kits23-preprocess-1..4` outputs; from session 2 on, also the previous training session's output |
 | Settings | Accelerator GPU T4 x1, Internet On |
-| Copy back | `spec003/run_record.json` → `reports/training/spec003_run_record.json` |
+| Copy back | `spec003/run_record.json` → `reports/training/spec003_session{n}_run_record.json` |
 
 Push the 100-epoch notebook as `kits23-train-1`, `kits23-train-2`, and so on.
 Each one prints `NOT FINISHED` (push the next session), `DONE` or `STOP`.
 The SPEC 004 notebook takes the output of the session that printed `DONE`.
 
-## 4. SPEC 004 + 005 — evaluate (Kaggle GPU, about 1–3 h)
+## 4. SPEC 004 + 005 — evaluate (Kaggle GPU, about 7–8 h)
 
 | | |
 |---|---|
 | Notebook | `notebooks/03_evaluate.ipynb` |
-| Inputs | `kits23-stage-1..3`, `kits23-prepare-data`, the training output |
+| Inputs | `kits23-stage-1..3`, `kits23-prepare-data`, and only the last training session's output (exactly one `checkpoint_final.pth` must be attached) |
 | Settings | GPU T4 x1, Internet On |
 
 What it does:
