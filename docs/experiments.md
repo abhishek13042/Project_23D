@@ -1,6 +1,6 @@
-# Experiment Foundation
+# Experiments
 
-No experiments are run in SPEC 001. This document defines the future structure.
+What every run must record, and which experiments this project runs.
 
 ## Required experiment record
 

@@ -61,7 +61,7 @@ Outputs, in `/kaggle/working/spec004/`:
 | `src/project3d/eval/stats.py` | Descriptive statistics and bootstrap CI |
 | `src/project3d/eval/official.py` | Official evaluator wrapper, config check, version |
 | `scripts/eval/evaluate.py` | CLI: scores a prediction folder against a split role |
-| `scripts/eval/build_eval_notebook.py` | Generates the notebook |
+| `scripts/notebooks/build_eval_notebook.py` | Generates the notebook |
 | `notebooks/03_evaluate.ipynb` | Kaggle notebook (generated; don't edit by hand) |
 
 ## 6. Requirements

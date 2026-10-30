@@ -1,6 +1,6 @@
 # SPEC 001 — Foundation & Feasibility
 
-- **Status:** VERIFIED LOCALLY — REMOTE SYNC PENDING
+- **Status:** DONE — REMOTE SYNC PENDING (no GitHub repository yet, SPEC 012)
 - **Phase:** 0 — Foundation
 - **Project:** Project_23D — Renal CT 3D Segmentation
 - **Date:** 2026-10-08 (documentation repaired and dataset availability re-checked 2026-10-21)
@@ -190,7 +190,7 @@ The project uses:
 - Swin UNETR as a reviewed modern method, not an initial implementation target.
 
 Full research notes are in `docs/research.md` and
-`reports/foundation/research_review.md`.
+`docs/research.md`.
 
 ## 9. Compute and reproducibility
 
@@ -295,9 +295,9 @@ Foundation verification is documentation and source audit only:
 - `docs/evaluation.md`
 - `docs/experiments.md`
 - `docs/limitations.md`
-- `docs/development-status.md`
+- `docs/status.md`
 - `docs/decisions.md`
-- foundation reports under `reports/foundation/`
+- foundation reports, now under `docs/archive/foundation/`
 
 ## 15. Non-goals
 

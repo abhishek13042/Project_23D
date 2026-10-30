@@ -1,6 +1,6 @@
 # SPEC 002 — Volume Data Pipeline
 
-- **Status:** IMPLEMENTED LOCALLY — KAGGLE RUN PENDING
+- **Status:** DONE — Kaggle run finished, 414 of 414 train and validation cases preprocessed (D-017)
 - **Phase:** 1 — Data
 - **Project:** Project_23D — Renal CT 3D Segmentation
 - **Date:** 2026-10-22
@@ -83,8 +83,8 @@ Each shard notebook `kits23-preprocess-k` saves its cases in
 | `scripts/data/prepare_kits23.py` | CLI running steps 1–4; stops on any failed check |
 | `src/project3d/data/preprocess_plan.py` | Resampled case sizes, excluded cases, shard plan (D-017) |
 | `scripts/data/preprocess_shard.py` | Preprocesses one shard, one process per case, with retry and resume |
-| `scripts/data/build_kaggle_notebook.py` | Generates the prepare notebook from the files above |
-| `scripts/data/build_preprocess_notebook.py` | Generates the four shard notebooks |
+| `scripts/notebooks/build_prepare_notebook.py` | Generates the prepare notebook from the files above |
+| `scripts/notebooks/build_preprocess_notebook.py` | Generates the four shard notebooks |
 | `notebooks/01_prepare_data.ipynb`, `notebooks/01b_preprocess_{1..4}.ipynb` | Kaggle notebooks (generated; don't edit by hand) |
 
 ## 7. Requirements

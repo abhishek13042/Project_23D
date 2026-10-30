@@ -18,6 +18,12 @@
 - A strong segmentation metric does not establish diagnostic or treatment utility.
 - Any later use of KiTS19/KiTS21 or AMOS22 must address overlap, label semantics,
   and licensing separately.
+- The model was trained with one fold and 100 epochs, not nnU-Net's 5 folds and 1000
+  epochs. Two whole-body training scans were left out (D-017), so whole-body scans
+  are a known weak spot.
+- The public demo may use a faster inference setting than the evaluated one (SPEC 008).
+  Its quality must be measured on validation cases and stated next to the output.
+- The hosted demo depends on free tiers that can change or run out (`docs/deployment.md`).
 - A Kaggle GPU run may not be bitwise identical to another GPU run even with fixed
   seeds; reproducibility is defined through recorded configuration and metric
   tolerance, not identical weights.

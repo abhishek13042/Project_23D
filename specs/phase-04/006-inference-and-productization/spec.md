@@ -2,7 +2,8 @@
 
 - **Status:** MERGED INTO SPEC 007 (D-012)
 
-Under the lean scope there is no separate product, API or demo.
+Under the lean scope there was no separate product, API or demo.
+D-018 has since added a product: see [phase 5](../../phase-05/README.md).
 
 - Test-set inference is part of SPEC 004 (`notebooks/03_evaluate.ipynb`).
 - The write-up and reproducibility steps are in

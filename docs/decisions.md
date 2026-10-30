@@ -83,7 +83,7 @@
   segmentations are byte-identical to the official GitHub ground truth (verified on
   sampled cases), so a single source with published checksums covers images and
   labels. Kaggle's Remote Files import uses no local bandwidth. Plan details and
-  the fallback are in `reports/foundation/approach_review.md` §3.
+  the fallback are in `docs/archive/foundation/approach_review.md` §3.
 
 ## D-012 — Lean compute-limited scope (one week, about 15 GPU-hours)
 
@@ -105,7 +105,7 @@
   Full nnU-Net (1000 epochs x 5 folds) would use several weeks of Kaggle GPU quota.
   The cuts remove GPU cost but keep the parts that make the result trustworthy: a
   locked test set, the official evaluator and confidence intervals. This approves
-  the four questions in `reports/foundation/approach_review.md` §10 in lean form.
+  the four questions in `docs/archive/foundation/approach_review.md` §10 in lean form.
 
 ## D-013 — nnU-Net raw dataset format for SPEC 002
 

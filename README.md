@@ -1,29 +1,74 @@
-# Project_23D — Renal CT 3D Segmentation
+# Project_23D: Kidney Tumor Segmentation in 3D CT
 
-Research-grade 3D semantic segmentation of kidneys, renal tumors, and renal
-cysts from contrast-enhanced CT volumes using the KiTS23 dataset.
+A 3D segmentation model that finds kidneys, renal tumors and cysts in contrast-enhanced
+CT scans. It is built with [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) on the
+[KiTS23](https://github.com/neheller/kits23) dataset, and evaluated once on a locked test
+set with the official KiTS23 evaluator.
+
+**Research and portfolio project. Not a medical device. Not for clinical use.**
 
 ## Status
 
-SPEC 001 — Foundation & Feasibility is complete locally. SPEC 002 — Volume Data
-Pipeline is implemented and tested locally; its Kaggle CPU run
-(`notebooks/01_prepare_data.ipynb`, then `notebooks/01b_preprocess_{1..4}.ipynb`, D-017) is pending. SPEC 003 (training) is implemented
-(`notebooks/02_train*.ipynb`); its Kaggle GPU run is pending. SPEC 004 (evaluation) and SPEC 005 (case analysis) are implemented and tested
-locally; they run on Kaggle in `notebooks/03_evaluate.ipynb` once a model exists. SPEC 007
-(report and reproducibility, with SPEC 006 merged in) is implemented: see
-[`docs/REPRODUCE.md`](docs/REPRODUCE.md) and
-[`reports/evaluation/results.md`](reports/evaluation/results.md) (pending until the runs finish).
+| Stage | State |
+|---|---|
+| Data: 489 cases staged, split 343/73/73, preprocessed on Kaggle | Done |
+| Training: nnU-Net v2, `3d_fullres`, fold 0, 100 epochs | Trained; final validation finishing |
+| Evaluation on the 73 test cases | Pending |
+| Public demo: website, live inference, database | Planned ([phase 5 specs](specs/phase-05/README.md)) |
 
-The development process is spec-driven:
+Results will appear in [reports/evaluation/results.md](reports/evaluation/results.md). That
+file is generated from the run records, so it shows *pending* until the run has finished.
+Detail is in [docs/status.md](docs/status.md).
+
+## How it works
 
 ```text
-PROJECT → PHASE → SPEC → TASK → IMPLEMENTATION → TEST → VERIFICATION → EVIDENCE → QUALITY GATE
+KiTS23 CT scans
+  → checks every file against its checksum
+  → splits by case, seed 42, with 73 test cases locked away
+  → nnU-Net v2 trains one 3D U-Net on Kaggle's free GPU
+  → scored once with the official KiTS23 evaluator, with 95% confidence intervals
+  → case analysis: which tumors it finds, and where it fails
 ```
 
-See [`docs/project-overview.md`](docs/project-overview.md) for the locked project
-definition and [`specs/phase-00/001-foundation/spec.md`](specs/phase-00/001-foundation/spec.md)
-for the complete foundation contract.
+## Repository layout
 
-The original project brief was not present in the empty project folder. The
-foundation therefore records the current project definition from the kickoff
-requirements and verifies the KiTS23 primary dataset against its official sources.
+```text
+src/project3d/      Library code: data, evaluation, training
+scripts/            Command-line entry points, one folder per stage
+  notebooks/        Generators for the Kaggle notebooks
+notebooks/          Generated Kaggle notebooks (do not edit by hand)
+tests/              Pytest suite, mirrors src/ and scripts/
+data/sources/       Pinned file lists and checksums (the data itself is not in git)
+reports/            Run records and generated results
+docs/               Documentation, start at docs/README.md
+specs/              What each stage must deliver, one spec per stage
+```
+
+## Quick start
+
+No GPU or dataset is needed to run the tests.
+
+```bash
+python -m venv .venv
+.venv/Scripts/python -m pip install -r requirements-dev.txt
+.venv/Scripts/python -m pytest -q
+```
+
+To run the full pipeline, follow [docs/reproduce.md](docs/reproduce.md). Everything heavy
+runs on Kaggle's free tier.
+
+## Documentation
+
+- [docs/README.md](docs/README.md): index of all documents
+- [docs/project-overview.md](docs/project-overview.md): the problem and the scope
+- [docs/architecture.md](docs/architecture.md): how the system fits together
+- [docs/evaluation.md](docs/evaluation.md): how results are measured
+- [docs/decisions.md](docs/decisions.md): every major decision and why
+- [docs/deployment.md](docs/deployment.md): how the demo runs for $0
+
+## License
+
+The source code is MIT ([LICENSE](LICENSE)). The KiTS23 data, and the weights and sample
+cases derived from it, are CC BY-NC-SA 4.0: non-commercial use only, shared under the same
+terms. See [NOTICE.md](NOTICE.md).

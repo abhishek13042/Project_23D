@@ -1,6 +1,6 @@
 # SPEC 003 — Training
 
-- **Status:** IMPLEMENTED LOCALLY — KAGGLE RUN PENDING (needs the SPEC 002 output)
+- **Status:** IN PROGRESS — pilot done, 100 epochs done, final validation finishing in session 2
 - **Phase:** 2 — Model
 - **Project:** Project_23D — Renal CT 3D Segmentation
 - **Date:** 2026-10-24
@@ -57,12 +57,12 @@ Outputs, in `/kaggle/working/`:
 |---|---|
 | `src/project3d/training/nnunet_trainer.py` | The trainer class; copied into nnU-Net's `variants/` folder on Kaggle |
 | `scripts/training/train.py` | Finds inputs, restores the previous session, runs within budget, writes records |
-| `scripts/training/build_train_notebook.py` | Generates `notebooks/02_train_pilot.ipynb` and `notebooks/02_train.ipynb` |
+| `scripts/notebooks/build_train_notebook.py` | Generates `notebooks/02_train_pilot.ipynb` and `notebooks/02_train.ipynb` |
 | `tests/training/test_train.py` | Input discovery, state machine, log parsing, budget stop, record, trainer settings |
 
 ## 6. Acceptance
 
 - [x] Local tests pass (`pytest`).
-- [ ] Pilot: 5 epochs finish, validation runs, epoch time is recorded.
+- [x] Pilot: 5 epochs finish, validation runs, epoch time is recorded.
 - [ ] Full run: `state = done`, 100 epochs, `fold_0/validation/summary.json` present.
 - [ ] Run record copied to `reports/training/spec003_run_record.json`.

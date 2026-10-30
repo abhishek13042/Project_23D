@@ -1,14 +1,14 @@
 # Model card — nnU-Net v2, KiTS23, fold 0
 
-**Status:** the model is not trained yet (SPEC 003). The numbers are in
-[`reports/evaluation/results.md`](../evaluation/results.md) once the runs are done.
+**Status:** 100 epochs are trained and the test evaluation is pending. The numbers
+will be in [`reports/evaluation/results.md`](../evaluation/results.md) after that run.
 
 ## What it is
 
 - **Task:** 3D semantic segmentation of contrast-enhanced abdominal CT.
 - **Outputs:** voxel labels 0 background, 1 kidney, 2 tumor, 3 cyst. The model is trained on the KiTS regions: kidney + masses, masses, tumor.
-- **Method:** the official nnU-Net v2 (2.8.1), `3d_fullres`, `nnUNetTrainer_100epochs`. One fold only (fold 0), with nnU-Net's automatic post-processing chosen on validation (D-012, D-014).
-- **Data:** KiTS23 v0.1.4, 489 labeled cases, split at case level into 343 train, 73 validation and 73 locked test cases (seed 42). The split is stratified by cohort proxy, tumor size and cyst presence.
+- **Method:** the official nnU-Net v2 (2.8.1), `3d_fullres`, `nnUNetTrainer_100epochs_kaggle` (the standard 100-epoch recipe, saving checkpoints more often, D-016). One fold only (fold 0), with nnU-Net's automatic post-processing chosen on validation (D-012, D-014).
+- **Data:** KiTS23 v0.1.4, 489 labeled cases, split at case level into 343 train, 73 validation and 73 locked test cases (seed 42). Two oversized whole-body scans were left out of training, so 341 cases were trained on (D-017). The split is stratified by cohort proxy, tumor size and cyst presence.
 
 ## Intended use
 

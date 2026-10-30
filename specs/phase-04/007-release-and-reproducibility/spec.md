@@ -11,7 +11,7 @@
 Turn the saved run records into one honest results report. Anyone should be able
 to rerun the work from the written steps alone. Under D-012, SPEC 006 (inference
 and productization) is merged into this spec. Inference is the SPEC 004 notebook.
-There is no app, API or demo.
+This spec covers no app, API or demo; D-018 moved those to [phase 5](../../phase-05/README.md).
 
 ## 2. Deliverables
 
@@ -19,7 +19,7 @@ There is no app, API or demo.
 |---|---|
 | `scripts/report/build_report.py` | Builds `reports/evaluation/results.md` from the run records only |
 | `reports/evaluation/results.md` | Setup, headline result with CIs, per-region table, integrity checks, link to the case analysis (generated) |
-| `docs/REPRODUCE.md` | Step-by-step Kaggle and local instructions, and what counts as a reproduction |
+| `docs/reproduce.md` | Step-by-step Kaggle and local instructions, and what counts as a reproduction |
 | `reports/release/model_card.md` | What the model is, intended use, how it was evaluated, limitations |
 
 ## 3. Requirements
@@ -30,7 +30,7 @@ There is no app, API or demo.
 - `S007-REQ-004`: The report compares the split fingerprints of SPEC 002 and SPEC 004, and flags a mismatch.
 - `S007-REQ-005`: The report says the internal test split is not comparable to the KiTS23 leaderboard.
 - `S007-REQ-006`: The model card says the model is not for clinical use, and states the data license.
-- `S007-REQ-007`: `docs/REPRODUCE.md` lists every notebook, its inputs and settings, and what to copy back.
+- `S007-REQ-007`: `docs/reproduce.md` lists every notebook, its inputs and settings, and what to copy back.
 
 ## 4. Tests
 
@@ -44,9 +44,9 @@ There is no app, API or demo.
 
 - After the Kaggle runs, `build_report.py` reports 0 pending items, except training details if SPEC 003 has no record.
 - The integrity checks pass.
-- A reader can follow `docs/REPRODUCE.md` without asking questions.
+- A reader can follow `docs/reproduce.md` without asking questions.
 
 ## 6. Non-goals
 
-- A web demo, API, Docker image or model hosting. These are dropped for compute and time reasons (D-012).
-- Publishing the weights. The data license is non-commercial and share-alike, so any release must say so.
+- A web demo, API or model hosting. These are in [phase 5](../../phase-05/README.md) (D-018).
+- Publishing the weights, which SPEC 008 does. The data license is non-commercial and share-alike, so any release must say so.

@@ -1,26 +1,24 @@
-# Specification Index
+# Specifications
 
-Current status: **SPEC 001 verified locally; remote synchronization pending because
-no intended remote URL is configured.** SPEC 002 is implemented and tested locally; its Kaggle CPU run is pending.
-SPEC 003 (training) is implemented and tested locally; its Kaggle GPU run is pending. SPEC 004 and SPEC 005 are implemented and
-tested locally; their Kaggle run (`notebooks/03_evaluate.ipynb`) needs the SPEC 003 model.
-SPEC 006 is merged into SPEC 007, which is implemented; its report fills in from the run records.
+Each stage of the project has a spec that says what must be delivered and how to prove it
+works. Current progress is in [docs/status.md](../docs/status.md).
 
-Specifications are organized by major engineering milestone rather than by every
-small technical concept.
+| Phase | Spec | Purpose | Status |
+|---|---|---|---|
+| 0 | [001 Foundation](phase-00/001-foundation/spec.md) | Lock the problem, data and evaluation rules | Done, remote pending |
+| 1 | [002 Volume data pipeline](phase-01/002-volume-data-pipeline/spec.md) | Verify, split and preprocess the data | Done |
+| 2 | [003 Training](phase-02/003-3d-segmentation-model/spec.md) | Train nnU-Net v2 on Kaggle | In progress |
+| 3 | [004 Evaluation](phase-03/004-evaluation-and-error-analysis/spec.md) | One scored test run | Code ready, run pending |
+| 3 | [005 Case analysis](phase-03/005-experiments-and-ablation/spec.md) | Where the model succeeds and fails | Code ready, run pending |
+| 4 | [006 Inference](phase-04/006-inference-and-productization/spec.md) | Merged into 007 | Closed |
+| 4 | [007 Report and reproducibility](phase-04/007-release-and-reproducibility/spec.md) | Honest results and rerun steps | Code ready |
+| 5 | [008 Model release and inference](phase-05/008-model-release-and-inference/spec.md) | Publish weights, build the predictor | Draft |
+| 5 | [009 Demo gallery](phase-05/009-demo-gallery/spec.md) | Pre-computed sample cases | Draft |
+| 5 | [010 Inference service](phase-05/010-inference-service/spec.md) | Live inference on ZeroGPU | Draft |
+| 5 | [011 Web app and database](phase-05/011-web-app-and-database/spec.md) | The public website | Draft |
+| 5 | [012 Deployment and launch](phase-05/012-deployment-and-launch/spec.md) | CI, hosting and launch | Draft |
 
-| Phase | Specification | Purpose |
-|---|---|---|
-| 0 | 001 Foundation | Lock problem, data, feasibility, and reproducibility contracts |
-| 1 | 002 Volume Data Pipeline | Ingest, validate, preprocess, split, and package 3D volumes |
-| 2 | 003 3D Segmentation Model | Baseline, main model, training, checkpointing, and inference contract |
-| 3 | 004 Evaluation and Error Analysis | Metrics, visual analysis, failure modes, and generalization |
-| 3 | 005 Experiments and Ablation | Hypothesis-driven comparisons and controlled improvements |
-| 4 | 006 Inference and Productization | Reusable inference pipeline and appropriate demo/interface |
-| 4 | 007 Release and Reproducibility | Packaging, documentation, artifacts, and final audit |
+Under D-012 (compute limit), SPEC 002–004 cover one nnU-Net v2 run and its evaluation. SPEC 005
+is reduced to a no-GPU case analysis. D-018 added phase 5.
 
-Under D-012 (compute limit, one week), SPEC 002-004 cover the single nnU-Net v2
-run and its evaluation. SPEC 005 is reduced to the no-GPU case analysis (E-005);
-SPEC 006-007 are reduced to a short reproducibility write-up.
-
-No implementation begins until the relevant specification is approved and locked.
+Implementation of a spec starts only after its status moves from DRAFT to APPROVED.
