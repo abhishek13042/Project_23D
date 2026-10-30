@@ -58,6 +58,12 @@ def test_eval_notebook_embeds_every_eval_module():
         assert py.relative_to(root).as_posix() in build_eval_notebook.EMBEDDED
 
 
+def test_eval_notebook_installs_the_training_trainer():
+    # without it, nnU-Net cannot load the checkpoint
+    assert "src/project3d/training/nnunet_trainer.py" in build_eval_notebook.EMBEDDED
+    assert 'variants / "project23d_trainer.py"' in build_eval_notebook.INSTALL
+
+
 def test_every_stage_shard_notebook_is_up_to_date():
     for k in range(1, build_stage_notebook.N_SHARDS + 1):
         nb = build_stage_notebook.path(k)

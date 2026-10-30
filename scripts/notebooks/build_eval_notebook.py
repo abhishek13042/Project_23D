@@ -26,6 +26,7 @@ EMBEDDED = [
     "src/project3d/eval/postprocess.py",
     "src/project3d/eval/analysis.py",
     "src/project3d/eval/figures.py",
+    "src/project3d/training/nnunet_trainer.py",
     "scripts/data/prepare_kits23.py",
     "scripts/eval/evaluate.py",
     "scripts/eval/postprocess.py",
@@ -75,6 +76,10 @@ def sh(cmd):
     subprocess.run(cmd, check=True)
 sh([sys.executable, "-m", "pip", "install", "-q", "nnunetv2=={NNUNET_VERSION}", "nibabel",
     "{KITS23_PIP}"])
+# the checkpoint names our trainer class, and nnU-Net only looks inside its own package
+import nnunetv2
+variants = Path(nnunetv2.__file__).parent / "training" / "nnUNetTrainer" / "variants"
+shutil.copy(f"{{WORK}}/src/project3d/training/nnunet_trainer.py", variants / "project23d_trainer.py")
 print("nnunetv2", md.version("nnunetv2"), "| torch", md.version("torch"), "| kits23", md.version("kits23"))"""
 
 LOCATE = f"""# Step 2 - find the inputs: KiTS23 folders, trained model, locked split
