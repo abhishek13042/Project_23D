@@ -46,8 +46,9 @@ analysis and figures.
    (from SPEC 002, it holds `spec002/split.json`), and the training output dataset
    (the folder that holds `fold_0/checkpoint_final.pth`).
 2. *Settings*: **Accelerator = GPU T4 x1** (or P100), **Internet = On**.
-3. **Save Version → Save & Run All (Commit)**. Expected GPU time: roughly 1-3 hours
-   (set `DISABLE_TTA = True` in step 3 to cut it to well under an hour).
+3. **Save Version → Save & Run All (Commit)**. Expected GPU time: about 7-8 hours, from
+   the 5.6 min per case measured in SPEC 003's validation (`DISABLE_TTA = True` in
+   step 3 is about 8x faster, usually with slightly lower Dice).
 
 **Rules this notebook follows** (docs/evaluation.md, D-012):
 - post-processing is chosen on the *validation* predictions only, then applied to test;
@@ -121,7 +122,8 @@ for c in TEST:
         dst.symlink_to(src)
 t = time.time()
 cmd = ["nnUNetv2_predict_from_modelfolder", "-i", IMGS_TS, "-o", OUT / "pred_raw",
-       "-m", TRAINER, "-f", "0", "-chk", "checkpoint_final.pth"]
+       "-m", TRAINER, "-f", "0", "-chk", "checkpoint_final.pth",
+       "-npp", "1", "-nps", "2"]  # few workers: Kaggle's RAM ran out with 3 in SPEC 002
 if DISABLE_TTA:
     cmd.append("--disable_tta")
 sh(cmd)
