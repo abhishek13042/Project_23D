@@ -1,3 +1,4 @@
+import gzip
 import json
 import sys
 import time
@@ -153,3 +154,33 @@ def test_trainer_settings(monkeypatch):
     monkeypatch.setattr(nnUNetTrainer, "__init__", lambda self, *a, **k: None)
     tr = nnUNetTrainer_100epochs_kaggle({}, "3d_fullres", 0, {}, torch.device("cpu"))
     assert (tr.num_epochs, tr.save_every) == (100, 5)
+
+
+def test_trainer_final_validation_skips_predicted_cases(tmp_path, monkeypatch):
+    pytest.importorskip("nnunetv2")
+    import torch
+    from nnunetv2.training.nnUNetTrainer.nnUNetTrainer import nnUNetTrainer
+
+    from project3d.training.nnunet_trainer import nnUNetTrainer_100epochs_kaggle
+
+    monkeypatch.setattr(nnUNetTrainer, "__init__", lambda self, *a, **k: None)
+    monkeypatch.setattr(nnUNetTrainer, "do_split", lambda self: (["a"], ["b", "c"]))
+    seen = []
+    monkeypatch.setattr(nnUNetTrainer, "perform_actual_validation", lambda self, p=False: seen.append(self.do_split()))
+    tr = nnUNetTrainer_100epochs_kaggle({}, "3d_fullres", 0, {}, torch.device("cpu"))
+    tr.output_folder = str(tmp_path)
+    (tmp_path / "validation").mkdir()
+    (tmp_path / "validation" / "b.nii.gz").write_bytes(b"x")
+    assert tr.do_split() == (["a"], ["b", "c"])  # training sees every case
+    tr.perform_actual_validation()
+    assert seen == [(["a"], ["c"])]
+
+
+def test_drop_unreadable_removes_only_truncated_files(tmp_path):
+    good = gzip.compress(b"x" * 5000 + bytes(range(256)) * 100)
+    (tmp_path / "good.nii.gz").write_bytes(good)
+    (tmp_path / "cut.nii.gz").write_bytes(good[: len(good) // 2])
+    (tmp_path / "junk.nii.gz").write_bytes(b"not gzip at all")
+    (tmp_path / "summary.json").write_text("{}")
+    assert train.drop_unreadable(tmp_path) == ["cut.nii.gz", "junk.nii.gz"]
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["good.nii.gz", "summary.json"]

@@ -29,7 +29,7 @@ test-set inference (SPEC 004).
 |---|---|---|
 | Trainer | `nnUNetTrainer_100epochs_kaggle`: nnU-Net's `nnUNetTrainer_100epochs` with `save_every = 5` | Same training recipe. A stopped session loses at most 5 epochs, not 50 (D-016). |
 | Sessions | `train.py` stops nnU-Net before the session's budget runs out (11.25 h minus setup). The next session attaches that output and runs `nnUNetv2_train --c` | Kaggle ends a GPU session after 12 h. Resuming is nnU-Net's own mechanism. |
-| Final validation | If `checkpoint_final.pth` exists but `validation/summary.json` doesn't, run `--val` | A session can end during validation, after training finished. |
+| Final validation | If `checkpoint_final.pth` exists but `validation/summary.json` doesn't, run `--val`. Half-written predictions are deleted, and the trainer skips cases already predicted | A session can end during validation, after training finished (it took about 5.6 min per case on the T4, so session 1 stopped at 57 of 73). nnU-Net's `--val` would redo all of them. |
 | GPU | T4 | Recent PyTorch builds dropped P100 (sm_60) support. |
 | Data loading | Preprocessed data copied to `/tmp`; `nnUNet_n_proc_DA=4` | Local disk is faster; the Kaggle GPU machine has 4 CPUs. |
 | `torch.compile` | Off (`nnUNet_compile=f`) | Its compile time recurs each session and can fail on T4. |

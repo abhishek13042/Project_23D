@@ -17,6 +17,7 @@ Example::
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import os
 import re
@@ -25,6 +26,7 @@ import signal
 import subprocess
 import sys
 import time
+import zlib
 from pathlib import Path
 
 DATASET = "Dataset220_KiTS2023"
@@ -100,6 +102,20 @@ def checkpoint_epoch(fold_dir: Path) -> int:
     return 0
 
 
+def drop_unreadable(folder: Path) -> list[str]:
+    """Delete predictions a stopped session left half written, so they are predicted again."""
+    bad = []
+    for f in sorted(folder.glob("*.nii.gz")):
+        try:
+            with gzip.open(f) as g:
+                while g.read(1 << 24):
+                    pass
+        except (OSError, EOFError, zlib.error):
+            f.unlink()
+            bad.append(f.name)
+    return bad
+
+
 def parse_log(text: str) -> list[dict]:
     """Per-epoch time and mean pseudo Dice from nnU-Net training_log_*.txt text."""
     epochs, cur = [], None
@@ -167,6 +183,8 @@ def main(argv: list[str] | None = None) -> int:
     fold = trainer_dir / f"fold_{FOLD}"
     before, start_epoch = state(fold), checkpoint_epoch(fold)
     print(f"state: {before}, epochs done: {start_epoch}", flush=True)
+    if before == "validate":
+        print("dropped half-written predictions:", drop_unreadable(fold / "validation"), flush=True)
 
     code, stopped = 0, False
     if before != "done":

@@ -1,0 +1,14 @@
+{
+  "spec": "SPEC 003",
+  "trainer": "nnUNetTrainer_100epochs_kaggle",
+  "configuration": "3d_fullres",
+  "fold": 0,
+  "gpu": "Tesla T4",
+  "sessions": 1,
+  "train_hours_total": 11.25,
+  "epochs_done": 100,
+  "state": "validate",
+  "mean_epoch_seconds": 209.4,
+  "last_pseudo_dice": 0.8735,
+  "fold0_validation_dice": null
+}
