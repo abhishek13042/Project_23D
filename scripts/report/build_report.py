@@ -1,6 +1,6 @@
 """SPEC 007: build reports/evaluation/results.md from the saved Kaggle records.
 
-Copy the Kaggle outputs into the repository first (docs/REPRODUCE.md):
+Copy the Kaggle outputs into the repository first (docs/reproduce.md):
 
     reports/data/spec002_run_record.json        SPEC 002 run_record.json
     reports/training/spec003_run_record.json    SPEC 003 run record (when it exists)
@@ -19,7 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 HECS = ["kidney_and_mass", "mass", "tumor"]
-REGIONS = HECS + ["kidney", "cyst"]
+REGIONS = [*HECS, "kidney", "cyst"]
 PENDING = "*pending*"
 
 
@@ -27,10 +27,6 @@ def load(path: Path | None) -> dict | None:
     if path and path.exists():
         return json.loads(path.read_text(encoding="utf-8"))
     return None
-
-
-def num(v, digits: int = 3) -> str:
-    return PENDING if v is None else f"{v:.{digits}f}"
 
 
 def mean_ci(d: dict | None) -> str:
@@ -73,7 +69,7 @@ def setup_section(prep: dict | None, train: dict | None, run: dict | None) -> li
                       "applied" if run.get("postprocessing_applied") else "not applied"),
                   row("Evaluator", run.get("kits23_evaluator")),
                   row("GPU / inference hours", f"{run.get('gpu')} / {run.get('predict_hours')}")]
-    return lines + [""]
+    return [*lines, ""]
 
 
 def headline_section(pp: dict | None, raw: dict | None) -> list[str]:
@@ -94,7 +90,7 @@ def headline_section(pp: dict | None, raw: dict | None) -> list[str]:
 def regions_section(pp: dict | None) -> list[str]:
     lines = ["## 3. Per region (post-processed)", ""]
     if not pp:
-        return lines + [PENDING, ""]
+        return [*lines, PENDING, ""]
     lines += ["| Region | Official Dice | Official surface Dice |", "|---|---|---|"]
     for h in HECS:
         r = pp["regions"][h]
@@ -108,7 +104,7 @@ def regions_section(pp: dict | None) -> list[str]:
         lines.append(f"| {name} | {median_iqr(r['dice'])} | {median_iqr(r['precision'])} | "
                      f"{median_iqr(r['recall'])} | {median_iqr(r['hd95_mm'], 1)} | {r['hd95_mm']['n']} | "
                      f"{median_iqr(r['abs_volume_error_ml'], 1)} | {r['n_ref_empty']} |")
-    return lines + [""]
+    return [*lines, ""]
 
 
 def checks_section(prep: dict | None, pp: dict | None, run: dict | None) -> list[str]:
@@ -124,7 +120,7 @@ def checks_section(prep: dict | None, pp: dict | None, run: dict | None) -> list
     lines.append(f"- Our Dice vs official Dice, max difference: "
                  f"{PENDING if diff is None else f'{diff:.1e} (limit 1e-3)'}")
     lines.append(f"- Test cases scored: {PENDING if not pp else pp['n_cases']}")
-    return lines + [""]
+    return [*lines, ""]
 
 
 def build(prep_path: Path, train_path: Path, eval_dir: Path, out: Path) -> str:

@@ -2,20 +2,10 @@ import hashlib
 import json
 import sys
 import types
-from pathlib import Path
 
 import numpy as np
 import pytest
-
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-sys.path.insert(0, str(ROOT / "scripts" / "data"))
-sys.path.insert(0, str(ROOT / "scripts" / "eval"))
-sys.path.insert(0, str(ROOT / "scripts" / "report"))
-sys.path.insert(0, str(ROOT / "scripts" / "training"))
-sys.path.insert(0, str(ROOT / "tests"))
-
-from helpers import make_seg, write_nifti  # noqa: E402
+from helpers import make_seg, write_nifti
 
 
 @pytest.fixture

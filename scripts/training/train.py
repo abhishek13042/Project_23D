@@ -1,10 +1,11 @@
 """SPEC 003: train nnU-Net v2 fold 0 on Kaggle within one session's time budget.
 
 Assembles the SPEC 002 preprocessed dataset (prepare output plus the shard
-outputs, D-017) from ``--input-root`` into one local folder of links. If an earlier session's output is attached, it restores that results
-folder and resumes. Then it runs ``nnUNetv2_train`` until the training (and
-nnU-Net's own fold-0 validation) finishes or the budget runs out. A stopped run
-loses at most ``save_every`` epochs; attach this output to the next session.
+outputs, D-017) from ``--input-root`` into one local folder of links. If an
+earlier session's output is attached, it restores that results folder and
+resumes. Then it runs ``nnUNetv2_train`` until the training (and nnU-Net's own
+fold-0 validation) finishes or the budget runs out. A stopped run loses at most
+``save_every`` epochs; attach this output to the next session.
 Example::
 
     python scripts/training/train.py --input-root /kaggle/input \
@@ -50,7 +51,7 @@ def assemble_preprocessed(root: Path, dest: Path, link: bool = os.name != "nt") 
     plans = sorted(p.parent for p in root.rglob("nnUNetPlans.json")
                    if p.parent.name == DATASET and (p.parent / "splits_final.json").exists())
     if len(plans) != 1:
-        raise SystemExit(f"need exactly one {DATASET} folder with nnUNetPlans.json and splits_final.json, found {plans}")
+        raise SystemExit(f"need exactly one {DATASET} folder with nnUNetPlans.json and splits_final.json: {plans}")
     shards = sorted(p for p in root.rglob(f"nnUNetPlans_{CONFIG}") if p.parent.name == DATASET and p.is_dir())
     data = dest / f"nnUNetPlans_{CONFIG}"
     data.mkdir(parents=True)

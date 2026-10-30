@@ -2,15 +2,15 @@
 
 The notebook embeds the SPEC 002 code with %%writefile cells, so Kaggle runs
 exactly the code the local tests cover. Re-run this script after any change to
-the embedded files; tests/data/test_notebook.py fails if the notebook is stale.
+the embedded files; tests/notebooks/test_notebooks.py fails if the notebook is stale.
 """
 
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+from notebook_tools import N_SHARDS, NNUNET_VERSION, ROOT, code_cell, md_cell, notebook, writefile_cells
+
 NOTEBOOK = ROOT / "notebooks" / "01_prepare_data.ipynb"
 EMBEDDED = [
     "src/project3d/__init__.py",
@@ -23,8 +23,6 @@ EMBEDDED = [
     "scripts/data/prepare_kits23.py",
     "data/sources/kits23_v0.1.4_files.tsv",
 ]
-NNUNET_VERSION = "2.8.1"
-N_SHARDS = 4  # shard notebooks for the preprocessing (D-017)
 
 INTRO = """# SPEC 002 — Prepare KiTS23 for nnU-Net (Kaggle, CPU only)
 
@@ -43,7 +41,7 @@ planning. The preprocessing itself runs in four shard notebooks afterwards
 attached. The training notebook (SPEC 003) attaches this output and all four shards.
 
 The code cells below are generated from the project repository
-(`scripts/data/build_kaggle_notebook.py`). Edit the repository, not this notebook."""
+(`scripts/notebooks/build_prepare_notebook.py`). Edit the repository, not this notebook."""
 
 ENV_CHECK = """# Step 0 - what machine did Kaggle give us?
 import os, shutil, sys, platform, json, time
@@ -140,30 +138,6 @@ record = {
 json.dump(record, open(f"{OUT}/run_record.json", "w"), indent=2)
 print(json.dumps(record, indent=1))
 print("DONE. Next: the four shard notebooks (01b_preprocess_1..4) with this output attached.")"""
-
-
-def md_cell(text: str) -> dict:
-    return {"cell_type": "markdown", "metadata": {}, "source": text.splitlines(keepends=True)}
-
-
-def code_cell(text: str) -> dict:
-    return {"cell_type": "code", "metadata": {}, "execution_count": None, "outputs": [],
-            "source": text.splitlines(keepends=True)}
-
-
-def writefile_cells(embedded: list[str]) -> list[dict]:
-    cells = [md_cell("Write the project code (generated from the repository).")]
-    for rel in embedded:
-        body = (ROOT / rel).read_text(encoding="utf-8").replace("\r\n", "\n")
-        cells.append(code_cell(f"%%writefile /kaggle/working/project23d/{rel}\n{body}"))
-    return cells
-
-
-def notebook(cells: list[dict]) -> dict:
-    return {"cells": cells, "nbformat": 4, "nbformat_minor": 5,
-            "metadata": {"kernelspec": {"name": "python3", "display_name": "Python 3",
-                                        "language": "python"},
-                         "language_info": {"name": "python"}}}
 
 
 def build() -> dict:

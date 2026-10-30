@@ -1,11 +1,11 @@
 import json
 
-import numpy as np
-import pytest
-
 import case_analysis
 import evaluate
+import numpy as np
+import pytest
 from helpers import features_csv
+
 from project3d.eval import analysis
 
 

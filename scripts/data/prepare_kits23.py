@@ -25,7 +25,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from project3d.data import features, manifest, nnunet_export, split  # noqa: E402
+from project3d.data import features, manifest, nnunet_export, split
 
 IMAGE_MIN_BYTES = 10 * 1024 * 1024  # CT volumes are tens of MB; label files are ~1 MB
 

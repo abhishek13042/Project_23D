@@ -54,7 +54,7 @@ def hd95(pred: np.ndarray, ref: np.ndarray, spacing_mm: tuple[float, ...]) -> fl
         return float("nan")
     idx = np.argwhere(pred | ref)
     lo, hi = np.maximum(idx.min(0) - 1, 0), idx.max(0) + 2
-    box = tuple(slice(a, b) for a, b in zip(lo, hi))
+    box = tuple(slice(a, b) for a, b in zip(lo, hi, strict=True))
     p = np.pad(pred[box], 1)
     r = np.pad(ref[box], 1)
     sp, sr = _surface(p), _surface(r)

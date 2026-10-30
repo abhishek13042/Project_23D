@@ -11,7 +11,6 @@ import numpy as np
 
 VALID_LABELS = {0, 1, 2, 3}
 KITS21_LAST_ID = 299  # cases 0-299 are the KiTS21 cohort; 400+ were added in KiTS23
-SIZE_BINS = ("none", "small", "medium", "large")
 
 
 def cohort_of(case_id: str) -> str:

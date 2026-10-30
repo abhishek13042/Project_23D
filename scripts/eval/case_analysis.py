@@ -23,8 +23,8 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from project3d.data import manifest  # noqa: E402
-from project3d.eval import analysis, figures  # noqa: E402
+from project3d.data import manifest
+from project3d.eval import analysis, figures
 
 
 def read_csv(path: Path) -> list[dict]:

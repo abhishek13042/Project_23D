@@ -120,7 +120,7 @@ def to_markdown(result: dict) -> str:
         lines += [f"## {factor}", "",
                   "| group | n | mean Dice | 95% CI | tumor Dice | 95% CI | mean surface Dice |",
                   "|---|---|---|---|---|---|---|"]
-        for md, td, sd in zip(by_metric["mean_dice"], by_metric["tumor_dice"], by_metric["mean_sd"]):
+        for md, td, sd in zip(by_metric["mean_dice"], by_metric["tumor_dice"], by_metric["mean_sd"], strict=True):
             lines.append(f"| {md['group']} | {md['n']} | {fmt(md['mean'])} | {ci(md['ci95'])} | "
                          f"{fmt(td['mean'])} | {ci(td['ci95'])} | {fmt(sd['mean'])} |")
         lines.append("")

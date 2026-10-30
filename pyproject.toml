@@ -1,0 +1,31 @@
+[project]
+name = "project3d"
+version = "0.1.0"
+description = "3D segmentation of kidneys, renal tumors and cysts in CT, with nnU-Net v2 on KiTS23"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [
+    "src",
+    "scripts/data",
+    "scripts/eval",
+    "scripts/notebooks",
+    "scripts/report",
+    "scripts/training",
+    "tests",
+]
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["RUF001"]  # en dashes in report text are intended
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/**/*.py" = ["E402"]  # scripts add src/ to sys.path so they run as-is on Kaggle
+"src/project3d/training/nnunet_trainer.py" = ["B008"]  # same signature as nnU-Net's trainer

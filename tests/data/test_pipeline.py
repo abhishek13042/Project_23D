@@ -1,8 +1,8 @@
 import json
 
+import prepare_kits23
 import pytest
 
-import prepare_kits23
 from project3d.data import nnunet_export
 
 
@@ -44,7 +44,7 @@ def test_stops_on_corrupt_file(fake_kits, capsys):
     data = bytearray(p.read_bytes())
     data[-1] ^= 0xFF
     p.write_bytes(bytes(data))
-    code, out, raw = run(fake_kits)
+    code, out, _raw = run(fake_kits)
     assert code == 1
     assert "STOP" in capsys.readouterr().out
     assert not (out / "split.json").exists()

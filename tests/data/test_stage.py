@@ -2,7 +2,6 @@ import hashlib
 import json
 
 import pytest
-
 import stage_kits23
 
 ROOT = stage_kits23.Path(__file__).resolve().parents[2]

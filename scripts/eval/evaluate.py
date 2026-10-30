@@ -26,8 +26,8 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from project3d.data import features, manifest  # noqa: E402
-from project3d.eval import metrics, stats  # noqa: E402
+from project3d.data import features, manifest
+from project3d.eval import metrics, stats
 
 CROSSCHECK_TOL = 1e-3  # our Dice vs official Dice; larger means a geometry/orientation bug
 
@@ -60,7 +60,9 @@ def score_case(args: tuple) -> dict:
 
 
 def summarize(rows: list[dict], official: bool) -> dict:
-    col = lambda k: [r[k] for r in rows]  # noqa: E731
+    def col(key: str) -> list:
+        return [r[key] for r in rows]
+
     out = {
         "n_cases": len(rows),
         "official_evaluator": official,

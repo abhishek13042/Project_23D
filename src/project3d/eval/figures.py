@@ -45,7 +45,7 @@ def overlay_figure(image: np.ndarray, ref: np.ndarray, pred: np.ndarray,
     views = [("axial", np.s_[k, :, :], s1 / s2, "upper"), ("coronal", np.s_[:, j, :], s0 / s2, "lower"),
              ("sagittal", np.s_[:, :, i], s0 / s1, "lower")]
     fig, axes = plt.subplots(1, 3, figsize=(12, 4.4))
-    for ax, (name, sl, aspect, origin) in zip(axes, views):
+    for ax, (name, sl, aspect, origin) in zip(axes, views, strict=True):
         ax.imshow(np.clip(image[sl], *WINDOW), cmap="gray", aspect=aspect, origin=origin)
         for region, labels in LABELS.items():
             for arr, style in ((ref, "solid"), (pred, "dashed")):
@@ -75,7 +75,7 @@ def boxplot_by_group(rows: list[dict], factor: str, metric: str, order: list[str
     data = [[r[metric] for r in rows if str(r[factor]) == g] for g in groups]
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.boxplot(data, showmeans=True)
-    ax.set_xticks(range(1, len(groups) + 1), [f"{g}\n(n={len(d)})" for g, d in zip(groups, data)])
+    ax.set_xticks(range(1, len(groups) + 1), [f"{g}\n(n={len(d)})" for g, d in zip(groups, data, strict=True)])
     ax.set_ylabel(metric)
     ax.set_xlabel(factor)
     ax.set_ylim(-0.02, 1.02)

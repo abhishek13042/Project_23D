@@ -17,7 +17,7 @@ MAX_MVOX = 350  # resampled size limit in millions of voxels; the median case is
 def resampled_mvox(shape: tuple[int, ...], spacing: tuple[float, ...], target: tuple[float, ...]) -> float:
     """Millions of voxels after resampling ``shape`` at ``spacing`` to ``target`` spacing."""
     n = 1.0
-    for size, sp, t in zip(shape, spacing, target):
+    for size, sp, t in zip(shape, spacing, target, strict=True):
         n *= size * sp / t
     return n / 1e6
 

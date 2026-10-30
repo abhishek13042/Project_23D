@@ -1,11 +1,10 @@
 import csv
 import json
 
+import evaluate
 import numpy as np
 import pytest
 from helpers import write_nifti
-
-import evaluate
 
 
 def run(fx, *extra):
@@ -19,7 +18,7 @@ def test_official_path(fake_eval, fake_official):
     code, out = run(fake_eval)
     assert code == 0
     s = json.loads((out / "summary.json").read_text())
-    rows = list(csv.DictReader(open(out / "per_case.csv")))
+    rows = list(csv.DictReader((out / "per_case.csv").read_text().splitlines()))
     assert s["n_cases"] == 10 == len(rows)  # test role only
     assert {r["case_id"] for r in rows} == {c for c, r in fake_eval["roles"].items() if r == "test"}
     assert s["primary_valid"] and s["kits23_evaluator"] == "fake"

@@ -4,13 +4,13 @@ import json
 import pytest
 
 import build_eval_notebook
-import build_kaggle_notebook
+import build_prepare_notebook
 import build_preprocess_notebook
 import build_stage_notebook
 import build_train_notebook
 
 BUILDERS = pytest.mark.parametrize(
-    "b", [build_stage_notebook, build_kaggle_notebook, build_preprocess_notebook, build_train_notebook,
+    "b", [build_stage_notebook, build_prepare_notebook, build_preprocess_notebook, build_train_notebook,
           build_eval_notebook],
     ids=["00_stage_data", "01_prepare_data", "01b_preprocess", "02_train", "03_evaluate"])
 
