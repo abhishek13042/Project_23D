@@ -3,7 +3,7 @@
 Copy the Kaggle outputs into the repository first (docs/reproduce.md):
 
     reports/data/spec002_run_record.json        SPEC 002 run_record.json
-    reports/training/spec003_run_record.json    SPEC 003 run record (when it exists)
+    reports/training/spec003_session2_run_record.json    last SPEC 003 run record (when it exists)
     reports/evaluation/spec004/                 SPEC 004 output without pred_* folders
 
 Then run ``python scripts/report/build_report.py``. Every number in the report
@@ -152,7 +152,7 @@ def build(prep_path: Path, train_path: Path, eval_dir: Path, out: Path) -> str:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--prep-record", type=Path, default=ROOT / "reports/data/spec002_run_record.json")
-    ap.add_argument("--train-record", type=Path, default=ROOT / "reports/training/spec003_run_record.json")
+    ap.add_argument("--train-record", type=Path, default=ROOT / "reports/training/spec003_session2_run_record.json")
     ap.add_argument("--eval-dir", type=Path, default=ROOT / "reports/evaluation/spec004")
     ap.add_argument("--out", type=Path, default=ROOT / "reports/evaluation/results.md")
     args = ap.parse_args(argv)

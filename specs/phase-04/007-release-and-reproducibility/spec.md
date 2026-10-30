@@ -1,6 +1,6 @@
 # SPEC 007 — Report and Reproducibility (includes SPEC 006)
 
-- **Status:** IMPLEMENTED LOCALLY — FILLED IN AFTER THE KAGGLE RUNS
+- **Status:** DONE — see reports/evaluation/results.md (2026-10-31)
 - **Phase:** 4 — Release
 - **Project:** Project_23D — Renal CT 3D Segmentation
 - **Date:** 2026-10-24

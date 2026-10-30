@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-10-30.
+Last updated: 2026-10-31.
 
 ## Where the project is
 
@@ -9,10 +9,10 @@ Last updated: 2026-10-30.
 | 001 | Foundation | Done. The GitHub remote is still missing (SPEC 012) |
 | 002 | Data pipeline | Done. 414 of 414 train and validation cases preprocessed on Kaggle |
 | 003 | Training | Done. 100 epochs, all 73 validation cases scored |
-| 004 | Evaluation | Code ready and tested. Kaggle run started 2026-10-30 |
-| 005 | Case analysis | Code ready and tested. Runs in the same notebook as 004 |
+| 004 | Evaluation | Done. Test mean Dice 0.722 |
+| 005 | Case analysis | Done. See `reports/evaluation/spec004/analysis/` |
 | 006 | Inference | Merged into 007, then replaced by phase 5 |
-| 007 | Report and reproducibility | Code ready. Report fills in after 004 |
+| 007 | Report and reproducibility | Done. See `reports/evaluation/results.md` |
 | 008–012 | Public demo | Drafted, see [phase 5](../specs/phase-05/README.md) |
 
 ## Training result
@@ -31,14 +31,26 @@ Source: `reports/training/spec003_session1_run_record.json` and
 
 - The raw score is low because the model marks false regions far from the kidneys. Pseudo Dice
   (0.874 at the end) hid this. It was still rising at epoch 100, so longer training should help.
-- The post-processing row was measured once in a separate script and chosen on these same cases, so it may
-  run slightly high. `kits23-evaluate` re-scores it with the final code.
+- The post-processing row was chosen on these same cases, so it runs slightly high.
+
+## Test result
+
+Scored once on the 73 test cases (`reports/evaluation/results.md`), 6.22 GPU hours.
+
+| Predictions | Kidney + masses | Masses | Tumor | Mean Dice (95% CI) | Mean surface Dice |
+|---|---|---|---|---|---|
+| Raw model output | — | — | — | 0.652 (0.596–0.707) | 0.519 |
+| After post-processing (primary) | 0.903 | 0.645 | 0.617 | 0.722 (0.665–0.777) | 0.596 |
+
+- The median case scores 0.845. The mean is pulled down by small tumors (tumor Dice 0.324 in that
+  group, 0.835 for large tumors) and by failed scans.
+- Post-processing helped 52 cases and hurt 7. case_00540 scored 0 on every region.
+- Cysts are effectively not separated: median cyst Dice is 0.000.
 
 ## What comes next
 
-1. `kits23-evaluate` predicts the 73 test cases, about 7–8 hours on the GPU.
-2. `scripts/report/build_report.py` writes the real results.
-3. Phase 5 starts with SPEC 008.
+1. Phase 5 starts with SPEC 008.
+2. Optional, after launch: train longer. This is a separate run, and it must be reported as one.
 
 ## What the owner needs to do
 

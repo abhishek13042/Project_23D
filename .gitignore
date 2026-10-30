@@ -34,3 +34,6 @@ data/raw/
 .ipynb_checkpoints/
 wandb/
 mlruns/
+
+# CT slices are derived from KiTS23 (D-008)
+reports/evaluation/spec004/analysis/figures/overlay_*.png

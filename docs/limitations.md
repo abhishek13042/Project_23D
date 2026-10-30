@@ -4,6 +4,10 @@
 - The project uses public non-commercial data under CC BY-NC-SA 4.0.
 - Official challenge test labels are not available for ordinary local evaluation.
 - Internal test performance is therefore not an independent external validation result.
+- The 100-epoch model is under-trained: it marks false regions away from the kidneys. The two-region
+  rule (D-021) removes most of them but fails when a false region is larger than a real kidney.
+- Small tumors are weak (tumor Dice 0.324 in the small group), and cysts are effectively not
+  separated (median cyst Dice 0.000).
 - Case IDs are the available independence key; wider patient-level provenance cannot
   be inferred beyond the dataset documentation.
 - KiTS23 includes corticomedullary and nephrogenic cases, but the official metadata

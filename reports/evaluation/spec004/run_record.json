@@ -1,0 +1,65 @@
+{
+  "spec": "SPEC 004",
+  "nnunetv2": "2.8.1",
+  "torch": "2.11.0+cu128",
+  "kits23_evaluator": "0.1.4 c1088353084c17b8882a11db71429e7c022b7785",
+  "gpu": "Tesla T4",
+  "trainer_dir": "nnUNetTrainer_100epochs_kaggle__nnUNetPlans__3d_fullres",
+  "checkpoint_mb": 249.7,
+  "split_fingerprint_sha256": "e681563482a412facbb16e6899ffb62ca6767c5e36f75c8ef78ba26f0538a5b2",
+  "n_test_cases": 73,
+  "disable_tta": false,
+  "postprocessing_applied": true,
+  "postprocessing": "keep the two largest foreground regions (D-021)",
+  "validation_postprocessed": {
+    "mean_dice": {
+      "mean": 0.7600759155550748,
+      "ci95": [
+        0.7117621343193177,
+        0.8053222314704538
+      ]
+    },
+    "mean_surface_dice": {
+      "mean": 0.6357136402814736,
+      "ci95": [
+        0.5951635588812207,
+        0.6744966080021759
+      ]
+    }
+  },
+  "dice_crosscheck_max_abs_diff": 0.0,
+  "primary_postprocessed": {
+    "mean_dice": {
+      "mean": 0.7216794390423055,
+      "ci95": [
+        0.6650712127545045,
+        0.7767292353414929
+      ]
+    },
+    "mean_surface_dice": {
+      "mean": 0.5964177931048051,
+      "ci95": [
+        0.5495718046690582,
+        0.640866294397545
+      ]
+    }
+  },
+  "primary_raw": {
+    "mean_dice": {
+      "mean": 0.6519945158607187,
+      "ci95": [
+        0.5963882489040331,
+        0.7065653298815252
+      ]
+    },
+    "mean_surface_dice": {
+      "mean": 0.5191679542728382,
+      "ci95": [
+        0.4763719023938947,
+        0.5616916666869943
+      ]
+    }
+  },
+  "predict_hours": 6.22,
+  "total_hours": 6.82
+}

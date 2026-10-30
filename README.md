@@ -12,13 +12,26 @@ set with the official KiTS23 evaluator.
 | Stage | State |
 |---|---|
 | Data: 489 cases staged, split 343/73/73, preprocessed on Kaggle | Done |
-| Training: nnU-Net v2, `3d_fullres`, fold 0, 100 epochs | Trained; final validation finishing |
-| Evaluation on the 73 test cases | Pending |
+| Training: nnU-Net v2, `3d_fullres`, fold 0, 100 epochs | Done |
+| Evaluation on the 73 test cases | Done |
 | Public demo: website, live inference, database | Planned ([phase 5 specs](specs/phase-05/README.md)) |
 
-Results will appear in [reports/evaluation/results.md](reports/evaluation/results.md). That
-file is generated from the run records, so it shows *pending* until the run has finished.
-Detail is in [docs/status.md](docs/status.md).
+## Results
+
+One fold, 100 epochs, internal test set of 73 cases, official KiTS23 evaluator. Each model was
+scored once on these cases. This is not comparable to the KiTS23 challenge leaderboard.
+
+| Region | Mean Dice (95% CI) | Median Dice |
+|---|---|---|
+| Kidney + masses | 0.903 (0.858–0.940) | 0.969 |
+| Masses | 0.645 (0.572–0.715) | 0.799 |
+| Tumor | 0.617 (0.543–0.691) | 0.773 |
+| **Mean of the three** | **0.722 (0.665–0.777)** | 0.845 |
+
+Mean surface Dice is 0.596 (0.550–0.641). Without post-processing, mean Dice is 0.652.
+The model is strong on kidneys and on large tumors, and weak on small tumors and cysts. Full
+results are in [reports/evaluation/results.md](reports/evaluation/results.md), and the current
+state is in [docs/status.md](docs/status.md).
 
 ## How it works
 

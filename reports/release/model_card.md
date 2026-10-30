@@ -1,7 +1,8 @@
 # Model card — nnU-Net v2, KiTS23, fold 0
 
-**Status:** 100 epochs are trained and the test evaluation is pending. The numbers
-will be in [`reports/evaluation/results.md`](../evaluation/results.md) after that run.
+**Status:** Evaluated once on the 73 internal test cases. Mean Dice is 0.722 (95% CI
+0.665–0.777) and mean surface Dice is 0.596 (0.550–0.641). Full numbers are in
+[`reports/evaluation/results.md`](../evaluation/results.md).
 
 ## What it is
 
@@ -29,6 +30,9 @@ The report also includes:
 ## Known limitations
 
 - **Short training:** one fold and 100 epochs instead of nnU-Net's 5 folds × 1000 epochs, so expect lower scores than the published nnU-Net KiTS23 results.
+- **False regions:** the raw model marks false regions away from the kidneys in most scans. Post-processing keeps the two largest regions (D-021), which fails when a false region is bigger than a real kidney. On the test set it made 7 of 73 cases slightly worse, and case_00540 scored 0 on every region.
+- **Small tumors:** the small-tumor group has a tumor Dice of 0.324, against 0.835 for large tumors.
+- **Cysts:** cysts are effectively not separated from tumors. Median cyst Dice is 0.000 across the 37 test cases that have cysts.
 - **Internal test set:** the test set comes from the public KiTS23 training cases. It is not the hidden challenge test set and not an external hospital, so the results can't be compared directly with the leaderboard.
 - **Small groups:** 73 test cases, so the sub-group results (for example small tumors) are uncertain. They are descriptive only.
 - **No contrast-phase data:** the contrast phase per case is unknown (D-010), so phase effects can't be measured.

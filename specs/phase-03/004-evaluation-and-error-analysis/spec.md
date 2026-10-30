@@ -1,6 +1,6 @@
 # SPEC 004 — Evaluation
 
-- **Status:** IMPLEMENTED LOCALLY — KAGGLE RUN PENDING (needs the SPEC 003 model)
+- **Status:** DONE — see reports/evaluation/results.md (2026-10-31)
 - **Phase:** 3 — Evaluation
 - **Project:** Project_23D — Renal CT 3D Segmentation
 - **Date:** 2026-10-24
