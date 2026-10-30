@@ -23,10 +23,12 @@ EMBEDDED = [
     "src/project3d/eval/metrics.py",
     "src/project3d/eval/stats.py",
     "src/project3d/eval/official.py",
+    "src/project3d/eval/postprocess.py",
     "src/project3d/eval/analysis.py",
     "src/project3d/eval/figures.py",
     "scripts/data/prepare_kits23.py",
     "scripts/eval/evaluate.py",
+    "scripts/eval/postprocess.py",
     "scripts/eval/case_analysis.py",
 ]
 KITS23_PIP = "git+https://github.com/neheller/kits23"
@@ -48,7 +50,7 @@ analysis and figures.
    step 3 is about 8x faster, usually with slightly lower Dice).
 
 **Rules this notebook follows** (docs/evaluation.md, D-012):
-- post-processing is chosen on the *validation* predictions only, then applied to test;
+- post-processing was chosen on the *validation* predictions only (D-021), then applied to test;
 - test results are computed once; nothing is tuned on them afterwards;
 - post-processed predictions are the primary result, raw ones are reported too.
 
@@ -127,32 +129,15 @@ sh(cmd)
 predict_hours = (time.time() - t) / 3600
 print(f"prediction took {predict_hours:.2f} h")"""
 
-POSTPROCESS = """# Step 4 - choose post-processing on the VALIDATION predictions only, apply it to test.
-# nnU-Net writes postprocessing.pkl next to its input, so the validation folder is
-# copied somewhere writable first.
+POSTPROCESS = """# Step 4 - apply the fixed post-processing rule (D-021): keep the two largest
+# connected foreground regions. The rule was chosen on validation cases only. It is
+# scored again on them here, so the record shows the same code on both sets.
 VAL_SRC = FOLD / "validation"
 val_found = sorted(p.name[:-7] for p in VAL_SRC.glob("case_*.nii.gz")) if VAL_SRC.is_dir() else []
-pp_applied = val_found == VAL
-if pp_applied:
-    VAL_PRED, VAL_REF = Path("/tmp/val_pred"), Path("/tmp/val_ref")
-    shutil.copytree(VAL_SRC, VAL_PRED, dirs_exist_ok=True)
-    VAL_REF.mkdir(exist_ok=True)
-    segs = manifest.find_case_files(SEGS)
-    for c in VAL:
-        if not (VAL_REF / f"{c}.nii.gz").exists():
-            (VAL_REF / f"{c}.nii.gz").symlink_to(segs[c][0])
-    common = ["-plans_json", TRAINER / "plans.json", "-dataset_json", TRAINER / "dataset.json", "-np", "4"]
-    sh(["nnUNetv2_determine_postprocessing", "-i", VAL_PRED, "-ref", VAL_REF, *common])
-    PKL = VAL_PRED / "postprocessing.pkl"
-    sh(["nnUNetv2_apply_postprocessing", "-i", OUT / "pred_raw", "-o", OUT / "pred_pp",
-        "-pp_pkl_file", PKL, *common])
-    shutil.copy(PKL, OUT / "postprocessing.pkl")
-    import pickle
-    print("post-processing chosen on validation:", pickle.load(open(PKL, "rb")))
-else:
-    print(f"fold_0/validation has {len(val_found)} of {len(VAL)} expected cases: "
-          "post-processing SKIPPED, the primary result uses the raw predictions.")
-    shutil.copytree(OUT / "pred_raw", OUT / "pred_pp", dirs_exist_ok=True)"""
+assert val_found == VAL, f"fold_0/validation has {len(val_found)} of {len(VAL)} expected cases"
+POST = f"{WORK}/scripts/eval/postprocess.py"
+sh([sys.executable, POST, "--pred-dir", VAL_SRC, "--out-dir", OUT / "val_pp", "--np", "3"])
+sh([sys.executable, POST, "--pred-dir", OUT / "pred_raw", "--out-dir", OUT / "pred_pp", "--np", "3"])"""
 
 EVALUATE = """# Step 5 - score both prediction sets with the official KiTS23 evaluator (CPU).
 # evaluate.py stops if a prediction is missing or misaligned, or if our Dice and
@@ -160,7 +145,10 @@ EVALUATE = """# Step 5 - score both prediction sets with the official KiTS23 eva
 for tag in ("pp", "raw"):
     sh([sys.executable, f"{WORK}/scripts/eval/evaluate.py", "--pred-dir", OUT / f"pred_{tag}",
         "--segs-root", SEGS, "--split", SPLIT, "--role", "test",
-        "--out-dir", OUT / f"eval_{tag}", "--np", "4"])"""
+        "--out-dir", OUT / f"eval_{tag}", "--np", "4"])
+sh([sys.executable, f"{WORK}/scripts/eval/evaluate.py", "--pred-dir", OUT / "val_pp",
+    "--segs-root", SEGS, "--split", SPLIT, "--role", "val",
+    "--out-dir", OUT / "eval_val_pp", "--np", "4"])"""
 
 ANALYSE = """# Step 6 - SPEC 005: performance by case characteristics, figures
 sh([sys.executable, f"{WORK}/scripts/eval/case_analysis.py",
@@ -187,7 +175,8 @@ record = {
     "trainer_dir": TRAINER.name, "checkpoint_mb": round(ckpt.stat().st_size / 1e6, 1),
     "split_fingerprint_sha256": split_record["fingerprint_sha256"],
     "n_test_cases": summary["n_cases"], "disable_tta": DISABLE_TTA,
-    "postprocessing_applied": pp_applied,
+    "postprocessing_applied": True, "postprocessing": "keep the two largest foreground regions (D-021)",
+    "validation_postprocessed": primary("val_pp")[0],
     "dice_crosscheck_max_abs_diff": summary.get("dice_crosscheck_max_abs_diff"),
     "primary_postprocessed": pp, "primary_raw": raw,
     "predict_hours": round(predict_hours, 2), "total_hours": round((time.time() - T0) / 3600, 2),

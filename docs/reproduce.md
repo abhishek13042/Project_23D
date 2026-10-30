@@ -78,17 +78,16 @@ The SPEC 004 notebook takes the output of the session that printed `DONE`.
 What it does:
 
 1. predicts the 73 test cases;
-2. chooses post-processing on validation only;
+2. applies the post-processing rule that was chosen on validation (D-021);
 3. scores raw and post-processed predictions with the official KiTS23 evaluator;
 4. writes the case analysis and figures.
 
-Copy back the `spec004/` output folder **without** `pred_raw/` and `pred_pp/` to `reports/evaluation/spec004/`. NIfTI files are git-ignored anyway.
+Copy back the `spec004/` output folder **without** `pred_raw/`, `pred_pp/` and `val_pp/` to `reports/evaluation/spec004/`. NIfTI files are git-ignored anyway.
 
 The folder should contain:
 
 - `run_record.json`;
-- `postprocessing.pkl`;
-- `eval_pp/` and `eval_raw/` (each with `per_case.csv` and `summary.json`);
+- `eval_pp/`, `eval_raw/` and `eval_val_pp/` (each with `per_case.csv` and `summary.json`);
 - `analysis/` (`analysis.md`, `analysis.json` and `figures/`).
 
 ## 5. Report (local)

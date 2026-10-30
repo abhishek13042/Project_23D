@@ -124,9 +124,9 @@
 
 - **Date:** 2026-10-24
 - **Decision:**
-  - Post-processing: nnU-Net's own `determine_postprocessing` on the fold-0
-    validation predictions, applied unchanged to test. Post-processed predictions
-    are the primary result; raw predictions are reported next to them.
+  - Post-processing: chosen on the fold-0 validation predictions and applied
+    unchanged to test (rule replaced by D-021). Post-processed predictions are the
+    primary result; raw predictions are reported next to them.
   - HD95: the larger of the two directed 95th-percentile surface distances, in mm,
     using the voxel spacing; undefined (NaN, counted) when either mask is empty.
   - Geometry: our shape/affine check runs before the official evaluator, and our
@@ -239,3 +239,25 @@
 - **Reason:** One clear home for each kind of file makes the project easier to read and to
   review. MIT is a common default for portfolio code, and it can't cover the data or weights,
   so they are listed separately.
+
+## D-021 — Keep the two largest foreground regions
+
+- **Date:** 2026-10-30
+- **Decision:** Post-processing keeps the two largest connected foreground regions
+  (26-connected, kidney + tumor + cyst together) and clears the rest. This replaces
+  the rule in D-014, before any test case was scored. The demo uses the same rule.
+- **Reason:** Measured on the 73 validation cases, using no test data:
+  - Mean Dice was 0.638, and 61 cases had more than 10 mL of false foreground over
+    10 mm from any true kidney or mass. Validation pseudo Dice hid this, because it
+    is measured on patches centred on foreground.
+  - `nnUNetv2_determine_postprocessing` chose nothing. It only tries keeping one
+    region, which removes a kidney (kidney Dice 0.855 → 0.673).
+  - Keeping two regions gave kidney 0.937, masses 0.694, tumor 0.650: mean 0.760.
+    It lowered masses Dice by over 0.001 in 2 cases and raised it in 53.
+  - Other thresholds tested (dropping small masses) added at most 0.002 or lowered the score,
+    so they are not used.
+- **Limits:** The rule fails when a false region is bigger than a real kidney, as in
+  case_00002, case_00072 and case_00217. It also removes a real second region in
+  patients with one kidney, if a false region stays. The likely root cause is short
+  training, since pseudo Dice was still rising at epoch 100. Post-processing hides
+  that rather than fixing it, so raw scores are always reported too.

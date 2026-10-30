@@ -75,8 +75,7 @@ The report includes denominators for every metric.
 
 The multiclass prediction is the argmax class map unless an experiment explicitly
 defines a calibrated probability threshold. Postprocessing is not tuned on the
-test split: nnU-Net's automatic post-processing is chosen on the fold-0
-validation cases only.
+test split: the rule was chosen on the fold-0 validation cases only (D-021).
 
 ## Qualitative analysis
 

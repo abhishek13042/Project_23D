@@ -1,6 +1,6 @@
 # SPEC 003 — Training
 
-- **Status:** IN PROGRESS — pilot done, 100 epochs done, final validation finishing in session 2
+- **Status:** DONE — 100 epochs, validation mean Dice 0.638 raw, see docs/status.md
 - **Phase:** 2 — Model
 - **Project:** Project_23D — Renal CT 3D Segmentation
 - **Date:** 2026-10-24
@@ -64,5 +64,5 @@ Outputs, in `/kaggle/working/`:
 
 - [x] Local tests pass (`pytest`).
 - [x] Pilot: 5 epochs finish, validation starts (the time budget stopped it), epoch time is recorded.
-- [ ] Full run: `state = done`, 100 epochs, `fold_0/validation/summary.json` present.
-- [ ] Run record copied to `reports/training/spec003_run_record.json`.
+- [x] Full run: `state = done`, 100 epochs, `fold_0/validation/summary.json` present.
+- [x] Run records copied to `reports/training/spec003_session{1,2}_run_record.json`.

@@ -17,7 +17,7 @@ headline number can be trusted and reproduced.
 In scope:
 
 - test-set inference with `nnUNetv2_predict_from_modelfolder` (Kaggle GPU);
-- nnU-Net post-processing, chosen on the fold-0 validation predictions only;
+- post-processing chosen on the fold-0 validation predictions only (D-021);
 - co-primary metrics (official Dice and surface Dice) with bootstrap 95% CIs;
 - secondary metrics per region, per-case table and run record.
 
@@ -32,7 +32,7 @@ the same notebook), the official challenge test set, ensembles.
 | Geometry check | Our own shape and affine check before scoring; the run stops on a mismatch | The official function's own shape/spacing checks are ineffective (they compare objects that are never equal). |
 | Config check | `check_config()` asserts the installed evaluator's HEC labels and surface-Dice tolerances match ours | A silent evaluator change would change the metric. |
 | Cross-check | Our Dice vs official Dice, per case and HEC; stop if the difference is above 1e-3 | Catches orientation or loading bugs. |
-| Post-processing | `nnUNetv2_determine_postprocessing` on fold-0 validation, applied to test | The protocol forbids tuning on test (docs/evaluation.md). If the validation folder is incomplete, post-processing is skipped and this is recorded. |
+| Post-processing | Keep the two largest connected foreground regions, chosen on fold-0 validation, applied to test (D-021) | The protocol forbids tuning on test (docs/evaluation.md). nnU-Net's own search only tries keeping one region, which removes a kidney. The run stops if the validation folder is incomplete. |
 | Primary result | Post-processed predictions; raw predictions also scored | Transparency: shows what post-processing changed. |
 | Per-case mean | Mean of the three HEC scores per case, then mean over cases | KiTS23 ranking convention; per-case averaging (docs/evaluation.md). |
 | CI | Case bootstrap, 10 000 resamples, seed 42, percentile 95%; only with ≥ 10 cases | Enough resamples for stable bounds; no CI on tiny smoke sets. |
@@ -47,9 +47,8 @@ Inputs (Kaggle): the two KiTS23 datasets, `kits23-nnunet-preprocessed`
 
 Outputs, in `/kaggle/working/spec004/`:
 
-- `pred_raw/`, `pred_pp/` — test label maps;
-- `postprocessing.pkl` — what was chosen on validation;
-- `eval_pp/`, `eval_raw/` — `per_case.csv`, `summary.json`;
+- `pred_raw/`, `pred_pp/`, `val_pp/` — label maps;
+- `eval_pp/`, `eval_raw/`, `eval_val_pp/` — `per_case.csv`, `summary.json`;
 - `analysis/` — SPEC 005;
 - `run_record.json`.
 
@@ -105,7 +104,7 @@ The official evaluator was not run locally (its install is Kaggle-only).
 | Risk | Handling |
 |---|---|
 | Test inference with test-time augmentation is slow on a T4 | `DISABLE_TTA` switch (about 8× faster); the setting is recorded. |
-| The training output lacks `fold_0/validation` | Post-processing is skipped, pred_pp = pred_raw, `postprocessing_applied: false`. |
+| The training output lacks `fold_0/validation` | The run stops, because the validation score could not be reproduced. |
 | The kits23 install changes packages | Versions printed and recorded; nnU-Net is pinned. |
 | Orientation mismatch between the model output and the references | Geometry check plus the Dice cross-check stop the run. |
 
