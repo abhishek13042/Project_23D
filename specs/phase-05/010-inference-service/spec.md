@@ -1,6 +1,6 @@
 # SPEC 010 — Inference Service
 
-- **Status:** DRAFT — BLOCKED until the Hugging Face account is 30 days old
+- **Status:** CODE DONE. The spike and public Space are BLOCKED until the Hugging Face account is 30 days old
 - **Phase:** 5 — Public demo
 - **Depends on:** SPEC 008, D-019
 
@@ -57,7 +57,7 @@ Record the outcome in `docs/decisions.md`.
 - [ ] A validation case runs through the public Space from a browser.
 - [ ] An oversized file is rejected with no GPU time used.
 - [ ] Files are gone from the Space's storage after a run.
-- [ ] Fallback B runs from a clean notebook.
+- [x] Fallback B runs from a clean notebook (`kits23-run-your-scan` on Kaggle, 2026-11-01).
 
 ## 7. Non-goals
 

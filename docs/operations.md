@@ -20,7 +20,9 @@ Do these in order. Each one leaves the site working.
 2. **Hugging Face model and gallery.** Create public repositories for the model and the sample
    cases. Upload the `model_package` output of `kits23-release` and the `gallery` output of
    `kits23-gallery`. Keep the model card and dataset card that come with them, because they state
-   the license.
+   the license. Then replace the model repository's `README.md` with
+   [model_card.md](../reports/release/model_card.md). It adds the benchmark, which didn't exist when
+   the package was built, so `checksums.json` lists the older README. The other files are unchanged.
 3. **Neon.** Create a project without a card and run `apps/web/src/db/schema.sql` once in its SQL
    editor.
 4. **Vercel.** Import the repository on the Hobby plan with these settings:

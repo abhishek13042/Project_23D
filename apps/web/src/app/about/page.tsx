@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import { score, speedOf } from "@/lib/results";
 import { LINKS, REPO_URL } from "@/lib/site";
 
 export const metadata: Metadata = { title: "About" };
 
 export default function About() {
+  const full = speedOf("full");
+  const demo = speedOf("no_tta_step_0.75");
+  if (!full || !demo) throw new Error("The inference benchmark is missing a setting");
+
   return (
     <div className="prose">
       <h1>About</h1>
@@ -28,6 +33,22 @@ export default function About() {
           <p>
             Post-processing keeps the two largest connected foreground regions. It was chosen on validation data.
             The test set was then scored once with the official KiTS evaluator.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Live demo setting</h2>
+        <div className="prose" style={{ marginTop: 12 }}>
+          <p>
+            The published scores use test-time augmentation. Live upload turns it off and uses a tile step of 0.75,
+            which took {Math.round(demo.seconds)} seconds per scan instead of {Math.round(full.seconds)} on a free
+            Kaggle GPU.
+          </p>
+          <p>
+            On {demo.nCases} validation cases this setting scored a mean Dice of {score(demo.meanDice)}, against{" "}
+            {score(full.meanDice)} for the full setting. One scan accounts for nearly all of that gap, so read it
+            as no measured loss, not as an improvement. The setting has not been scored on the test set.
           </p>
         </div>
       </section>

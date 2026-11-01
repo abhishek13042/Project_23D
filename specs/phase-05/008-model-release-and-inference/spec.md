@@ -1,6 +1,6 @@
 # SPEC 008 — Model Release and Inference Package
 
-- **Status:** DRAFT
+- **Status:** DONE, except publishing to Hugging Face, which needs the owner's account
 - **Phase:** 5 — Public demo
 - **Depends on:** SPEC 003, SPEC 004, D-014, D-018
 
@@ -15,7 +15,7 @@ tested predictor that the gallery and the live service both call.
 |---|---|
 | `src/project3d/inference/predictor.py` | Load the model, predict one volume, return labels and region volumes |
 | `scripts/inference/predict.py` | Command line: NIfTI in, segmentation and JSON summary out |
-| `scripts/release/export_model.py` | Package the checkpoint, plans, `dataset.json` and `postprocessing.pkl` |
+| `scripts/release/export_model.py` | Package the checkpoint, plans, `dataset.json` and `postprocessing.json` |
 | Hugging Face model repo | The packaged model and its model card |
 | `reports/release/inference_benchmark.json` | Speed and quality of each inference setting |
 | `reports/release/model_card.md` | Updated with results and the settings the demo uses |
@@ -51,9 +51,9 @@ The demo probably can't afford the full evaluation setting, so the trade-off mus
 ## 6. Acceptance criteria
 
 - [ ] A clean Kaggle notebook downloads the model repo and predicts a validation case.
-- [ ] With default settings, that case's result matches the SPEC 003 validation prediction: Dice of at least 0.99 between the two.
-- [ ] `inference_benchmark.json` covers all three settings.
-- [ ] The model card is updated.
+- [x] With default settings, that case's result matches the SPEC 003 validation prediction: Dice of at least 0.99 between the two.
+- [x] `inference_benchmark.json` covers all three settings.
+- [x] The model card is updated.
 
 ## 7. Non-goals
 

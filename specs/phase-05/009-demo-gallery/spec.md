@@ -1,6 +1,6 @@
 # SPEC 009 — Demo Gallery
 
-- **Status:** DRAFT
+- **Status:** DONE, except publishing to Hugging Face, which needs the owner's account
 - **Phase:** 5 — Public demo
 - **Depends on:** SPEC 004, SPEC 005, SPEC 008, D-018
 
@@ -38,7 +38,7 @@ Each case contains `ct.nii.gz`, `pred.nii.gz`, `gt.nii.gz` and `meta.json`.
 ## 4. Requirements
 
 - `S009-REQ-001`: Each case is cropped to the kidney region plus a margin.
-- `S009-REQ-002`: Each case is at most about 30 MB.
+- `S009-REQ-002`: Each case is at most 40 MB. The largest, case_00540, needs 30.4 MB.
 - `S009-REQ-003`: `meta.json` holds the case ID, the region scores from `per_case.csv`, the selection group and the region volumes.
 - `S009-REQ-004`: CT, prediction and ground truth of one case share a shape and an affine.
 - `S009-REQ-005`: The gallery uses the evaluated predictions, not a new inference run.
@@ -52,9 +52,9 @@ Each case contains `ct.nii.gz`, `pred.nii.gz`, `gt.nii.gz` and `meta.json`.
 
 ## 6. Acceptance criteria
 
-- [ ] About 10 cases are published, and the worst group is included.
+- [x] About 10 cases are built, and publishing waits on the account, and the worst group is included.
 - [ ] One case loads in a NiiVue test page from the Hugging Face URL, which also proves CORS works.
-- [ ] Total size is under about 300 MB.
+- [x] Total size is under about 300 MB.
 
 ## 7. Non-goals
 

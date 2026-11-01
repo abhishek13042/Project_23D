@@ -4,6 +4,8 @@
 0.665–0.777) and mean surface Dice is 0.596 (0.550–0.641). Full numbers are in
 [`reports/evaluation/results.md`](../evaluation/results.md).
 
+> Research demo, not for clinical use.
+
 ## What it is
 
 - **Task:** 3D semantic segmentation of contrast-enhanced abdominal CT.
@@ -38,5 +40,39 @@ The report also includes:
 - **No contrast-phase data:** the contrast phase per case is unknown (D-010), so phase effects can't be measured.
 - **Dataset biases:** biases in patient population, scanners and annotation are inherited from KiTS23.
 - **License:** data CC BY-NC-SA 4.0. The model weights are derived from that data, so non-commercial use only.
+
+## Inference settings
+
+Measured on six validation cases on a Kaggle T4 GPU (`inference_benchmark.json`). The test set was
+not used. Peak memory was the same for all three: 4.5 GB of GPU memory and 12.7 GB of RAM.
+
+| Setting | Mean time per scan | Slowest scan | Mean Dice | Mean surface Dice |
+|---|---|---|---|---|
+| Full: test-time augmentation, tile step 0.5 | 442 s | 608 s | 0.566 | 0.434 |
+| No test-time augmentation, tile step 0.5 | 133 s | 222 s | 0.566 | 0.427 |
+| No test-time augmentation, tile step 0.75 (**live demo**) | 103 s | 182 s | 0.644 | 0.472 |
+
+The full setting matches the evaluation: Dice of at least 0.9995 against the saved validation
+predictions. The published scores and the run-it-yourself notebook use it.
+
+The live demo uses the last setting because it is about four times faster. Its higher Dice is not an
+improvement. It comes almost entirely from one scan, case_00002, which went from 0.267 to 0.788, and
+six cases can't support more than "no loss was measured". The demo setting was not scored on the
+73 test cases.
+
+## How to use it
+
+Install `nnunetv2==2.8.1`, then copy `project23d_trainer.py` into nnU-Net's
+`training/nnUNetTrainer/variants/` folder. The checkpoint names that class, so nnU-Net can't load
+the model without it. Keep the two largest connected foreground regions of the output
+(26-connected), as described in `postprocessing.json`. The published scores depend on that step.
+
+`checksums.json` holds the SHA-256 of every file in this package.
+
+## Credits and license
+
+- **Data:** KiTS23 (<https://github.com/neheller/kits23>), CC BY-NC-SA 4.0.
+- **Method:** nnU-Net (Isensee et al., *Nature Methods* 2021; <https://github.com/MIC-DKFZ/nnUNet>), Apache 2.0.
+- **These weights:** CC BY-NC-SA 4.0, because they are derived from KiTS23. Non-commercial use only, shared under the same terms.
 
 See also [`docs/limitations.md`](../../docs/limitations.md).

@@ -1,10 +1,10 @@
 :root {
   color-scheme: light;
-  --paper: #f6f3ec;
-  --paper-deep: #ece7dc;
+  --paper: #f2f4f5;
+  --paper-deep: #e3e7e9;
   --ink: #1b1d1f;
   --ink-soft: #55575a;
-  --rule: #cfc8b9;
+  --rule: #c3cace;
   --film: #0e1012;
   --film-raised: #1a1d20;
   --film-ink: #e8e6e1;
@@ -17,6 +17,7 @@
   --serif: var(--font-serif), Georgia, serif;
   --sans: var(--font-sans), system-ui, sans-serif;
   --mono: var(--font-mono), ui-monospace, monospace;
+  --measure: 56ch;
   --gutter: clamp(16px, 4vw, 48px);
   --page: 1160px;
 }
@@ -82,7 +83,8 @@ h3 {
 
 p {
   margin: 0;
-  max-width: 68ch;
+  max-width: var(--measure);
+  text-wrap: pretty;
 }
 
 code {
@@ -157,7 +159,9 @@ main {
 }
 
 section + section,
+.prose > section + section,
 .lede + section,
+.prose > .lede + section,
 .hero + section,
 .after {
   margin-top: clamp(52px, 8vw, 88px);
@@ -169,7 +173,7 @@ section + section,
   max-width: 58ch;
 }
 
-.prose > * + * {
+.prose > :not(section) + :not(section) {
   margin-top: 14px;
 }
 
@@ -181,7 +185,7 @@ section + section,
 .prose ul {
   margin-block: 14px 0;
   padding-left: 20px;
-  max-width: 68ch;
+  max-width: var(--measure);
 }
 
 .prose li + li {
@@ -558,7 +562,7 @@ section + section,
   padding: 16px 18px;
   border: 1px solid var(--warn);
   border-radius: 3px;
-  max-width: 68ch;
+  max-width: var(--measure);
 }
 
 .warning strong {
@@ -574,7 +578,7 @@ section + section,
   gap: 10px;
   align-items: flex-start;
   margin-top: 20px;
-  max-width: 68ch;
+  max-width: var(--measure);
 }
 
 .check input {

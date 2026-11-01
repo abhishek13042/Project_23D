@@ -1,0 +1,26 @@
+{
+  "README.md": {
+    "sha256": "c562dde476e279a48cc0a6a551032b12f2627dd31a43c7b1f59bf120d0c781bc",
+    "bytes": 4207
+  },
+  "dataset.json": {
+    "sha256": "09bffa90755339c57673d5848b8ee5d65d6e97253ce1d93a21f4279cfafb7949",
+    "bytes": 679
+  },
+  "fold_0/checkpoint_final.pth": {
+    "sha256": "23da650a19a34c70ef62a92e739f481ec6ea529611f029cca4be33a9f8c6a845",
+    "bytes": 249734415
+  },
+  "plans.json": {
+    "sha256": "041bc561429ae835532e5877418c62032a3fc19d09aa85a027b53b86fb07e8da",
+    "bytes": 16279
+  },
+  "postprocessing.json": {
+    "sha256": "f25bc5b6d21b0d92dacf70fc0b13032388738ed368062e855703b90579ef5c0f",
+    "bytes": 124
+  },
+  "project23d_trainer.py": {
+    "sha256": "a43100b9a757097bc6a30286a12eba318de1ddfb64cd1e5322b7e6ab6d34def2",
+    "bytes": 1694
+  }
+}

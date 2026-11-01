@@ -1,6 +1,6 @@
 # SPEC 012 — Deployment, CI and Launch
 
-- **Status:** DRAFT
+- **Status:** CODE DONE. Launch waits on the owner's accounts, see `docs/operations.md`
 - **Phase:** 5 — Public demo
 - **Depends on:** SPEC 011, D-009, D-019. SPEC 010 for live upload only
 

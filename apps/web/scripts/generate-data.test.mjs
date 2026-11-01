@@ -21,6 +21,12 @@ describe("generated results", () => {
     expect(data.regions.map((r) => r.id)).toContain("cyst");
   });
 
+  it("reads the speed of the setting the live demo uses", () => {
+    const demo = build(REPORTS).speed.find((s) => s.setting === "no_tta_step_0.75");
+    expect(demo?.nCases).toBe(6);
+    expect(demo?.seconds).toBeGreaterThan(0);
+  });
+
   it("keeps the failed cases in the gallery", () => {
     const groups = build(REPORTS).gallery.map((c) => c.group);
     expect(groups.filter((g) => g === "worst").length).toBe(groups.filter((g) => g === "best").length);

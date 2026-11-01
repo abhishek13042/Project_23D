@@ -14,7 +14,7 @@ set with the official KiTS23 evaluator.
 | Data: 489 cases staged, split 343/73/73, preprocessed on Kaggle | Done |
 | Training: nnU-Net v2, `3d_fullres`, fold 0, 100 epochs | Done |
 | Evaluation on the 73 test cases | Done |
-| Public demo: website, live inference, database | Planned ([phase 5 specs](specs/phase-05/README.md)) |
+| Public demo: website, live inference, database | Code done, not deployed yet ([phase 5 specs](specs/phase-05/README.md)) |
 
 ## Results
 

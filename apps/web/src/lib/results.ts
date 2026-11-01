@@ -15,6 +15,8 @@ export const groupOf = (id: string) => GROUPS.find((group) => group.id === id) ?
 export const casesIn = (group: string) => results.gallery.filter((c) => c.group === group);
 export const findCase = (id: string) => results.gallery.find((c) => c.case_id === id);
 
+export const speedOf = (setting: string) => results.speed.find((s) => s.setting === setting);
+
 export const score = (value: number) => value.toFixed(3);
 export const interval = (s: { low: number; high: number }) => `${s.low.toFixed(3)}–${s.high.toFixed(3)}`;
 export const ml = (value: number) => (value < 10 ? value.toFixed(1) : value.toFixed(0));

@@ -31,7 +31,7 @@ This notebook runs on your own free Kaggle or Colab GPU, so your scan stays in y
 1. Turn on a **GPU** and **Internet** in the notebook settings.
 2. Add your `.nii` or `.nii.gz` CT scan. On Kaggle, use *Add Input*. On Colab, upload it to the
    Files panel. If you set no path below, the notebook uses the first scan it finds.
-3. Run all the cells. It takes about 1 minute per scan on a GPU.
+3. Run all the cells. It takes about 8 minutes per scan on a Kaggle GPU, plus a few minutes of setup.
 
 The weights are derived from KiTS23 and are licensed CC BY-NC-SA 4.0: non-commercial use only.
 

@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-10-31.
+Last updated: 2026-11-01.
 
 ## Where the project is
 
@@ -13,7 +13,11 @@ Last updated: 2026-10-31.
 | 005 | Case analysis | Done. See `reports/evaluation/spec004/analysis/` |
 | 006 | Inference | Merged into 007, then replaced by phase 5 |
 | 007 | Report and reproducibility | Done. See `reports/evaluation/results.md` |
-| 008–012 | Public demo | Drafted, see [phase 5](../specs/phase-05/README.md) |
+| 008 | Model release | Done. Benchmark recorded. The upload to Hugging Face waits on the owner |
+| 009 | Demo gallery | Done. 10 cases built. The upload to Hugging Face waits on the owner |
+| 010 | Inference service | Code done. ZeroGPU test blocked by the Hugging Face account's age |
+| 011 | Website and database | Code done. Runs locally. Needs Vercel and Neon |
+| 012 | Deployment and CI | Code done. Needs the GitHub repository, then [operations.md](operations.md) |
 
 ## Training result
 
@@ -49,7 +53,7 @@ Scored once on the 73 test cases (`reports/evaluation/results.md`), 6.22 GPU hou
 
 ## What comes next
 
-1. Phase 5 starts with SPEC 008.
+1. The owner follows the launch order in [operations.md](operations.md#first-launch).
 2. Optional, after launch: train longer. This is a separate run, and it must be reported as one.
 
 ## What the owner needs to do

@@ -1,6 +1,6 @@
 # SPEC 011 — Web App and Database
 
-- **Status:** DRAFT
+- **Status:** CODE DONE. Waiting on the Neon and Vercel accounts
 - **Phase:** 5 — Public demo
 - **Depends on:** SPEC 009, D-018, D-019. SPEC 010 for live upload only
 
@@ -64,10 +64,10 @@ The `/try` page writes one `inference_run` after a run. Statistics are shown on 
 
 ## 7. Acceptance criteria
 
-- [ ] `next build` passes.
-- [ ] All pages work on desktop and phone width.
-- [ ] A gallery case loads with the database disconnected.
-- [ ] Lighthouse performance on `/` is at least 80.
+- [x] `next build` passes.
+- [x] All pages work on desktop and phone width.
+- [x] A gallery case loads with the database disconnected.
+- [x] Lighthouse performance on `/` is at least 80. It measured 92 locally, with accessibility 100.
 
 ## 8. Non-goals
 

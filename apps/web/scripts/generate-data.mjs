@@ -30,6 +30,7 @@ export function build(reports) {
   const validation = read(reports, "evaluation/spec004/eval_val_pp/summary.json");
   const analysis = read(reports, "evaluation/spec004/analysis/analysis.json");
   const gallery = read(reports, "release/gallery_index.json");
+  const benchmark = read(reports, "release/inference_benchmark.json");
   if (gallery.length === 0) throw new Error("The gallery index is empty");
 
   return {
@@ -57,6 +58,12 @@ export function build(reports) {
     byCyst: rows(analysis.tables.has_cyst.mean_dice),
     volumeCorrelation: analysis.tumor_volume_vs_tumor_dice,
     worstCases: analysis.worst_cases,
+    speed: benchmark.settings.map((s) => ({
+      setting: s.setting,
+      seconds: s.seconds_per_case_mean,
+      meanDice: s.mean_dice,
+      nCases: s.n_cases,
+    })),
     gallery,
   };
 }

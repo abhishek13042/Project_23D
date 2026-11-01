@@ -1,0 +1,190 @@
+{
+  "spec": "SPEC 008",
+  "role": "val",
+  "cases": [
+    "case_00002",
+    "case_00093",
+    "case_00193",
+    "case_00286",
+    "case_00460",
+    "case_00582"
+  ],
+  "split_fingerprint_sha256": "e681563482a412facbb16e6899ffb62ca6767c5e36f75c8ef78ba26f0538a5b2",
+  "settings": [
+    {
+      "setting": "full",
+      "tta": true,
+      "tile_step": 0.5,
+      "n_cases": 6,
+      "seconds_per_case_mean": 442.2,
+      "seconds_per_case_max": 607.8,
+      "mean_dice": 0.5658677059807462,
+      "mean_surface_dice": 0.43379476901103714,
+      "peak_gpu_gb": 4.52,
+      "peak_cpu_gb": 12.68,
+      "per_case": [
+        {
+          "case_id": "case_00002",
+          "seconds": 381.6,
+          "voxel_count": 68419584,
+          "mean_dice": 0.26731416192503604,
+          "mean_sd": 0.23460070526998567,
+          "dice_vs_training_validation": 0.9998318467639945
+        },
+        {
+          "case_id": "case_00093",
+          "seconds": 607.8,
+          "voxel_count": 206307328,
+          "mean_dice": 0.7444085846178784,
+          "mean_sd": 0.6620344138509502,
+          "dice_vs_training_validation": 0.9997114184583209
+        },
+        {
+          "case_id": "case_00193",
+          "seconds": 240.4,
+          "voxel_count": 61079552,
+          "mean_dice": 0.7217252923275964,
+          "mean_sd": 0.5906719106809007,
+          "dice_vs_training_validation": 0.9995587231791027
+        },
+        {
+          "case_id": "case_00286",
+          "seconds": 536.4,
+          "voxel_count": 27787264,
+          "mean_dice": 0.7839470323598965,
+          "mean_sd": 0.4743087101294073,
+          "dice_vs_training_validation": 0.999939481817159
+        },
+        {
+          "case_id": "case_00460",
+          "seconds": 360.9,
+          "voxel_count": 23855104,
+          "mean_dice": 0.7247099151451896,
+          "mean_sd": 0.48938299867417334,
+          "dice_vs_training_validation": 0.9997590116242413
+        },
+        {
+          "case_id": "case_00582",
+          "seconds": 526.2,
+          "voxel_count": 42729472,
+          "mean_dice": 0.15310124950888018,
+          "mean_sd": 0.15176987546080564,
+          "dice_vs_training_validation": 0.9997474287026993
+        }
+      ]
+    },
+    {
+      "setting": "no_tta",
+      "tta": false,
+      "tile_step": 0.5,
+      "n_cases": 6,
+      "seconds_per_case_mean": 132.6,
+      "seconds_per_case_max": 222.4,
+      "mean_dice": 0.5655822097396233,
+      "mean_surface_dice": 0.427267788465215,
+      "peak_gpu_gb": 4.52,
+      "peak_cpu_gb": 12.73,
+      "per_case": [
+        {
+          "case_id": "case_00002",
+          "seconds": 128.3,
+          "voxel_count": 68419584,
+          "mean_dice": 0.2670960849382746,
+          "mean_sd": 0.21817239081306297
+        },
+        {
+          "case_id": "case_00093",
+          "seconds": 222.4,
+          "voxel_count": 206307328,
+          "mean_dice": 0.7407364788114877,
+          "mean_sd": 0.646843197425928
+        },
+        {
+          "case_id": "case_00193",
+          "seconds": 85.9,
+          "voxel_count": 61079552,
+          "mean_dice": 0.7162870576661594,
+          "mean_sd": 0.5511327508311726
+        },
+        {
+          "case_id": "case_00286",
+          "seconds": 130.0,
+          "voxel_count": 27787264,
+          "mean_dice": 0.7824558338441868,
+          "mean_sd": 0.4899692907451469
+        },
+        {
+          "case_id": "case_00460",
+          "seconds": 89.2,
+          "voxel_count": 23855104,
+          "mean_dice": 0.7311614729759989,
+          "mean_sd": 0.4930179550732732
+        },
+        {
+          "case_id": "case_00582",
+          "seconds": 139.6,
+          "voxel_count": 42729472,
+          "mean_dice": 0.15575633020163204,
+          "mean_sd": 0.1644711459027064
+        }
+      ]
+    },
+    {
+      "setting": "no_tta_step_0.75",
+      "tta": false,
+      "tile_step": 0.75,
+      "n_cases": 6,
+      "seconds_per_case_mean": 102.5,
+      "seconds_per_case_max": 182.4,
+      "mean_dice": 0.6444084425346817,
+      "mean_surface_dice": 0.4722073945086773,
+      "peak_gpu_gb": 4.52,
+      "peak_cpu_gb": 12.64,
+      "per_case": [
+        {
+          "case_id": "case_00002",
+          "seconds": 104.2,
+          "voxel_count": 68419584,
+          "mean_dice": 0.7883718929834571,
+          "mean_sd": 0.6150995989071493
+        },
+        {
+          "case_id": "case_00093",
+          "seconds": 182.4,
+          "voxel_count": 206307328,
+          "mean_dice": 0.6898220495306869,
+          "mean_sd": 0.5475250700777852
+        },
+        {
+          "case_id": "case_00193",
+          "seconds": 70.6,
+          "voxel_count": 61079552,
+          "mean_dice": 0.7049754635751628,
+          "mean_sd": 0.5526364749243499
+        },
+        {
+          "case_id": "case_00286",
+          "seconds": 94.4,
+          "voxel_count": 27787264,
+          "mean_dice": 0.7506344319162886,
+          "mean_sd": 0.4256235622531194
+        },
+        {
+          "case_id": "case_00460",
+          "seconds": 62.1,
+          "voxel_count": 23855104,
+          "mean_dice": 0.76595001560583,
+          "mean_sd": 0.5268828523478034
+        },
+        {
+          "case_id": "case_00582",
+          "seconds": 101.5,
+          "voxel_count": 42729472,
+          "mean_dice": 0.1666968015966642,
+          "mean_sd": 0.16547680854185676
+        }
+      ]
+    }
+  ],
+  "min_dice_vs_training_validation": 0.9995587231791027
+}

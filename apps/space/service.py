@@ -15,15 +15,17 @@ DISCLAIMER = "Research demo, not for clinical use"
 RESULT_NAME = "segmentation.nii.gz"
 SUFFIXES = (".nii", ".nii.gz")
 MAX_FILE_MB = 500
-MAX_VOXELS = 200_000_000  # above this, one scan could not finish inside MAX_GPU_SECONDS
-OPTIONS = Options(tta=False, tile_step=0.5)  # measured on validation cases in SPEC 008
+MAX_VOXELS = 200_000_000  # a 206 million voxel scan took 182 s in SPEC 008, close to MAX_GPU_SECONDS
+# The fastest setting in the SPEC 008 benchmark, and no worse on its six validation cases.
+OPTIONS = Options(tta=False, tile_step=0.75)
 
 # the model resamples every scan to this spacing, so the work depends on it, not on the raw voxels
 TARGET_SPACING_MM = (1.0, 0.78125, 0.78125)
-BASE_GPU_SECONDS = 20
-GPU_SECONDS_PER_MILLION_VOXELS = 0.5
-MIN_GPU_SECONDS = 30
-MAX_GPU_SECONDS = 120  # the daily quota without an account is 2 minutes (docs/deployment.md)
+# Fitted to SPEC 008 on a Kaggle T4, where scans took 62 to 182 s. Recheck them in the ZeroGPU test.
+BASE_GPU_SECONDS = 60
+GPU_SECONDS_PER_MILLION_VOXELS = 0.7
+MIN_GPU_SECONDS = 90
+MAX_GPU_SECONDS = 200  # above the 2 minute no-account quota, so the largest scans need a free account
 
 # The website reads the part before the colon, so these codes are part of the API.
 INVALID = "INVALID_INPUT"
