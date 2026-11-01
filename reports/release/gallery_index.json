@@ -1,0 +1,585 @@
+[
+  {
+    "case_id": "case_00540",
+    "group": "worst",
+    "scores": {
+      "mean_dice": 0.0,
+      "mean_sd": 0.0,
+      "kidney_and_mass_dice_official": 0.0,
+      "mass_dice_official": 0.0,
+      "tumor_dice_official": 0.0
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.0
+      },
+      "mass": {
+        "dice": 0.0
+      },
+      "tumor": {
+        "dice": 0.0
+      },
+      "kidney": {
+        "dice": 0.0
+      },
+      "cyst": {
+        "dice": 0.0
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 88.494,
+        "predicted": 209.269
+      },
+      "tumor": {
+        "reference": 7.913,
+        "predicted": 10.621
+      },
+      "cyst": {
+        "reference": 25.268,
+        "predicted": 1.433
+      }
+    },
+    "crop_shape": [
+      323,
+      199,
+      358
+    ],
+    "spacing_mm": [
+      1.0,
+      0.80859375,
+      0.80859375
+    ],
+    "size_mb": 30.39
+  },
+  {
+    "case_id": "case_00031",
+    "group": "worst",
+    "scores": {
+      "mean_dice": 0.12886810155740905,
+      "mean_sd": 0.1353897447023708,
+      "kidney_and_mass_dice_official": 0.3554153435079556,
+      "mass_dice_official": 0.015240062530523355,
+      "tumor_dice_official": 0.015948898633748192
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.3554153435079556
+      },
+      "mass": {
+        "dice": 0.015240062530523355
+      },
+      "tumor": {
+        "dice": 0.015948898633748192
+      },
+      "kidney": {
+        "dice": 0.6202879956783767
+      },
+      "cyst": {
+        "dice": 0.0
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 254.622,
+        "predicted": 174.536
+      },
+      "tumor": {
+        "reference": 4.139,
+        "predicted": 313.43
+      },
+      "cyst": {
+        "reference": 0.0,
+        "predicted": 26.919
+      }
+    },
+    "crop_shape": [
+      103,
+      277,
+      393
+    ],
+    "spacing_mm": [
+      3.0,
+      0.5180000066757202,
+      0.5180000066757202
+    ],
+    "size_mb": 15.86
+  },
+  {
+    "case_id": "case_00133",
+    "group": "best",
+    "scores": {
+      "mean_dice": 0.9714477875880255,
+      "mean_sd": 0.9425293700092686,
+      "kidney_and_mass_dice_official": 0.9818487811697921,
+      "mass_dice_official": 0.9679176860479239,
+      "tumor_dice_official": 0.9645768955463608
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.9818487811697921
+      },
+      "mass": {
+        "dice": 0.9679176860479239
+      },
+      "tumor": {
+        "dice": 0.9645768955463608
+      },
+      "kidney": {
+        "dice": 0.9741491943010017
+      },
+      "cyst": {
+        "dice": 0.0
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 292.562,
+        "predicted": 287.541
+      },
+      "tumor": {
+        "reference": 52.772,
+        "predicted": 50.593
+      },
+      "cyst": {
+        "reference": 0.0,
+        "predicted": 0.639
+      }
+    },
+    "crop_shape": [
+      64,
+      125,
+      281
+    ],
+    "spacing_mm": [
+      2.5,
+      0.8496090173721313,
+      0.8496090173721313
+    ],
+    "size_mb": 3.05
+  },
+  {
+    "case_id": "case_00481",
+    "group": "best",
+    "scores": {
+      "mean_dice": 0.9627941942453253,
+      "mean_sd": 0.7767375388011546,
+      "kidney_and_mass_dice_official": 0.9716211644258774,
+      "mass_dice_official": 0.9593428846890617,
+      "tumor_dice_official": 0.9574185336210369
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.9716211644258774
+      },
+      "mass": {
+        "dice": 0.9593428846890617
+      },
+      "tumor": {
+        "dice": 0.9574185336210369
+      },
+      "kidney": {
+        "dice": 0.9433846533113418
+      },
+      "cyst": {
+        "dice": 0.0
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 419.206,
+        "predicted": 423.072
+      },
+      "tumor": {
+        "reference": 595.542,
+        "predicted": 573.531
+      },
+      "cyst": {
+        "reference": 0.0,
+        "predicted": 5.205
+      }
+    },
+    "crop_shape": [
+      77,
+      219,
+      387
+    ],
+    "spacing_mm": [
+      2.5,
+      0.703125,
+      0.703125
+    ],
+    "size_mb": 8.86
+  },
+  {
+    "case_id": "case_00168",
+    "group": "median",
+    "scores": {
+      "mean_dice": 0.8453903317117102,
+      "mean_sd": 0.6857614529354475,
+      "kidney_and_mass_dice_official": 0.9715655506316138,
+      "mass_dice_official": 0.7916642680329284,
+      "tumor_dice_official": 0.7729411764705882
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.9715655506316138
+      },
+      "mass": {
+        "dice": 0.7916642680329284
+      },
+      "tumor": {
+        "dice": 0.7729411764705882
+      },
+      "kidney": {
+        "dice": 0.950432730133753
+      },
+      "cyst": {
+        "dice": 0.0
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 254.736,
+        "predicted": 264.896
+      },
+      "tumor": {
+        "reference": 29.98,
+        "predicted": 21.124
+      },
+      "cyst": {
+        "reference": 0.0,
+        "predicted": 1.115
+      }
+    },
+    "crop_shape": [
+      34,
+      149,
+      275
+    ],
+    "spacing_mm": [
+      5.0,
+      0.7753909826278687,
+      0.7753909826278687
+    ],
+    "size_mb": 1.97
+  },
+  {
+    "case_id": "case_00200",
+    "group": "median",
+    "scores": {
+      "mean_dice": 0.8524608771946568,
+      "mean_sd": 0.7378160067591518,
+      "kidney_and_mass_dice_official": 0.9701905898690133,
+      "mass_dice_official": 0.9047457721251839,
+      "tumor_dice_official": 0.6824462695897734
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.9701905898690133
+      },
+      "mass": {
+        "dice": 0.9047457721251839
+      },
+      "tumor": {
+        "dice": 0.6824462695897734
+      },
+      "kidney": {
+        "dice": 0.9245826933077623
+      },
+      "cyst": {
+        "dice": 0.03213656818626492
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 367.368,
+        "predicted": 365.625
+      },
+      "tumor": {
+        "reference": 109.111,
+        "predicted": 197.525
+      },
+      "cyst": {
+        "reference": 85.735,
+        "predicted": 4.356
+      }
+    },
+    "crop_shape": [
+      40,
+      164,
+      355
+    ],
+    "spacing_mm": [
+      4.0,
+      0.7421875,
+      0.7421875
+    ],
+    "size_mb": 3.25
+  },
+  {
+    "case_id": "case_00549",
+    "group": "median",
+    "scores": {
+      "mean_dice": 0.8381686702685661,
+      "mean_sd": 0.7418765723607805,
+      "kidney_and_mass_dice_official": 0.9813843488034468,
+      "mass_dice_official": 0.7900483759502419,
+      "tumor_dice_official": 0.7430732860520095
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.9813843488034468
+      },
+      "mass": {
+        "dice": 0.7900483759502419
+      },
+      "tumor": {
+        "dice": 0.7430732860520095
+      },
+      "kidney": {
+        "dice": 0.9696731550342066
+      },
+      "cyst": {
+        "dice": 0.021052631578947368
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 403.953,
+        "predicted": 409.484
+      },
+      "tumor": {
+        "reference": 14.39,
+        "predicted": 21.19
+      },
+      "cyst": {
+        "reference": 12.56,
+        "predicted": 0.545
+      }
+    },
+    "crop_shape": [
+      30,
+      160,
+      315
+    ],
+    "spacing_mm": [
+      5.0,
+      0.8203125,
+      0.8203125
+    ],
+    "size_mb": 2.1
+  },
+  {
+    "case_id": "case_00548",
+    "group": "small_tumor",
+    "scores": {
+      "mean_dice": 0.5372269618519544,
+      "mean_sd": 0.5127063507756033,
+      "kidney_and_mass_dice_official": 0.9792134680444993,
+      "mass_dice_official": 0.395920126418618,
+      "tumor_dice_official": 0.23654729109274564
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.9792134680444993
+      },
+      "mass": {
+        "dice": 0.395920126418618
+      },
+      "tumor": {
+        "dice": 0.23654729109274564
+      },
+      "kidney": {
+        "dice": 0.9698715318329598
+      },
+      "cyst": {
+        "dice": 0.029023746701846966
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 612.297,
+        "predicted": 596.237
+      },
+      "tumor": {
+        "reference": 3.414,
+        "predicted": 22.55
+      },
+      "cyst": {
+        "reference": 5.465,
+        "predicted": 1.764
+      }
+    },
+    "crop_shape": [
+      32,
+      137,
+      281
+    ],
+    "spacing_mm": [
+      5.0,
+      0.9765625,
+      0.9765625
+    ],
+    "size_mb": 1.71
+  },
+  {
+    "case_id": "case_00500",
+    "group": "small_tumor",
+    "scores": {
+      "mean_dice": 0.5362145595581527,
+      "mean_sd": 0.4758598944414651,
+      "kidney_and_mass_dice_official": 0.9803985234147001,
+      "mass_dice_official": 0.30737663897507755,
+      "tumor_dice_official": 0.3208685162846803
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.9803985234147001
+      },
+      "mass": {
+        "dice": 0.30737663897507755
+      },
+      "tumor": {
+        "dice": 0.3208685162846803
+      },
+      "kidney": {
+        "dice": 0.9528092507860434
+      },
+      "cyst": {
+        "dice": 0.0
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 740.275,
+        "predicted": 682.878
+      },
+      "tumor": {
+        "reference": 8.832,
+        "predicted": 45.719
+      },
+      "cyst": {
+        "reference": 0.0,
+        "predicted": 2.618
+      }
+    },
+    "crop_shape": [
+      66,
+      158,
+      279
+    ],
+    "spacing_mm": [
+      3.0,
+      0.9765625,
+      0.9765625
+    ],
+    "size_mb": 3.98
+  },
+  {
+    "case_id": "case_00083",
+    "group": "with_cyst",
+    "scores": {
+      "mean_dice": 0.7950714712233035,
+      "mean_sd": 0.646215122515656,
+      "kidney_and_mass_dice_official": 0.9811197446985482,
+      "mass_dice_official": 0.6602642901044868,
+      "tumor_dice_official": 0.7438303788668752
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.9811197446985482
+      },
+      "mass": {
+        "dice": 0.6602642901044868
+      },
+      "tumor": {
+        "dice": 0.7438303788668752
+      },
+      "kidney": {
+        "dice": 0.9716891788683527
+      },
+      "cyst": {
+        "dice": 0.0
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 654.333,
+        "predicted": 656.788
+      },
+      "tumor": {
+        "reference": 12.955,
+        "predicted": 19.97
+      },
+      "cyst": {
+        "reference": 2.841,
+        "predicted": 1.473
+      }
+    },
+    "crop_shape": [
+      51,
+      157,
+      306
+    ],
+    "spacing_mm": [
+      3.0,
+      0.9765625,
+      0.9765625
+    ],
+    "size_mb": 3.33
+  },
+  {
+    "case_id": "case_00485",
+    "group": "with_cyst",
+    "scores": {
+      "mean_dice": 0.7937766527731743,
+      "mean_sd": 0.5895077053894447,
+      "kidney_and_mass_dice_official": 0.9546239299550915,
+      "mass_dice_official": 0.7114937232380674,
+      "tumor_dice_official": 0.7152123051263638
+    },
+    "regions": {
+      "kidney_and_mass": {
+        "dice": 0.9546239299550915
+      },
+      "mass": {
+        "dice": 0.7114937232380674
+      },
+      "tumor": {
+        "dice": 0.7152123051263638
+      },
+      "kidney": {
+        "dice": 0.8821642792674276
+      },
+      "cyst": {
+        "dice": 0.003786444528587656
+      }
+    },
+    "volumes_ml": {
+      "kidney": {
+        "reference": 771.778,
+        "predicted": 654.237
+      },
+      "tumor": {
+        "reference": 154.187,
+        "predicted": 255.86
+      },
+      "cyst": {
+        "reference": 4.55,
+        "predicted": 7.993
+      }
+    },
+    "crop_shape": [
+      41,
+      169,
+      312
+    ],
+    "spacing_mm": [
+      5.0,
+      0.974609375,
+      0.974609375
+    ],
+    "size_mb": 3.01
+  }
+]
