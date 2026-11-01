@@ -1,0 +1,25 @@
+name: Health check
+
+# Reads public pages once a day and does nothing else. A failed run shows in the Actions tab.
+# GitHub pauses schedules after 60 days without commits; re-enable it from that tab.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    if: vars.SITE_URL != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python scripts/ops/health_check.py --site "$SITE_URL" --gallery "$GALLERY_BASE_URL"
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          GALLERY_BASE_URL: ${{ vars.GALLERY_BASE_URL }}

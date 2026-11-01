@@ -1,0 +1,30 @@
+name: Sync Space
+
+# Stays idle until the repository variable HF_SPACE_ID and the secret HF_TOKEN exist
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - apps/space/**
+      - scripts/space/**
+      - src/project3d/**
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    if: vars.HF_SPACE_ID != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install huggingface_hub
+      - run: python scripts/space/package_space.py --out-dir build/space
+      - run: hf upload "$HF_SPACE_ID" build/space . --repo-type space --commit-message "Sync from GitHub $GITHUB_SHA"
+        env:
+          HF_SPACE_ID: ${{ vars.HF_SPACE_ID }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
