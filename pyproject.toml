@@ -12,10 +12,17 @@ pythonpath = [
     "src",
     "scripts/data",
     "scripts/eval",
+    "apps/space",
+    "scripts/gallery",
+    "scripts/inference",
     "scripts/notebooks",
+    "scripts/ops",
     "scripts/report",
+    "scripts/space",
+    "scripts/release",
     "scripts/training",
     "tests",
+    "tests/inference",
 ]
 
 [tool.ruff]
