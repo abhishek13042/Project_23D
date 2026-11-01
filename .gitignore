@@ -37,3 +37,12 @@ mlruns/
 
 # CT slices are derived from KiTS23 (D-008)
 reports/evaluation/spec004/analysis/figures/overlay_*.png
+
+# Website: generated data and local sample cases
+apps/web/src/data/
+apps/web/public/gallery-local/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local preview settings
+.claude/launch.json

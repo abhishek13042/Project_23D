@@ -1,0 +1,33 @@
+{
+  "name": "project23d-web",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "data": "node scripts/generate-data.mjs",
+    "predev": "npm run data",
+    "dev": "next dev",
+    "prebuild": "npm run data",
+    "build": "next build",
+    "start": "next start",
+    "pretest": "npm run data",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gradio/client": "^1.15.0",
+    "@neondatabase/serverless": "1.2.0",
+    "@niivue/niivue": "0.69.0",
+    "drizzle-orm": "0.45.4",
+    "next": "16.4.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.9.0",
+    "vitest": "^4.0.0"
+  }
+}
