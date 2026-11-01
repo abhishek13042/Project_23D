@@ -1,0 +1,5 @@
+# torch comes with the ZeroGPU image. The spike in SPEC 010 confirms this set on real hardware.
+nnunetv2==2.8.1
+nibabel==5.4.2
+scipy
+huggingface_hub

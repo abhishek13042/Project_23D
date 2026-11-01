@@ -4,15 +4,20 @@ import json
 import pytest
 
 import build_eval_notebook
+import build_gallery_notebook
 import build_prepare_notebook
 import build_preprocess_notebook
+import build_release_notebook
+import build_run_notebook
 import build_stage_notebook
 import build_train_notebook
 
 BUILDERS = pytest.mark.parametrize(
     "b", [build_stage_notebook, build_prepare_notebook, build_preprocess_notebook, build_train_notebook,
-          build_eval_notebook],
-    ids=["00_stage_data", "01_prepare_data", "01b_preprocess", "02_train", "03_evaluate"])
+          build_eval_notebook, build_release_notebook, build_gallery_notebook,
+          build_run_notebook],
+    ids=["00_stage_data", "01_prepare_data", "01b_preprocess", "02_train", "03_evaluate", "03b_release",
+         "04_gallery", "05_run_on_your_scan"])
 
 
 @BUILDERS
@@ -30,6 +35,7 @@ def test_code_cells_are_valid_python(b):
         src = "".join(cell["source"])
         if src.startswith("%%writefile"):
             header, body = src.split("\n", 1)
+            assert body.strip(), f"{header} is empty, which IPython refuses to run"
             assert header.startswith("%%writefile /kaggle/working/project23d/")
             if header.endswith(".py"):
                 ast.parse(body)
