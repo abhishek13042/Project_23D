@@ -52,7 +52,7 @@ Each case contains `ct.nii.gz`, `pred.nii.gz`, `gt.nii.gz` and `meta.json`.
 
 ## 6. Acceptance criteria
 
-- [x] About 10 cases are built, and publishing waits on the account, and the worst group is included.
+- [x] 11 cases are built, and publishing waits on the account, and the worst group is included.
 - [ ] One case loads in a NiiVue test page from the Hugging Face URL, which also proves CORS works.
 - [x] Total size is under about 300 MB.
 

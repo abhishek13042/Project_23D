@@ -14,7 +14,7 @@ Last updated: 2026-11-01.
 | 006 | Inference | Merged into 007, then replaced by phase 5 |
 | 007 | Report and reproducibility | Done. See `reports/evaluation/results.md` |
 | 008 | Model release | Done. Benchmark recorded. The upload to Hugging Face waits on the owner |
-| 009 | Demo gallery | Done. 10 cases built. The upload to Hugging Face waits on the owner |
+| 009 | Demo gallery | Done. 11 cases built. The upload to Hugging Face waits on the owner |
 | 010 | Inference service | Code done. ZeroGPU test blocked by the Hugging Face account's age |
 | 011 | Website and database | Code done. Runs locally. Needs Vercel and Neon |
 | 012 | Deployment and CI | Code done. Needs the GitHub repository, then [operations.md](operations.md) |
