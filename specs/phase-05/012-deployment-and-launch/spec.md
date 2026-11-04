@@ -30,13 +30,14 @@ Put the project on the public internet, keep it healthy for $0, and present it w
 
 ## 4. Launch checklist
 
-- [ ] Results and model card are final and match `reports/`.
-- [ ] Limits in `docs/deployment.md` are rechecked and re-dated.
-- [ ] The not-for-clinical-use notice shows on every result page.
-- [ ] KiTS23 and nnU-Net are credited, and their licenses are stated.
-- [ ] README has the live link and a short demo GIF.
+- [x] Results and model card are final and match `reports/` (checked 2026-11-04).
+- [x] Limits in `docs/deployment.md` are rechecked and re-dated (2026-11-04, none changed).
+- [x] The not-for-clinical-use notice shows on every page, in the site-wide bar under the menu.
+- [x] KiTS23, nnU-Net and NiiVue are credited on the About page, with their licenses.
+- [ ] README has the live link and a short demo GIF. (GIF done: `docs/media/demo.gif`, 180 KB, no CT images. The live link waits for deployment.)
 - [ ] The site is opened from a phone and from a fresh browser with no accounts.
-- [ ] `/try` shows a useful message when live inference is unavailable.
+- [x] `/try` shows a useful message when live inference is unavailable. It points to the
+  run-it-yourself notebook.
 
 ## 5. Acceptance criteria
 

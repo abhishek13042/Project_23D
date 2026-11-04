@@ -90,8 +90,8 @@ export default function About() {
             Data: <a href={LINKS.kits23}>the KiTS23 challenge</a> (<a href={LINKS.kits23Data}>dataset repository</a>),
             CC BY-NC-SA 4.0.
           </li>
-          <li>Model framework: <a href={LINKS.nnunet}>nnU-Net</a>, by Isensee and colleagues.</li>
-          <li>Viewer: <a href={LINKS.niivue}>NiiVue</a>.</li>
+          <li>Model framework: <a href={LINKS.nnunet}>nnU-Net</a>, by Isensee and colleagues, Apache 2.0.</li>
+          <li>Viewer: <a href={LINKS.niivue}>NiiVue</a>, BSD 2-Clause.</li>
           <li>
             The model weights derive from the data, so they carry the same{" "}
             <a href={LINKS.license}>non-commercial license</a>.

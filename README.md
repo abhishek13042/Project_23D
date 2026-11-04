@@ -7,6 +7,10 @@ set with the official KiTS23 evaluator.
 
 **Research and portfolio project. Not a medical device. Not for clinical use.**
 
+![The demo website: a map of the 73 test scans by tumor size, kidney size and score, then the results and gallery pages](docs/media/demo.gif)
+
+The live site link will go here once it is deployed.
+
 ## Status
 
 | Stage | State |

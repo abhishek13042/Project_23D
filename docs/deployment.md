@@ -3,7 +3,7 @@
 Nothing here is deployed yet. This is the design that [phase 5](../specs/phase-05/README.md)
 builds. The reasoning is in D-019.
 
-Free tiers change often, so every limit below is dated. All were checked on **2026-10-30**.
+Free tiers change often, so every limit below is dated. All were checked on **2026-10-30** and rechecked unchanged on **2026-11-04**.
 Check them again before relying on them.
 
 ## The stack
@@ -36,7 +36,7 @@ Browser
 
 ## Verified free limits
 
-| Service | Limit on 2026-10-30 | What it means here |
+| Service | Limit on 2026-11-04 | What it means here |
 |---|---|---|
 | Vercel Hobby | Non-commercial personal use; 100 GB data transfer, 1M function calls, 4 CPU-hours per month; functions up to 300 s | Fine for a portfolio. Scans must not pass through Vercel functions |
 | Neon Free | 100 CU-hours per project, 1 GB storage, scale to zero after 5 min, no card | Fine for small rows of statistics |
@@ -45,8 +45,8 @@ Browser
 | HF public repos | Best-effort free storage; large datasets need a dataset card | Fine for weights and about 10 cropped cases |
 | GitHub Actions | Free on public repos | CI only |
 
-The Vercel request body limit of about 4.5 MB comes from memory and was not checked. The design
-avoids it either way, because uploads go directly to the Space.
+Vercel functions accept request and response bodies of at most 4.5 MB (checked 2026-11-04). The
+design avoids this limit, because uploads go directly to the Space.
 
 ## Options rejected
 
@@ -80,5 +80,5 @@ into chat or git.
 
 - Hugging Face: [Spaces overview](https://huggingface.co/docs/hub/spaces-overview), [ZeroGPU](https://huggingface.co/docs/hub/spaces-zerogpu), [storage limits](https://huggingface.co/docs/hub/storage-limits), [forum report on CPU Spaces](https://discuss.huggingface.co/t/official-community-complaint-revert-free-cpu-basic-spaces-and-remove-anti-developer-sdk-restrictions/177703)
 - [Neon pricing](https://neon.com/pricing)
-- [Vercel Hobby plan](https://vercel.com/docs/plans/hobby)
-- GitHub: [hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners), [terms for additional products](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features)
+- Vercel: [Hobby plan](https://vercel.com/docs/plans/hobby), [function limits](https://vercel.com/docs/functions/limitations)
+- GitHub: [hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners), [Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions), [terms for additional products](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features)
