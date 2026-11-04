@@ -261,3 +261,18 @@
   patients with one kidney, if a false region stays. The likely root cause is short
   training, since pseudo Dice was still rising at epoch 100. Post-processing hides
   that rather than fixing it, so raw scores are always reported too.
+
+## D-022 — The website looks like a survey sheet
+
+- **Date:** 2026-11-02
+- **Decision:** The website uses the "survey sheet" design in [DESIGN.md](../DESIGN.md) (SPEC 013).
+  The home page shows a contour map of the 73 test scans, drawn from the per-scan scores. Every
+  spot on the map is a real scan. This replaces the earlier "journal paper" look in PRODUCT.md.
+- **Kept:** One 0–1 score ruler for every score. The kidney, tumor and cyst label colors. The
+  near-black CT viewer. "Research demo, not for clinical use." on every page. All numbers are
+  read from the generated results data.
+- **Reason:** Segmentation draws outlines, and a contour line is an outline. The map shows the
+  good scans and the failures in one picture, so the weak scans can't be hidden. The journal
+  look had nothing that came from the data itself.
+- **Limits:** The contours between scans are smoothed estimates, and the page says so. A table
+  of all 73 scans gives the same data as text, for screen readers and for checking.

@@ -46,3 +46,7 @@ next-env.d.ts
 
 # Local preview settings
 .claude/launch.json
+
+# Impeccable tool state (local)
+.impeccable/hook.cache.json
+.impeccable/questions/

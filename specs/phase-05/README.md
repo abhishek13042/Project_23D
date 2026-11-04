@@ -7,8 +7,9 @@ limits are in [docs/deployment.md](../../docs/deployment.md).
 
 ```text
 008 Model release ──► 009 Gallery ──► 011 Web app ──► 012 Launch
-       │                                   ▲
-       └──────────► 010 Inference service ─┘  (optional for launch)
+       │                                   ▲   │
+       └──────────► 010 Inference service ─┘   └──► 013 Frontend design
+                    (optional for launch)
 ```
 
 SPEC 010 may finish after launch. The site can launch with the gallery alone and add live upload

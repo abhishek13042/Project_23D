@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-02T14:36:14+00:00",
+  "title": "Design System: Project 23D",
+  "narrative": {
+    "northStar": "The Survey"
+  },
+  "extensions": {
+    "colorMeta": {
+      "sheet": {
+        "role": "primary",
+        "displayName": "Petrol Chart Ink",
+        "tonalRamp": [
+          "#0b2633",
+          "#12384a",
+          "#3f6e80"
+        ]
+      },
+      "sheet-deep": {
+        "role": "primary",
+        "displayName": "Deep Petrol"
+      },
+      "sheet-line": {
+        "role": "primary",
+        "displayName": "Contour Line"
+      },
+      "on-sheet": {
+        "role": "neutral",
+        "displayName": "Sheet Text"
+      },
+      "on-sheet-soft": {
+        "role": "neutral",
+        "displayName": "Sheet Text, Soft"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Cool Chart Paper",
+        "tonalRamp": [
+          "#eaf0f1",
+          "#dae3e6",
+          "#b4c4ca"
+        ]
+      },
+      "paper-deep": {
+        "role": "neutral",
+        "displayName": "Chart Paper, Shaded"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Survey Ink"
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Survey Ink, Soft"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Ruled Line"
+      },
+      "link": {
+        "role": "secondary",
+        "displayName": "Deep Channel Blue"
+      },
+      "mark": {
+        "role": "accent",
+        "displayName": "Amber Annotation Ink"
+      },
+      "warn": {
+        "role": "status",
+        "displayName": "Burnt Warning"
+      },
+      "film": {
+        "role": "neutral",
+        "displayName": "Film Black",
+        "tonalRamp": [
+          "#0e1012",
+          "#1a1d20",
+          "#43474b"
+        ]
+      },
+      "film-raised": {
+        "role": "neutral",
+        "displayName": "Film, Raised"
+      },
+      "film-line": {
+        "role": "neutral",
+        "displayName": "Film Line"
+      },
+      "film-ink": {
+        "role": "neutral",
+        "displayName": "Film Text"
+      },
+      "film-soft": {
+        "role": "neutral",
+        "displayName": "Film Text, Soft"
+      },
+      "label-kidney": {
+        "role": "data",
+        "displayName": "Kidney Label"
+      },
+      "label-tumor": {
+        "role": "data",
+        "displayName": "Tumor Label"
+      },
+      "label-cyst": {
+        "role": "data",
+        "displayName": "Cyst Label"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Wide Display",
+        "purpose": "Headings and headline scores, Archivo at 116% width."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Body text and tables with tabular numerals, kept within 66ch."
+      },
+      "note": {
+        "displayName": "Map Note",
+        "purpose": "Map notes and source notes only."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "survey-in",
+        "value": "1600ms cubic-bezier(0.3, 0, 0.2, 1)",
+        "purpose": "The one authored motion: contours draw in on the home map. Off under reduced motion."
+      },
+      {
+        "name": "state",
+        "value": "160ms ease-out",
+        "purpose": "Background and color changes on buttons and links."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tablet",
+        "value": "980px"
+      },
+      {
+        "name": "phone",
+        "value": "620px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "html": "<button class=\"button\" type=\"button\">Explore the cases</button>",
+      "css": ".button{display:inline-block;padding:11px 20px;border:1px solid #0f2a36;border-radius:2px;background:#0f2a36;color:#eaf0f1;font:600 1rem Archivo,system-ui,sans-serif;cursor:pointer;transition:background 160ms ease-out,color 160ms ease-out,border-color 160ms ease-out}.button:hover{background:#0c5f78;border-color:#0c5f78;color:#fff}.button:disabled{background:#dae3e6;border-color:#b4c4ca;color:#46606c;cursor:not-allowed}"
+    },
+    {
+      "name": "Sheet Button",
+      "kind": "button",
+      "html": "<div style=\"background:#12384a;padding:24px\"><a class=\"button-sheet\" href=\"#\">Explore the cases</a></div>",
+      "css": ".button-sheet{display:inline-block;padding:11px 20px;border:1px solid #e9f2f2;border-radius:2px;background:#e9f2f2;color:#0b2633;font:600 1rem Archivo,system-ui,sans-serif;text-decoration:none;transition:background 160ms ease-out}.button-sheet:hover{background:#f2b544;border-color:#f2b544}"
+    },
+    {
+      "name": "Score Ruler",
+      "kind": "custom",
+      "html": "<svg class=\"ruler\" viewBox=\"0 0 200 16\" role=\"img\" aria-label=\"0.722, 95% interval 0.665 to 0.777\"><line x1=\"0\" y1=\"8\" x2=\"200\" y2=\"8\"/><rect x=\"133\" y=\"4\" width=\"22\" height=\"8\"/><circle cx=\"144\" cy=\"8\" r=\"4\"/></svg>",
+      "css": ".ruler{width:200px;height:16px}.ruler line{stroke:#b4c4ca;stroke-width:1}.ruler rect{fill:#0c5f78;opacity:.25}.ruler circle{fill:#0f2a36}"
+    },
+    {
+      "name": "Ledger",
+      "kind": "custom",
+      "html": "<table class=\"ledger\"><thead><tr><th>Region</th><th>Mean</th></tr></thead><tbody><tr><th>Kidney and masses</th><td>0.903</td></tr></tbody></table>",
+      "css": ".ledger{border-collapse:collapse;width:100%;font:400 17px/1.6 Archivo,sans-serif;color:#0f2a36}.ledger th,.ledger td{padding:8px 12px 8px 0;border-bottom:1px solid #b4c4ca;text-align:left}.ledger thead th{font-weight:600;border-bottom:2px solid #0f2a36}.ledger td{font-variant-numeric:tabular-nums}"
+    }
+  ]
+}

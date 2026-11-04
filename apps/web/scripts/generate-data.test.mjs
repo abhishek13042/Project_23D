@@ -27,6 +27,14 @@ describe("generated results", () => {
     expect(demo?.seconds).toBeGreaterThan(0);
   });
 
+  it("gives the score terrain one real height per test scan", () => {
+    const { scans, nCases, meanDice } = build(REPORTS);
+    expect(scans).toHaveLength(nCases);
+    const mean = scans.reduce((sum, scan) => sum + scan.mean_dice, 0) / nCases;
+    expect(mean).toBeCloseTo(meanDice.mean, 6);
+    expect(scans.every((scan) => scan.tumor_ml > 0 && scan.kidney_ml > 0)).toBe(true);
+  });
+
   it("keeps the failed cases in the gallery", () => {
     const groups = build(REPORTS).gallery.map((c) => c.group);
     expect(groups.filter((g) => g === "worst").length).toBe(groups.filter((g) => g === "best").length);

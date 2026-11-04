@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHead } from "@/components/PageHead";
 import { TryForm } from "@/components/TryForm";
 import { NOTEBOOK_PATH, REPO_URL } from "@/lib/site";
 
@@ -26,8 +27,10 @@ function Fallback() {
 export default function Try() {
   return (
     <>
-      <h1>Try a scan</h1>
-      <p className="lede">Run the model on your own abdominal CT, in NIfTI format.</p>
+      <PageHead title="Try a scan">
+        <p className="lede">Run the model on your own abdominal CT, in NIfTI format.</p>
+      </PageHead>
+      <div className="frame page">
       <div className="warning">
         <p>
           <strong>Do not upload scans that can identify a person.</strong> Remove names, dates and hospital details
@@ -39,6 +42,7 @@ export default function Try() {
         </p>
       </div>
       <TryForm fallback={<Fallback />} />
+      </div>
     </>
   );
 }

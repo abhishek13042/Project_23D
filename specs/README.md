@@ -17,6 +17,7 @@ works. Current progress is in [docs/status.md](../docs/status.md).
 | 5 | [010 Inference service](phase-05/010-inference-service/spec.md) | Live inference on ZeroGPU | Draft |
 | 5 | [011 Web app and database](phase-05/011-web-app-and-database/spec.md) | The public website | Draft |
 | 5 | [012 Deployment and launch](phase-05/012-deployment-and-launch/spec.md) | CI, hosting and launch | Draft |
+| 5 | [013 Frontend design](phase-05/013-frontend-design/spec.md) | The survey-sheet look for every page | Code done |
 
 Under D-012 (compute limit), SPEC 002–004 cover one nnU-Net v2 run and its evaluation. SPEC 005
 is reduced to a no-GPU case analysis. D-018 added phase 5.

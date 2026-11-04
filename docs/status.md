@@ -18,6 +18,7 @@ Last updated: 2026-11-01.
 | 010 | Inference service | Code done. ZeroGPU test blocked by the Hugging Face account's age |
 | 011 | Website and database | Code done. Runs locally. Needs Vercel and Neon |
 | 012 | Deployment and CI | Code done. Needs the GitHub repository, then [operations.md](operations.md) |
+| 013 | Frontend design | Code done. The survey-sheet look is on all six pages. See [DESIGN.md](../DESIGN.md) |
 
 ## Training result
 

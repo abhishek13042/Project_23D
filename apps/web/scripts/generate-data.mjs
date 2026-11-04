@@ -20,6 +20,23 @@ function read(reports, path) {
   return JSON.parse(readFileSync(file, "utf-8"));
 }
 
+function readScans(reports, path) {
+  const file = join(reports, path);
+  if (!existsSync(file)) throw new Error(`Missing report file: ${file}`);
+  const [header, ...lines] = readFileSync(file, "utf-8").trim().split(/\r?\n/);
+  const columns = header.split(",");
+  return lines.map((line) => {
+    const cells = line.split(",");
+    const value = (name) => cells[columns.indexOf(name)];
+    return {
+      case_id: value("case_id"),
+      mean_dice: Number(value("mean_dice")),
+      tumor_ml: Number(value("tumor_ref_ml")),
+      kidney_ml: Number(value("kidney_ref_ml")),
+    };
+  });
+}
+
 const stat = (s) => ({ mean: s.mean, median: s.median, low: s.ci95[0], high: s.ci95[1] });
 const rows = (table) =>
   table.map((r) => ({ group: r.group, n: r.n, mean: r.mean, median: r.median, low: r.ci95[0], high: r.ci95[1] }));
@@ -58,6 +75,7 @@ export function build(reports) {
     byCyst: rows(analysis.tables.has_cyst.mean_dice),
     volumeCorrelation: analysis.tumor_volume_vs_tumor_dice,
     worstCases: analysis.worst_cases,
+    scans: readScans(reports, "evaluation/spec004/eval_pp/per_case.csv"),
     speed: benchmark.settings.map((s) => ({
       setting: s.setting,
       seconds: s.seconds_per_case_mean,

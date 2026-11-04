@@ -7,4 +7,4 @@ Assumptions inferred from the project brief and D-018 to D-020; the owner delega
 - **Promise:** the work is measured honestly. Failures are as visible as successes.
 - **Voice:** plain, exact, unexcited. Numbers carry their confidence intervals.
 - **Never:** clinical claims, leaderboard comparisons, typed-in metrics, stock medical imagery.
-- **Look:** a journal paper with radiology-room viewer panels. One 0–1 score ruler is used everywhere.
+- **Look:** a topographic survey sheet of the test scans, with film-black viewer panels for CT (D-022, [DESIGN.md](DESIGN.md)). One 0–1 score ruler is used everywhere.

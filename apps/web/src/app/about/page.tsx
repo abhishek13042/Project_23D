@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHead } from "@/components/PageHead";
 import { score, speedOf } from "@/lib/results";
 import { LINKS, REPO_URL } from "@/lib/site";
 
@@ -10,13 +11,14 @@ export default function About() {
   if (!full || !demo) throw new Error("The inference benchmark is missing a setting");
 
   return (
-    <div className="prose">
-      <h1>About</h1>
-      <p className="lede">
-        A learning project that builds a 3D medical segmentation workflow from raw data to a public demo, and
-        measures it properly.
-      </p>
-
+    <>
+      <PageHead title="About">
+        <p className="lede">
+          A learning project that builds a 3D medical segmentation workflow from raw data to a public demo, and
+          measures it properly.
+        </p>
+      </PageHead>
+      <div className="frame page prose">
       <section>
         <h2>Method</h2>
         <div className="prose" style={{ marginTop: 12 }}>
@@ -97,6 +99,7 @@ export default function About() {
           {REPO_URL && <li>Source code: <a href={REPO_URL}>GitHub repository</a>.</li>}
         </ul>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

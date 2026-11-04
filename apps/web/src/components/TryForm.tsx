@@ -120,8 +120,9 @@ export function TryForm({ fallback }: { fallback: React.ReactNode }) {
         <input type="checkbox" checked={agreed} onChange={(event) => setAgreed(event.target.checked)} />
         <span>My scan is anonymized and I have the right to use it.</span>
       </label>
-      <label className="field">
-        <span>CT scan (.nii or .nii.gz)</span>
+      <label className={`drop ${!agreed || running ? "locked" : ""}`}>
+        <span className="drop-title">{file ? file.name : "Drop a CT scan here, or choose a file"}</span>
+        <span className="drop-hint">{agreed ? "A .nii or .nii.gz file" : "Tick the box above first"}</span>
         <input
           type="file"
           accept=".nii,.gz"
