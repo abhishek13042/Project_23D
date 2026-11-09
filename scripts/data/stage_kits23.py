@@ -28,6 +28,7 @@ FOLDER = {"image": "images", "segmentation": "segmentations"}
 
 
 def load_rows(tsv_path: Path) -> list[dict]:
+    """Read the pinned file list, sorted by kind and case."""
     with open(tsv_path, newline="", encoding="utf-8") as fh:
         rows = list(csv.DictReader(fh, delimiter="\t"))
     for r in rows:
@@ -53,15 +54,16 @@ def plan_shard(rows: list[dict], shard: int, n_shards: int) -> list[dict]:
 
 
 def fetch(row: dict, out_dir: Path, retries: int = 3) -> dict:
+    """Download one file until its size and SHA-256 match the manifest; return its status row."""
     dst = out_dir / FOLDER[row["kind"]] / f"{row['case_id']}.nii.gz"
     status = "MISSING"
     for attempt in range(1, retries + 1):
         if dst.exists() and dst.stat().st_size == row["size_bytes"]:
-            h = hashlib.sha256()
+            digest = hashlib.sha256()
             with open(dst, "rb") as fh:
                 while chunk := fh.read(8 * 1024 * 1024):
-                    h.update(chunk)
-            if h.hexdigest() == row["sha256"]:
+                    digest.update(chunk)
+            if digest.hexdigest() == row["sha256"]:
                 return {"case_id": row["case_id"], "kind": row["kind"], "status": "OK", "attempts": attempt - 1}
         part = dst.with_suffix(".part")
         try:
@@ -86,13 +88,14 @@ def fetch(row: dict, out_dir: Path, retries: int = 3) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--manifest", type=Path, required=True)
-    ap.add_argument("--shard", type=int, required=True)
-    ap.add_argument("--n-shards", type=int, default=3)
-    ap.add_argument("--out-dir", type=Path, required=True)
-    ap.add_argument("--workers", type=int, default=8)
-    args = ap.parse_args(argv)
+    """Download and check one shard of the KiTS23 files."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--shard", type=int, required=True)
+    parser.add_argument("--n-shards", type=int, default=3)
+    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--workers", type=int, default=8)
+    args = parser.parse_args(argv)
 
     t0 = time.time()
     rows = plan_shard(load_rows(args.manifest), args.shard, args.n_shards)

@@ -39,10 +39,7 @@ def detect_roots(input_root: Path, min_files: int = 1,
     be split over several folders (one per Kaggle staging shard, D-015); they are
     then linked into ``link_dir/images`` so the pipeline sees one folder.
     """
-    by_dir: dict[Path, list[int]] = {}
-    for paths in manifest.find_case_files(input_root).values():
-        for p in paths:
-            by_dir.setdefault(p.parent, []).append(p.stat().st_size)
+    by_dir = _file_sizes_by_folder(input_root)
     if not by_dir:
         raise SystemExit(f"no case_XXXXX.nii(.gz) files found under {input_root}")
     big = sorted(d for d, s in by_dir.items() if statistics.median(s) >= IMAGE_MIN_BYTES)
@@ -57,41 +54,63 @@ def detect_roots(input_root: Path, min_files: int = 1,
         return big[0], small[0]
     if link_dir is None:
         raise SystemExit(f"images are split over {len(big)} folders; pass a link folder")
-    merged = Path(link_dir) / "images"
-    if merged.exists():
-        shutil.rmtree(merged)
-    for d in big:
-        for p in sorted(d.iterdir()):
-            if not manifest.CASE_FILE_RE.match(p.name):
-                continue
-            if (merged / p.name).exists():
-                raise SystemExit(f"{p.name} appears in more than one image folder")
-            nnunet_export._place(p, merged / p.name, link_mode)
+    merged = _link_into_one_folder(big, Path(link_dir) / "images", link_mode)
     print(f"linked {n_images} images from {len(big)} folders into {merged}")
     return merged, small[0]
 
 
+def _file_sizes_by_folder(input_root: Path) -> dict[Path, list[int]]:
+    """Map each folder holding case files to the sizes of those files."""
+    by_dir: dict[Path, list[int]] = {}
+    for paths in manifest.find_case_files(input_root).values():
+        for path in paths:
+            by_dir.setdefault(path.parent, []).append(path.stat().st_size)
+    return by_dir
+
+
+def _link_into_one_folder(folders: list[Path], merged: Path, link_mode: str) -> Path:
+    """Link (or copy) the case files of several folders into ``merged``; a case found twice is an error."""
+    if merged.exists():
+        shutil.rmtree(merged)
+    for folder in folders:
+        for path in sorted(folder.iterdir()):
+            if not manifest.CASE_FILE_RE.match(path.name):
+                continue
+            if (merged / path.name).exists():
+                raise SystemExit(f"{path.name} appears in more than one image folder")
+            nnunet_export._place(path, merged / path.name, link_mode)
+    return merged
+
+
 def write_csv(path: Path, rows: list[dict]) -> None:
+    """Write rows of dicts to a CSV file, using the first row's keys as the header."""
     with open(path, "w", newline="", encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0]))
-        w.writeheader()
-        w.writerows(rows)
+        writer = csv.DictWriter(fh, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """Command-line options for this script."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--input-root", type=Path, help="auto-detect images/segmentation folders here")
+    parser.add_argument("--images-root", type=Path)
+    parser.add_argument("--segs-root", type=Path)
+    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--raw-root", type=Path, required=True)
+    parser.add_argument("--link-mode", choices=("symlink", "copy"), default="symlink")
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--subset", action="store_true",
+                        help="allow missing cases (local smoke test); never use for the real run")
+    parser.add_argument("--skip-hash", action="store_true", help="size check only (faster, weaker)")
+    return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--manifest", type=Path, required=True)
-    ap.add_argument("--input-root", type=Path, help="auto-detect images/segmentation folders here")
-    ap.add_argument("--images-root", type=Path)
-    ap.add_argument("--segs-root", type=Path)
-    ap.add_argument("--out-dir", type=Path, required=True)
-    ap.add_argument("--raw-root", type=Path, required=True)
-    ap.add_argument("--link-mode", choices=("symlink", "copy"), default="symlink")
-    ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--subset", action="store_true",
-                    help="allow missing cases (local smoke test); never use for the real run")
-    ap.add_argument("--skip-hash", action="store_true", help="size check only (faster, weaker)")
-    args = ap.parse_args(argv)
+    """Verify the files, measure each case, split once and build the nnU-Net raw dataset."""
+    parser = build_parser()
+    args = parser.parse_args(argv)
 
     t0 = time.time()
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -101,7 +120,7 @@ def main(argv: list[str] | None = None) -> int:
         images_root, segs_root = detect_roots(args.input_root, link_dir=args.raw_root.parent / "kits23_merged",
                                               link_mode=args.link_mode)
     else:
-        ap.error("give --input-root, or both --images-root and --segs-root")
+        parser.error("give --input-root, or both --images-root and --segs-root")
     print(f"images: {images_root}\nsegmentations: {segs_root}")
 
     # 1. Verify every file against the pinned manifest.
@@ -140,20 +159,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # 3. Split once, fingerprint, save.
     roles = split.make_split(rows, seed=args.seed)
-    record = {
-        "spec": "SPEC 002",
-        "dataset": "KiTS23 v0.1.4",
-        # Line endings normalized so Windows and Kaggle copies hash the same.
-        "manifest_sha256": hashlib.sha256(
-            args.manifest.read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
-        "seed": args.seed,
-        "fractions": {"train": 0.70, "val": 0.15, "test": 0.15},
-        "strata": "cohort | size_bin | cyst",
-        "size_bin_cuts_ml": list(cuts),
-        "fingerprint_sha256": split.fingerprint(roles),
-        "summary": split.summary(rows, roles),
-        "roles": roles,
-    }
+    record = split_record(args.manifest, args.seed, rows, roles, cuts)
     (args.out_dir / "split.json").write_text(json.dumps(record, indent=2), encoding="utf-8")
     (args.out_dir / "splits_final.json").write_text(
         json.dumps(split.nnunet_splits(roles), indent=2), encoding="utf-8")
@@ -164,6 +170,24 @@ def main(argv: list[str] | None = None) -> int:
     nnunet_export.check_no_test_leak(ds, roles)
     print(f"[4/4] nnU-Net raw dataset: {ds}  ({time.time() - t0:.0f}s total)")
     return 0
+
+
+def split_record(manifest_path: Path, seed: int, rows: list[dict], roles: dict, cuts: tuple) -> dict:
+    """The saved split: settings, fingerprint, per-role summary and the role of every case."""
+    return {
+        "spec": "SPEC 002",
+        "dataset": "KiTS23 v0.1.4",
+        # Line endings normalized so Windows and Kaggle copies hash the same.
+        "manifest_sha256": hashlib.sha256(
+            manifest_path.read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
+        "seed": seed,
+        "fractions": {"train": 0.70, "val": 0.15, "test": 0.15},
+        "strata": "cohort | size_bin | cyst",
+        "size_bin_cuts_ml": list(cuts),
+        "fingerprint_sha256": split.fingerprint(roles),
+        "summary": split.summary(rows, roles),
+        "roles": roles,
+    }
 
 
 if __name__ == "__main__":

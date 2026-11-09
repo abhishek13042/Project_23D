@@ -33,6 +33,7 @@ CROSSCHECK_TOL = 1e-3  # our Dice vs official Dice; larger means a geometry/orie
 
 
 def score_case(args: tuple) -> dict:
+    """Score one predicted case against its label; returns one per-case row."""
     case_id, pred_path, ref_path, use_official = args
     import nibabel as nib
 
@@ -60,6 +61,7 @@ def score_case(args: tuple) -> dict:
 
 
 def summarize(rows: list[dict], official: bool) -> dict:
+    """Turn per-case rows into the summary: means with 95% CIs per metric and region."""
     def col(key: str) -> list:
         return [r[key] for r in rows]
 
@@ -89,15 +91,16 @@ def summarize(rows: list[dict], official: bool) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--pred-dir", type=Path, required=True)
-    ap.add_argument("--segs-root", type=Path, required=True)
-    ap.add_argument("--split", type=Path, required=True)
-    ap.add_argument("--role", default="test", choices=("test", "val"))
-    ap.add_argument("--out-dir", type=Path, required=True)
-    ap.add_argument("--np", type=int, default=1, help="worker processes")
-    ap.add_argument("--no-official", action="store_true", help="local smoke test only")
-    args = ap.parse_args(argv)
+    """Score every prediction of one split role and write per-case and summary files."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--pred-dir", type=Path, required=True)
+    parser.add_argument("--segs-root", type=Path, required=True)
+    parser.add_argument("--split", type=Path, required=True)
+    parser.add_argument("--role", default="test", choices=("test", "val"))
+    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--np", type=int, default=1, help="worker processes")
+    parser.add_argument("--no-official", action="store_true", help="local smoke test only")
+    args = parser.parse_args(argv)
 
     roles = json.loads(args.split.read_text(encoding="utf-8"))["roles"]
     cases = sorted(c for c, r in roles.items() if r == args.role)

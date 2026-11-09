@@ -28,6 +28,7 @@ SOURCE_FILES = [
 
 
 def package(out_dir: Path) -> list[Path]:
+    """Copy the Space app and the library files it needs into ``out_dir``."""
     out_dir.mkdir(parents=True, exist_ok=True)
     copied = [Path(shutil.copy(ROOT / "apps" / "space" / name, out_dir)) for name in APP_FILES]
     for name in SOURCE_FILES:
@@ -38,9 +39,10 @@ def package(out_dir: Path) -> list[Path]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--out-dir", type=Path, required=True)
-    args = ap.parse_args(argv)
+    """Package the Hugging Face Space folder."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--out-dir", type=Path, required=True)
+    args = parser.parse_args(argv)
     print(f"wrote {len(package(args.out_dir))} files to {args.out_dir}")
     return 0
 

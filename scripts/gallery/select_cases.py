@@ -20,7 +20,7 @@ from pathlib import Path
 GROUP_SIZES = {"worst": 2, "best": 2, "median": 3, "small_tumor": 2, "with_cyst": 2}
 
 
-def _is_true(value) -> bool:
+def _is_true(value: object) -> bool:
     return str(value).strip().lower() in ("1", "true")
 
 
@@ -47,16 +47,18 @@ def select(per_case: list[dict], features: dict[str, dict]) -> list[dict]:
 
 
 def read_csv(path: Path) -> list[dict]:
+    """Read a CSV file into a list of dicts."""
     with open(path, newline="", encoding="utf-8") as fh:
         return list(csv.DictReader(fh))
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--per-case", type=Path, required=True)
-    ap.add_argument("--case-features", type=Path, required=True)
-    ap.add_argument("--out", type=Path, required=True)
-    args = ap.parse_args(argv)
+    """Pick the gallery cases and save them as JSON."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--per-case", type=Path, required=True)
+    parser.add_argument("--case-features", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
+    args = parser.parse_args(argv)
 
     features = {r["case_id"]: r for r in read_csv(args.case_features)}
     rows = select(read_csv(args.per_case), features)

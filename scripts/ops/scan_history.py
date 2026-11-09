@@ -33,6 +33,7 @@ SECRET_PATTERNS = {
 
 
 def path_problem(path: str, size: int) -> str | None:
+    """Why this file path must not be in git, or None if it is fine."""
     if path.lower().endswith(FORBIDDEN_SUFFIXES):
         return "data or weights file"
     if re.search(r"(^|/)\.env(\.(?!example$)[^/]+)?$", path):
@@ -45,10 +46,12 @@ def path_problem(path: str, size: int) -> str | None:
 
 
 def secret_problems(content: bytes) -> list[str]:
+    """Names of the secret patterns found in this file content."""
     return [name for name, pattern in SECRET_PATTERNS.items() if pattern.search(content)]
 
 
 def git(*args: str, stdin: bytes | None = None) -> bytes:
+    """Run a git command in the repo and return its output."""
     return subprocess.run(["git", *args], cwd=ROOT, input=stdin, capture_output=True, check=True).stdout
 
 
@@ -63,6 +66,7 @@ def history_blobs() -> dict[str, list[str]]:
 
 
 def scan() -> list[str]:
+    """Check every file ever committed and list the problems found."""
     blobs = history_blobs()
     query = "".join(f"{sha}\n" for sha in blobs).encode()
     out = git("cat-file", "--batch", stdin=query)
@@ -82,6 +86,7 @@ def scan() -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Scan the git history and exit with 1 if anything was found."""
     argparse.ArgumentParser(description=__doc__.splitlines()[0]).parse_args(argv)
     problems = scan()
     for problem in problems:

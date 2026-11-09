@@ -45,6 +45,7 @@ tags:
 
 
 def sha256(path: Path) -> str:
+    """SHA-256 of a file, read in 1 MB blocks."""
     digest = hashlib.sha256()
     with open(path, "rb") as fh:
         for block in iter(lambda: fh.read(1 << 20), b""):
@@ -59,6 +60,7 @@ def model_card_text(card: Path = MODEL_CARD) -> str:
 
 
 def export(trainer_dir: Path, out_dir: Path) -> dict:
+    """Copy the files the predictor needs into ``out_dir`` and write the model record."""
     sources = {"plans.json": trainer_dir / "plans.json", "dataset.json": trainer_dir / "dataset.json",
                f"fold_0/{CHECKPOINT}": trainer_dir / "fold_0" / CHECKPOINT, TRAINER_FILE: TRAINER_SOURCE}
     missing = [str(p) for p in sources.values() if not p.exists()]
@@ -85,10 +87,11 @@ def verify(out_dir: Path) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--trainer-dir", type=Path, required=True, help="folder holding plans.json and fold_0/")
-    ap.add_argument("--out-dir", type=Path, required=True)
-    args = ap.parse_args(argv)
+    """Export the trained model as a release folder."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--trainer-dir", type=Path, required=True, help="folder holding plans.json and fold_0/")
+    parser.add_argument("--out-dir", type=Path, required=True)
+    args = parser.parse_args(argv)
     try:
         record = export(args.trainer_dir, args.out_dir)
     except FileNotFoundError as exc:

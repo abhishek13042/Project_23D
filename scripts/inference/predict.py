@@ -13,24 +13,26 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from project3d.inference.predictor import InvalidInput, NnUNetModel, Options, Predictor
+from project3d.inference.predictor import InvalidInput, Model, NnUNetModel, Options, Predictor
 
 
-def main(argv: list[str] | None = None, model_factory=NnUNetModel) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--model-dir", type=Path, required=True)
-    ap.add_argument("--input", type=Path, required=True)
-    ap.add_argument("--output", type=Path, required=True)
-    ap.add_argument("--summary", type=Path, help="JSON summary (default: printed only)")
-    ap.add_argument("--no-tta", action="store_true", help="turn test-time augmentation off")
-    ap.add_argument("--tile-step", type=float, default=Options.tile_step)
-    ap.add_argument("--device", default=Options.device, choices=("cuda", "cpu"))
-    args = ap.parse_args(argv)
+def main(argv: list[str] | None = None, model_factory: Callable[..., Model] = NnUNetModel) -> int:
+    """Segment one CT scan and save the label map and a JSON summary."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--model-dir", type=Path, required=True)
+    parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--summary", type=Path, help="JSON summary (default: printed only)")
+    parser.add_argument("--no-tta", action="store_true", help="turn test-time augmentation off")
+    parser.add_argument("--tile-step", type=float, default=Options.tile_step)
+    parser.add_argument("--device", default=Options.device, choices=("cuda", "cpu"))
+    args = parser.parse_args(argv)
 
     options = Options(tta=not args.no_tta, tile_step=args.tile_step, device=args.device)
     predictor = Predictor(model_factory(args.model_dir, options), options)

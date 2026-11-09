@@ -17,14 +17,19 @@ import json
 import math
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
+import numpy.typing as npt
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
 from project3d.data import features, manifest
 from project3d.eval.metrics import REGIONS
+
+if TYPE_CHECKING:
+    from nibabel.spatialimages import SpatialImage
 
 MARGIN_MM = 15.0
 MAX_CASE_MB = 40  # the worst case is kept whatever its size; a false region makes its crop large
@@ -88,7 +93,7 @@ def crop_box(mask: np.ndarray, spacing: tuple, margin_mm: float = MARGIN_MM) -> 
     return tuple(box)
 
 
-def _save_crop(img, box: tuple[slice, ...], dtype, path: Path) -> None:
+def _save_crop(img: SpatialImage, box: tuple[slice, ...], dtype: npt.DTypeLike, path: Path) -> None:
     import nibabel as nib
 
     crop = img.slicer[box]  # updates the affine, so the crop stays in the right place in space
@@ -113,6 +118,7 @@ def case_meta(row: dict, group: str, shape: tuple, spacing: tuple) -> dict:
 
 
 def build_case(case: dict, row: dict, ct_path: Path, gt_path: Path, pred_path: Path, out_dir: Path) -> dict:
+    """Crop the CT, label and prediction around the kidneys and describe the case."""
     import nibabel as nib
 
     for other in (gt_path, pred_path):
@@ -139,14 +145,15 @@ def build_case(case: dict, row: dict, ct_path: Path, gt_path: Path, pred_path: P
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--cases", type=Path, required=True)
-    ap.add_argument("--per-case", type=Path, required=True)
-    ap.add_argument("--images-root", type=Path, required=True)
-    ap.add_argument("--segs-root", type=Path, required=True)
-    ap.add_argument("--pred-dir", type=Path, required=True)
-    ap.add_argument("--out-dir", type=Path, required=True)
-    args = ap.parse_args(argv)
+    """Build the gallery files for every selected case."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--cases", type=Path, required=True)
+    parser.add_argument("--per-case", type=Path, required=True)
+    parser.add_argument("--images-root", type=Path, required=True)
+    parser.add_argument("--segs-root", type=Path, required=True)
+    parser.add_argument("--pred-dir", type=Path, required=True)
+    parser.add_argument("--out-dir", type=Path, required=True)
+    args = parser.parse_args(argv)
 
     cases = json.loads(args.cases.read_text(encoding="utf-8"))
     with open(args.per_case, newline="", encoding="utf-8") as fh:

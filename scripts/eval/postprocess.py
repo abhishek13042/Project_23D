@@ -22,6 +22,7 @@ from project3d.eval.postprocess import keep_largest_regions
 
 
 def process_case(args: tuple[Path, Path]) -> str:
+    """Keep the largest connected regions in one prediction and save it."""
     src, dst = args
     import nibabel as nib
 
@@ -34,11 +35,12 @@ def process_case(args: tuple[Path, Path]) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--pred-dir", type=Path, required=True)
-    ap.add_argument("--out-dir", type=Path, required=True)
-    ap.add_argument("--np", type=int, default=1, help="worker processes")
-    args = ap.parse_args(argv)
+    """Post-process every prediction in a folder."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--pred-dir", type=Path, required=True)
+    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--np", type=int, default=1, help="worker processes")
+    args = parser.parse_args(argv)
 
     files = sorted(args.pred_dir.glob("case_*.nii.gz"))
     if not files:

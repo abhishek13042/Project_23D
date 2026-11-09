@@ -30,6 +30,7 @@ SUFFIXES = (".b2nd", "_seg.b2nd", ".pkl")
 
 
 def find_plans_dir(root: Path) -> Path:
+    """Find the one dataset folder that holds the nnU-Net plans and the shard plan."""
     hits = sorted(p.parent for p in root.rglob("shard_plan.json")
                   if p.parent.name == DATASET and (p.parent / "nnUNetPlans.json").exists())
     if len(hits) != 1:
@@ -38,42 +39,47 @@ def find_plans_dir(root: Path) -> Path:
 
 
 def is_done(out_dir: Path, case: str) -> bool:
+    """True when all preprocessed files for this case are already written."""
     return all((out_dir / f"{case}{s}").exists() for s in SUFFIXES)
 
 
 def preprocess_one(case: str, image: str, seg: str, plans_dir: Path, out_dir: Path) -> None:
+    """Preprocess one case with nnU-Net (runs inside its own child process)."""
     from batchgenerators.utilities.file_and_folder_operations import load_json
     from nnunetv2.utilities.plans_handling.plans_handler import PlansManager
 
-    pm = PlansManager(load_json(str(plans_dir / "nnUNetPlans.json")))
-    cm = pm.get_configuration(CONFIG)
-    pp = cm.preprocessor_class(verbose=False)
-    pp.run_case_save(str(out_dir / case), [image], seg, pm, cm, load_json(str(plans_dir / "dataset.json")))
+    plans = PlansManager(load_json(str(plans_dir / "nnUNetPlans.json")))
+    config = plans.get_configuration(CONFIG)
+    preprocessor = config.preprocessor_class(verbose=False)
+    preprocessor.run_case_save(str(out_dir / case), [image], seg, plans, config,
+                               load_json(str(plans_dir / "dataset.json")))
 
 
 def run_case(case: str, image: Path, seg: Path, plans_dir: Path, out_dir: Path) -> tuple[str, int, float]:
-    t = time.time()
+    """Preprocess one case in a child process; return (case, exit code, seconds)."""
+    start = time.time()
     code = subprocess.run([sys.executable, __file__, "--one", case, str(image), str(seg),
                            str(plans_dir), str(out_dir)]).returncode
     if code == 0 and not is_done(out_dir, case):
         code = -1
-    print(f"{case}: {'ok' if code == 0 else f'FAILED ({code})'} in {time.time() - t:.0f} s", flush=True)
-    return case, code, time.time() - t
+    print(f"{case}: {'ok' if code == 0 else f'FAILED ({code})'} in {time.time() - start:.0f} s", flush=True)
+    return case, code, time.time() - start
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Preprocess every case of one shard, retrying failures one at a time."""
     if argv is None and len(sys.argv) > 1 and sys.argv[1] == "--one":
         case, image, seg, plans_dir, out_dir = sys.argv[2:7]
         preprocess_one(case, image, seg, Path(plans_dir), Path(out_dir))
         return 0
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--input-root", type=Path, required=True)
-    ap.add_argument("--shard", type=int, required=True, help="1-based")
-    ap.add_argument("--out-dir", type=Path, required=True)
-    ap.add_argument("--record", type=Path, required=True)
-    ap.add_argument("--workers", type=int, default=2)
-    ap.add_argument("--link-dir", type=Path, default=Path("/tmp/kits23_merged"))
-    args = ap.parse_args(argv)
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--input-root", type=Path, required=True)
+    parser.add_argument("--shard", type=int, required=True, help="1-based")
+    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--record", type=Path, required=True)
+    parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--link-dir", type=Path, default=Path("/tmp/kits23_merged"))
+    args = parser.parse_args(argv)
     t0 = time.time()
 
     plans_dir = find_plans_dir(args.input_root)
@@ -86,15 +92,15 @@ def main(argv: list[str] | None = None) -> int:
     print(f"shard {args.shard}/{plan['n_shards']}: {len(cases)} cases, {len(todo)} to do, "
           f"{args.workers} workers", flush=True)
 
-    def job(c):
-        return run_case(c, images[c][0], segs[c][0], plans_dir, args.out_dir)
+    def job(case: str) -> tuple[str, int, float]:
+        return run_case(case, images[case][0], segs[case][0], plans_dir, args.out_dir)
 
     with ThreadPoolExecutor(args.workers) as ex:
         results = list(ex.map(job, todo))
     retry = [c for c, code, _ in results if code != 0]
     if retry:
         print(f"retrying {len(retry)} failed case(s) one at a time: {retry}", flush=True)
-        results += [job(c) for c in retry]
+        results += [job(case) for case in retry]
     failed = [c for c in cases if not is_done(args.out_dir, c)]
     secs = [s for _, code, s in results if code == 0]
     size_gb = sum(f.stat().st_size for f in args.out_dir.iterdir()) / 1e9

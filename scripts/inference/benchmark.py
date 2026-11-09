@@ -56,6 +56,7 @@ def label_dice(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def summarize(name: str, options: Options, rows: list[dict], peak_gpu_gb: float, peak_cpu_gb: float) -> dict:
+    """Summarize one setting: speed, Dice and peak memory over its cases."""
     seconds = [r["seconds"] for r in rows]
     return {"setting": name, "tta": options.tta, "tile_step": options.tile_step, "n_cases": len(rows),
             "seconds_per_case_mean": round(statistics.mean(seconds), 1),
@@ -66,6 +67,7 @@ def summarize(name: str, options: Options, rows: list[dict], peak_gpu_gb: float,
 
 
 def run_setting(name: str, args: argparse.Namespace, cases: list[str]) -> dict:
+    """Predict and score the benchmark cases with one setting."""
     import resource
 
     import evaluate
@@ -101,16 +103,17 @@ def run_setting(name: str, args: argparse.Namespace, cases: list[str]) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--model-dir", type=Path, required=True)
-    ap.add_argument("--images-root", type=Path, required=True)
-    ap.add_argument("--segs-root", type=Path, required=True)
-    ap.add_argument("--split", type=Path, required=True)
-    ap.add_argument("--training-validation", type=Path, help="SPEC 003 fold_0/validation folder")
-    ap.add_argument("--n-cases", type=int, default=N_CASES)
-    ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--only", choices=list(SETTINGS), help=argparse.SUPPRESS)  # one setting, one process
-    args = ap.parse_args(argv)
+    """Run every benchmark setting, each in its own process, and save the results."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--model-dir", type=Path, required=True)
+    parser.add_argument("--images-root", type=Path, required=True)
+    parser.add_argument("--segs-root", type=Path, required=True)
+    parser.add_argument("--split", type=Path, required=True)
+    parser.add_argument("--training-validation", type=Path, help="SPEC 003 fold_0/validation folder")
+    parser.add_argument("--n-cases", type=int, default=N_CASES)
+    parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--only", choices=list(SETTINGS), help=argparse.SUPPRESS)  # one setting, one process
+    args = parser.parse_args(argv)
 
     split = json.loads(args.split.read_text(encoding="utf-8"))
     cases = choose_cases(split["roles"], args.n_cases)

@@ -28,19 +28,21 @@ from project3d.eval import analysis, figures
 
 
 def read_csv(path: Path) -> list[dict]:
+    """Read a CSV file into a list of dicts."""
     with open(path, newline="", encoding="utf-8") as fh:
         return list(csv.DictReader(fh))
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--per-case", type=Path, required=True)
-    ap.add_argument("--case-features", type=Path, required=True)
-    ap.add_argument("--out-dir", type=Path, required=True)
-    ap.add_argument("--images-root", type=Path, help="needed for overlay figures")
-    ap.add_argument("--segs-root", type=Path)
-    ap.add_argument("--pred-dir", type=Path)
-    args = ap.parse_args(argv)
+    """Join per-case scores with case features and write the case analysis."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--per-case", type=Path, required=True)
+    parser.add_argument("--case-features", type=Path, required=True)
+    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--images-root", type=Path, help="needed for overlay figures")
+    parser.add_argument("--segs-root", type=Path)
+    parser.add_argument("--pred-dir", type=Path)
+    args = parser.parse_args(argv)
 
     rows = analysis.join_rows(read_csv(args.per_case), read_csv(args.case_features))
     result = analysis.analyse(rows)

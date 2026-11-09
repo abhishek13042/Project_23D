@@ -25,6 +25,7 @@ TIMEOUT_SECONDS = 30
 
 
 def targets(site: str, gallery: str, case_ids: list[str]) -> list[str]:
+    """Every URL the health check should reach: site pages, case pages and gallery files."""
     site, gallery = site.rstrip("/"), gallery.rstrip("/")
     urls = [f"{site}/{page}" for page in PAGES]
     urls += [f"{site}/case/{case_id}" for case_id in case_ids]
@@ -34,6 +35,7 @@ def targets(site: str, gallery: str, case_ids: list[str]) -> list[str]:
 
 
 def status_of(url: str) -> int:
+    """HTTP status of a HEAD request to the URL, or 0 if it could not be reached."""
     request = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "project-23d-health-check"})
     try:
         with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
@@ -45,15 +47,17 @@ def status_of(url: str) -> int:
 
 
 def failures(urls: list[str], check: Callable[[str], int] = status_of) -> list[tuple[str, int]]:
+    """The URLs that did not answer 200, with their status."""
     results = [(url, check(url)) for url in urls]
     return [(url, status) for url, status in results if status != 200]
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--site", required=True)
-    ap.add_argument("--gallery", default="")
-    args = ap.parse_args(argv)
+    """Check every URL and exit with 1 if any failed."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--site", required=True)
+    parser.add_argument("--gallery", default="")
+    args = parser.parse_args(argv)
     case_ids = [case["case_id"] for case in json.loads(GALLERY_INDEX.read_text(encoding="utf-8"))]
     urls = targets(args.site, args.gallery, case_ids)
     bad = failures(urls)

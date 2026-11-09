@@ -37,6 +37,7 @@ SESSIONS_FILE = "project23d_sessions.json"
 
 
 def trainer_dir_name(trainer: str) -> str:
+    """nnU-Net's results folder name for this trainer."""
     return f"{trainer}__nnUNetPlans__{CONFIG}"
 
 
@@ -86,6 +87,7 @@ def find_previous(root: Path, trainer: str) -> Path | None:
 
 
 def state(fold_dir: Path) -> str:
+    """Where training stands: new, resume, validate or done."""
     if (fold_dir / "checkpoint_final.pth").exists():
         return "done" if (fold_dir / "validation" / "summary.json").exists() else "validate"
     if (fold_dir / "checkpoint_latest.pth").exists():
@@ -94,6 +96,7 @@ def state(fold_dir: Path) -> str:
 
 
 def checkpoint_epoch(fold_dir: Path) -> int:
+    """Epochs completed according to the newest checkpoint, or 0."""
     for name in ("checkpoint_final.pth", "checkpoint_latest.pth"):
         if (fold_dir / name).exists():
             import torch
@@ -135,7 +138,7 @@ def parse_log(text: str) -> list[dict]:
 
 def stop(proc: subprocess.Popen, grace: float = 60) -> None:
     """Stop the trainer and its data-augmentation workers."""
-    def signal_all(sig):
+    def signal_all(sig: int) -> None:
         if os.name == "posix":
             os.killpg(proc.pid, sig)
         else:
@@ -161,15 +164,16 @@ def run_with_budget(cmd: list[str], seconds: float) -> tuple[int | None, bool]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--input-root", type=Path, required=True)
-    ap.add_argument("--preprocessed-root", type=Path, required=True)
-    ap.add_argument("--results-root", type=Path, required=True)
-    ap.add_argument("--trainer", required=True)
-    ap.add_argument("--budget-hours", type=float, required=True)
-    ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--gpu", default="unknown")
-    args = ap.parse_args(argv)
+    """Train (or resume) within the time budget and write the run record."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--input-root", type=Path, required=True)
+    parser.add_argument("--preprocessed-root", type=Path, required=True)
+    parser.add_argument("--results-root", type=Path, required=True)
+    parser.add_argument("--trainer", required=True)
+    parser.add_argument("--budget-hours", type=float, required=True)
+    parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--gpu", default="unknown")
+    args = parser.parse_args(argv)
     t0 = time.time()
 
     pre = args.preprocessed_root / DATASET
@@ -197,29 +201,10 @@ def main(argv: list[str] | None = None) -> int:
 
     after, end_epoch = state(fold), checkpoint_epoch(fold)
     hours = (time.time() - t0) / 3600
-    sessions_path = trainer_dir / SESSIONS_FILE
-    sessions = json.loads(sessions_path.read_text()) if sessions_path.exists() else []
-    sessions.append({"session": len(sessions) + 1, "gpu": args.gpu, "hours": round(hours, 2),
-                     "state_before": before, "state_after": after, "start_epoch": start_epoch,
-                     "end_epoch": end_epoch, "stopped_by_budget": stopped, "exit_code": code})
-    trainer_dir.mkdir(parents=True, exist_ok=True)
-    sessions_path.write_text(json.dumps(sessions, indent=2))
-
-    epochs = []
-    for log in sorted(fold.glob("training_log_*.txt")):
-        epochs += parse_log(log.read_text(encoding="utf-8", errors="replace"))
-    secs = [e["seconds"] for e in epochs]
-    summary = fold / "validation" / "summary.json"
-    val_dice = json.loads(summary.read_text())["foreground_mean"]["Dice"] if summary.exists() else None
-    record = {
-        "spec": "SPEC 003", "trainer": args.trainer, "configuration": CONFIG, "fold": FOLD,
-        "gpu": args.gpu, "sessions": len(sessions),
-        "train_hours_total": round(sum(s["hours"] for s in sessions), 2),
-        "epochs_done": end_epoch, "state": after,
-        "mean_epoch_seconds": round(sum(secs) / len(secs), 1) if secs else None,
-        "last_pseudo_dice": next((e.get("pseudo_dice") for e in reversed(epochs)), None),
-        "fold0_validation_dice": None if val_dice is None else round(val_dice, 4),
-    }
+    sessions = log_session(trainer_dir, {
+        "gpu": args.gpu, "hours": round(hours, 2), "state_before": before, "state_after": after,
+        "start_epoch": start_epoch, "end_epoch": end_epoch, "stopped_by_budget": stopped, "exit_code": code})
+    record = run_record(args.trainer, args.gpu, fold, sessions, end_epoch, after)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(record, indent=2))
     print(json.dumps(record, indent=1))
@@ -231,6 +216,35 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print("NOT FINISHED: attach this notebook's output to the next training session.")
     return 0
+
+
+def log_session(trainer_dir: Path, session: dict) -> list[dict]:
+    """Append this session to the trainer folder's session log and return the whole log."""
+    sessions_path = trainer_dir / SESSIONS_FILE
+    sessions = json.loads(sessions_path.read_text()) if sessions_path.exists() else []
+    sessions.append({"session": len(sessions) + 1, **session})
+    trainer_dir.mkdir(parents=True, exist_ok=True)
+    sessions_path.write_text(json.dumps(sessions, indent=2))
+    return sessions
+
+
+def run_record(trainer: str, gpu: str, fold: Path, sessions: list[dict], end_epoch: int, after: str) -> dict:
+    """Summarize the training run so far: hours, epochs, speed and the latest Dice scores."""
+    epochs = []
+    for log in sorted(fold.glob("training_log_*.txt")):
+        epochs += parse_log(log.read_text(encoding="utf-8", errors="replace"))
+    secs = [e["seconds"] for e in epochs]
+    summary = fold / "validation" / "summary.json"
+    val_dice = json.loads(summary.read_text())["foreground_mean"]["Dice"] if summary.exists() else None
+    return {
+        "spec": "SPEC 003", "trainer": trainer, "configuration": CONFIG, "fold": FOLD,
+        "gpu": gpu, "sessions": len(sessions),
+        "train_hours_total": round(sum(s["hours"] for s in sessions), 2),
+        "epochs_done": end_epoch, "state": after,
+        "mean_epoch_seconds": round(sum(secs) / len(secs), 1) if secs else None,
+        "last_pseudo_dice": next((e.get("pseudo_dice") for e in reversed(epochs)), None),
+        "fold0_validation_dice": None if val_dice is None else round(val_dice, 4),
+    }
 
 
 if __name__ == "__main__":
