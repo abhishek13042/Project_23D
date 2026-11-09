@@ -7,11 +7,14 @@ set with the official KiTS23 evaluator.
 
 **Research and portfolio project. Not a medical device. Not for clinical use.**
 
-![The demo website: a map of the 73 test scans by tumor size, kidney size and score, then the results and gallery pages](docs/media/demo.gif)
-
-The live site link will go here once it is deployed.
-
-## Status
+```text
+KiTS23 CT scans
+  → checks every file against its checksum
+  → splits by case, seed 42, with 73 test cases locked away
+  → nnU-Net v2 trains one 3D U-Net on Kaggle's free GPU
+  → scored once with the official KiTS23 evaluator, with 95% confidence intervals
+  → case analysis: which tumors it finds, and where it fails
+```
 
 | Stage | State |
 |---|---|
@@ -37,30 +40,12 @@ The model is strong on kidneys and on large tumors, and weak on small tumors and
 results are in [reports/evaluation/results.md](reports/evaluation/results.md), and the current
 state is in [docs/status.md](docs/status.md).
 
-## How it works
+## Demo
 
-```text
-KiTS23 CT scans
-  → checks every file against its checksum
-  → splits by case, seed 42, with 73 test cases locked away
-  → nnU-Net v2 trains one 3D U-Net on Kaggle's free GPU
-  → scored once with the official KiTS23 evaluator, with 95% confidence intervals
-  → case analysis: which tumors it finds, and where it fails
-```
+![The demo website: a map of the 73 test scans by tumor size, kidney size and score, then the results and gallery pages](docs/media/demo.gif)
 
-## Repository layout
-
-```text
-src/project3d/      Library code: data, evaluation, training
-scripts/            Command-line entry points, one folder per stage
-  notebooks/        Generators for the Kaggle notebooks
-notebooks/          Generated Kaggle notebooks (do not edit by hand)
-tests/              Pytest suite, mirrors src/ and scripts/
-data/sources/       Pinned file lists and checksums (the data itself is not in git)
-reports/            Run records and generated results
-docs/               Documentation, start at docs/README.md
-specs/              What each stage must deliver, one spec per stage
-```
+The live site link will go here once it is deployed. To run the site locally, see
+[apps/web/README.md](apps/web/README.md).
 
 ## Quick start
 
@@ -72,10 +57,28 @@ python -m venv .venv
 .venv/Scripts/python -m pytest -q
 ```
 
+On macOS or Linux, use `.venv/bin/python` instead of `.venv/Scripts/python`.
+
 To run the full pipeline, follow [docs/reproduce.md](docs/reproduce.md). Everything heavy
 runs on Kaggle's free tier.
 
-## Documentation
+## Repository map
+
+```text
+src/project3d/      Library code: data, evaluation, inference, training
+scripts/            Command-line entry points, one folder per stage
+  notebooks/        Generators for the Kaggle notebooks
+notebooks/          Generated Kaggle notebooks (do not edit by hand)
+apps/web/           The demo website (Next.js)
+apps/space/         The live model demo (Gradio on Hugging Face Spaces)
+tests/              Pytest suite, mirrors src/ and scripts/
+data/sources/       Pinned file lists and checksums (the data itself is not in git)
+reports/            Run records and generated results
+docs/               Documentation, start at docs/README.md
+specs/              What each stage must deliver, one spec per stage
+```
+
+Each main folder has its own README. The most useful documents:
 
 - [docs/README.md](docs/README.md): index of all documents
 - [docs/project-overview.md](docs/project-overview.md): the problem and the scope
