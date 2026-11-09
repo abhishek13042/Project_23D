@@ -23,8 +23,8 @@ Do these in order. Each one leaves the site working.
    the license. Then replace the model repository's `README.md` with
    [model_card.md](../reports/release/model_card.md). It adds the benchmark, which didn't exist when
    the package was built, so `checksums.json` lists the older README. The other files are unchanged.
-3. **Neon.** Create a project without a card and run `apps/web/src/db/schema.sql` once in its SQL
-   editor.
+3. **Neon (skip at launch).** The database only stores live upload runs and ratings, so it waits for
+   the Space (D-023). When needed, create a project without a card and run `apps/web/src/db/schema.sql`.
 4. **Vercel.** Import the repository on the Hobby plan with these settings:
    - Root directory: `apps/web`.
    - Include files outside the root directory: **on**. The build reads `../../reports`.

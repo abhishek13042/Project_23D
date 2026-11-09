@@ -289,5 +289,7 @@
 - **Kept:** The Space app in `apps/space/` and its tests. Turning it on later only needs a Space
   ID, through PRO or a Hugging Face community grant (see
   [operations.md](operations.md#first-launch), step 6).
+- **Database:** Neon is skipped too. It only stores live upload runs and ratings, and the site
+  works without `DATABASE_URL`: the run statistics on the Results page stay hidden.
 - **Limits:** Visitors need their own free Kaggle or Colab account to run the model. The ZeroGPU
   questions in [zerogpu_spike.md](../reports/release/zerogpu_spike.md) stay unmeasured.

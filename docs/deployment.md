@@ -23,7 +23,7 @@ Browser
 | 3D viewer | NiiVue, in the browser | Renders on the visitor's GPU, so it costs no server |
 | Sample cases and weights | Hugging Face repos | Free for public repos |
 | Live inference | Hugging Face ZeroGPU Space | The only free GPU found with no card |
-| Database | Neon Postgres Free | No card, scales to zero |
+| Database | Neon Postgres Free, only with live upload | Not used at launch (D-023) |
 
 ## Three levels, so it never goes fully dark
 
@@ -66,7 +66,7 @@ into chat or git.
 |---|---|
 | **Create and verify a Hugging Face account** | **Now**: the 30-day clock starts at account creation |
 | Create an empty public GitHub repository and send its URL | Before SPEC 012, ideally now |
-| Create Vercel and Neon accounts | At SPEC 011 |
+| Create a Vercel account (Neon only with live upload) | At SPEC 011 |
 
 ## Rules for the public demo
 
