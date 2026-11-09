@@ -1,6 +1,6 @@
 // SPEC 010 and 011: read the answers of the /segment endpoint on the Hugging Face Space.
 
-export type SpaceCode = "INVALID_INPUT" | "QUOTA_EXCEEDED" | "BUSY" | "FAILED";
+type SpaceCode = "INVALID_INPUT" | "QUOTA_EXCEEDED" | "BUSY" | "FAILED";
 export type SpaceFailure = { code: SpaceCode; message: string };
 
 export type SpaceSummary = {

@@ -3,7 +3,7 @@ import { contours } from "d3-contour";
 // SPEC 013: the score terrain. Spot heights are real; the surface between them is smoothed.
 
 export type Scan = { case_id: string; mean_dice: number; tumor_ml: number; kidney_ml: number };
-export type Ring = [number, number][];
+type Ring = [number, number][];
 export type Tick = { value: number; at: number };
 
 export const LEVELS = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];

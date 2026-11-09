@@ -10,7 +10,7 @@ export type Store = {
   stats(): Promise<Stats>;
 };
 
-export type Reply = { status: number; body: Record<string, unknown> };
+type Reply = { status: number; body: Record<string, unknown> };
 
 const INVALID: Reply = { status: 400, body: { error: "invalid input" } };
 const TOO_LARGE: Reply = { status: 413, body: { error: "too large" } };

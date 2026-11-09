@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { DISCLAIMER, LABELS } from "@/lib/site";
 
 export type Volume = { url: string; name: string };
-export type Layer = Volume & { id: string; label: string };
+type Layer = Volume & { id: string; label: string };
 
 type Phase = "idle" | "loading" | "ready" | "failed" | "no-webgl";
 type Controller = { setLayer: (index: number, opacity: number) => void; stop: () => void };

@@ -303,10 +303,6 @@ section + section,
   align-items: end;
 }
 
-.sheet-head .back {
-  margin-bottom: 14px;
-}
-
 .index-map figcaption {
   margin-top: 8px;
   font: italic 400 0.98rem/1.4 var(--note);

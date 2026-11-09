@@ -1,7 +1,6 @@
 import generated from "@/data/results.json";
 
 export const results = generated;
-export type GalleryCase = (typeof generated.gallery)[number];
 
 export const GROUPS = [
   { id: "worst", title: "Where it failed", note: "The lowest scores on the test set. They come first on purpose." },
