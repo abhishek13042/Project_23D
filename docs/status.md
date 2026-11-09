@@ -6,7 +6,7 @@ Last updated: 2026-11-09.
 
 | Spec | Stage | State |
 |---|---|---|
-| 001 | Foundation | Done. The GitHub remote is still missing (SPEC 012) |
+| 001 | Foundation | Done. Public at github.com/abhishek13042/Project_23D |
 | 002 | Data pipeline | Done. 414 of 414 train and validation cases preprocessed on Kaggle |
 | 003 | Training | Done. 100 epochs, all 73 validation cases scored |
 | 004 | Evaluation | Done. Test mean Dice 0.722 |
@@ -17,7 +17,7 @@ Last updated: 2026-11-09.
 | 009 | Demo gallery | Done. 11 cases built. The upload to Hugging Face waits on the owner |
 | 010 | Inference service | Code done. The Hugging Face account is now old enough; the ZeroGPU test is next |
 | 011 | Website and database | Code done. Runs locally. Needs Vercel and Neon |
-| 012 | Deployment and CI | Code done. Needs the GitHub repository, then [operations.md](operations.md) |
+| 012 | Deployment and CI | Code done. Pushed to GitHub; next steps in [operations.md](operations.md) |
 | 013 | Frontend design | Code done. The survey-sheet look is on all six pages. See [DESIGN.md](../DESIGN.md) |
 
 ## Training result
@@ -60,7 +60,7 @@ Scored once on the 73 test cases (`reports/evaluation/results.md`), 6.22 GPU hou
 ## What the owner needs to do
 
 See [deployment.md](deployment.md#what-only-the-owner-can-do). The Hugging Face account is now
-older than 30 days, so live upload no longer has to wait. Next: push to GitHub and log in to `hf`.
+older than 30 days, so live upload no longer has to wait. Next: log in to `hf` and upload the model.
 
 ## Decisions in force
 
