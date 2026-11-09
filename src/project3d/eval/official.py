@@ -22,13 +22,14 @@ def check_config() -> None:
 
 
 def official_case(pred_path: str, ref_path: str) -> dict:
+    """Official Dice and surface Dice for one case, as ``<region>_dice_official`` and ``_sd_official``."""
     from kits23.evaluation.metrics import compute_metrics_for_case
 
-    m = compute_metrics_for_case(str(pred_path), str(ref_path))
+    scores = compute_metrics_for_case(str(pred_path), str(ref_path))
     out = {}
     for i, name in enumerate(HECS):
-        out[f"{name}_dice_official"] = float(m[i, 0])
-        out[f"{name}_sd_official"] = float(m[i, 1])
+        out[f"{name}_dice_official"] = float(scores[i, 0])
+        out[f"{name}_sd_official"] = float(scores[i, 1])
     return out
 
 

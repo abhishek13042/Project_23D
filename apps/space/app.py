@@ -22,6 +22,7 @@ QUEUE_SIZE = 8
 
 
 def load_model() -> NnUNetModel:
+    """Download the released model from Hugging Face and load it."""
     return NnUNetModel(snapshot_download(MODEL_REPO), service.OPTIONS)
 
 
@@ -29,15 +30,17 @@ MODEL = load_model() if MODEL_REPO else None
 
 
 def duration(path: str, out_dir: str) -> int:
+    """GPU seconds to ask ZeroGPU for, based on the scan size."""
     return service.gpu_seconds(path)
 
 
 @spaces.GPU(duration=duration)
-def run_on_gpu(path: str, out_dir: str):
+def run_on_gpu(path: str, out_dir: str) -> tuple[Path, dict]:
+    """Segment the scan on the GPU that ZeroGPU lends for this call."""
     return service.segment_file(MODEL, path, out_dir)
 
 
-def segment(path: str | None):
+def segment(path: str | None) -> tuple[str, dict]:
     """Check the upload with no GPU, then run the model. Returns the labels and a JSON summary."""
     if path is None:
         raise gr.Error(f"{service.INVALID}: Please choose a file.")

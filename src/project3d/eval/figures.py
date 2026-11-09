@@ -66,6 +66,7 @@ def overlay_figure(image: np.ndarray, ref: np.ndarray, pred: np.ndarray,
 
 def boxplot_by_group(rows: list[dict], factor: str, metric: str, order: list[str],
                      out_path: Path) -> Path:
+    """Box plot of ``metric`` per group of ``factor``, with the group sizes on the axis."""
     import matplotlib
 
     matplotlib.use("Agg")

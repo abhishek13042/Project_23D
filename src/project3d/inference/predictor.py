@@ -11,12 +11,15 @@ from __future__ import annotations
 import shutil
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 import numpy as np
 
 from project3d.data import features
 from project3d.eval.postprocess import keep_largest_regions
+
+if TYPE_CHECKING:
+    from nibabel.spatialimages import SpatialImage
 
 CHECKPOINT = "checkpoint_final.pth"
 TRAINER_FILE = "project23d_trainer.py"  # the name it gets inside nnU-Net's package
@@ -43,9 +46,19 @@ class Options:
 
 
 class Model(Protocol):
-    def read(self, path: Path) -> tuple[np.ndarray, dict]: ...
-    def predict(self, data: np.ndarray, properties: dict) -> np.ndarray: ...
-    def write(self, seg: np.ndarray, path: Path, properties: dict) -> None: ...
+    """What ``Predictor`` needs from a model. Tests use a fake one."""
+
+    def read(self, path: Path) -> tuple[np.ndarray, dict]:
+        """Load a scan as the model expects it, with its geometry properties."""
+        ...
+
+    def predict(self, data: np.ndarray, properties: dict) -> np.ndarray:
+        """Return the label map for a loaded scan."""
+        ...
+
+    def write(self, seg: np.ndarray, path: Path, properties: dict) -> None:
+        """Save a label map with the geometry of the original scan."""
+        ...
 
 
 def check_header(shape: tuple, spacing: tuple, max_voxels: int = MAX_VOXELS) -> None:
@@ -61,7 +74,7 @@ def check_header(shape: tuple, spacing: tuple, max_voxels: int = MAX_VOXELS) -> 
         raise InvalidInput(f"This scan has {voxels:,} voxels; the limit is {max_voxels:,}.")
 
 
-def load_checked(path: str | Path, max_voxels: int = MAX_VOXELS):
+def load_checked(path: str | Path, max_voxels: int = MAX_VOXELS) -> SpatialImage:
     """Open a NIfTI file and check its header. Voxel data is not read."""
     import nibabel as nib
 
@@ -80,6 +93,8 @@ def region_volumes(seg: np.ndarray, spacing: tuple) -> dict[str, float]:
 
 
 class Predictor:
+    """Runs a model on one scan with the same checks and post-processing for every caller."""
+
     def __init__(self, model: Model, options: Options | None = None):
         self.model = model
         self.options = options or Options()
@@ -133,11 +148,14 @@ class NnUNetModel:
         self.io = self.predictor.plans_manager.image_reader_writer_class()
 
     def read(self, path: Path) -> tuple[np.ndarray, dict]:
+        """Load a scan with the reader nnU-Net used in training."""
         return self.io.read_images([str(path)])
 
     def predict(self, data: np.ndarray, properties: dict) -> np.ndarray:
+        """Run the network on one loaded scan."""
         # runs in this process: nnU-Net's worker processes can't be used inside a ZeroGPU call
         return self.predictor.predict_single_npy_array(data, properties)
 
     def write(self, seg: np.ndarray, path: Path, properties: dict) -> None:
+        """Save the labels in the scan's original geometry."""
         self.io.write_seg(seg, str(path), properties)

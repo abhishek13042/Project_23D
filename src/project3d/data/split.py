@@ -20,6 +20,7 @@ ROLES = ("train", "val", "test")
 
 
 def stratum_key(row: dict) -> str:
+    """The stratum a case belongs to, e.g. ``kits23|small|nocyst``."""
     return f"{row['cohort']}|{row['size_bin']}|{'cyst' if row['has_cyst'] else 'nocyst'}"
 
 

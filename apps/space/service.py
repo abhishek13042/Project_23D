@@ -9,7 +9,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
-from project3d.inference.predictor import InvalidInput, Options, Predictor, load_checked
+from project3d.inference.predictor import InvalidInput, Model, Options, Predictor, load_checked
 
 DISCLAIMER = "Research demo, not for clinical use"
 RESULT_NAME = "segmentation.nii.gz"
@@ -64,7 +64,7 @@ def gpu_seconds(path: str | Path) -> int:
     return int(min(max(wanted, MIN_GPU_SECONDS), MAX_GPU_SECONDS))
 
 
-def segment_file(model, path: str | Path, out_dir: str | Path, options: Options = OPTIONS) -> tuple[Path, dict]:
+def segment_file(model: Model, path: str | Path, out_dir: str | Path, options: Options = OPTIONS) -> tuple[Path, dict]:
     """Segment one scan. The JSON summary holds no file name, so the website may store it."""
     dst = Path(out_dir) / RESULT_NAME
     summary = Predictor(model, options).predict_file(path, dst)

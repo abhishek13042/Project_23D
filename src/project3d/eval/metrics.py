@@ -21,6 +21,7 @@ SD_TOLERANCES_MM = {"kidney_and_mass": 1.0330772532390826, "mass": 1.13287964885
 
 
 def region_mask(seg: np.ndarray, labels: tuple[int, ...]) -> np.ndarray:
+    """Boolean mask of the voxels whose label is in ``labels``."""
     return np.isin(seg, labels)
 
 

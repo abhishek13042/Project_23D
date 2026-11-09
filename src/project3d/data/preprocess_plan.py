@@ -45,6 +45,7 @@ def select_cases(roles: dict[str, str], mvox: dict[str, float],
 
 
 def filter_splits(splits: list[dict[str, list[str]]], excluded: list[str]) -> list[dict[str, list[str]]]:
+    """Remove the excluded cases from every fold of nnU-Net's splits."""
     drop = set(excluded)
     return [{k: [c for c in v if c not in drop] for k, v in fold.items()} for fold in splits]
 
@@ -52,18 +53,20 @@ def filter_splits(splits: list[dict[str, list[str]]], excluded: list[str]) -> li
 def plan_shards(cases: list[str], mvox: dict[str, float], n_shards: int) -> list[list[str]]:
     """Contiguous groups of sorted case IDs with about equal total voxels."""
     cases = sorted(cases)
-    total = sum(mvox[c] for c in cases)
+    total = sum(mvox[case] for case in cases)
     shards: list[list[str]] = [[] for _ in range(n_shards)]
     done = 0.0
-    for c in cases:
-        k = min(int((done + mvox[c] / 2) / total * n_shards), n_shards - 1)
-        shards[k].append(c)
-        done += mvox[c]
+    for case in cases:
+        # The shard whose share of the total voxels contains this case's midpoint.
+        shard = min(int((done + mvox[case] / 2) / total * n_shards), n_shards - 1)
+        shards[shard].append(case)
+        done += mvox[case]
     return shards
 
 
 def write_plan(path: Path, roles: dict[str, str], mvox: dict[str, float], n_shards: int,
                max_mvox: float = MAX_MVOX) -> dict:
+    """Choose the cases, split them into shards and save the plan as JSON."""
     keep, excluded = select_cases(roles, mvox, max_mvox)
     plan = {
         "max_mvox": max_mvox, "n_shards": n_shards,

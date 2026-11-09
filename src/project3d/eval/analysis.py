@@ -8,6 +8,7 @@ made (docs/evaluation.md, statistical reporting).
 from __future__ import annotations
 
 import numpy as np
+import numpy.typing as npt
 from scipy import stats as sps
 
 from .stats import bootstrap_ci, describe
@@ -17,15 +18,17 @@ METRICS = ["mean_dice", "mean_sd", "kidney_and_mass_dice", "mass_dice", "tumor_d
 FACTORS = ["size_bin", "has_cyst", "cohort", "fg_volume_quartile"]
 
 
-def _num(v) -> float:
+def _num(value: object) -> float:
+    """The value as a float, or NaN when it is blank or not a number."""
     try:
-        return float(v)
+        return float(value)
     except (TypeError, ValueError):
         return float("nan")
 
 
-def _truthy(v) -> bool:
-    return str(v).strip().lower() in ("true", "1")
+def _truthy(value: object) -> bool:
+    """True for the CSV spellings ``True`` and ``1``."""
+    return str(value).strip().lower() in ("true", "1")
 
 
 def join_rows(per_case: list[dict], case_features: list[dict]) -> list[dict]:
@@ -33,18 +36,18 @@ def join_rows(per_case: list[dict], case_features: list[dict]) -> list[dict]:
 
     ``tumor_dice`` etc. prefer the official columns when present.
     """
-    feats = {r["case_id"]: r for r in case_features}
+    features_by_case = {r["case_id"]: r for r in case_features}
     rows = []
-    for pc in per_case:
-        f = feats[pc["case_id"]]
-        row = {"case_id": pc["case_id"], "cohort": f["cohort"], "size_bin": f["size_bin"],
-               "has_cyst": _truthy(f["has_cyst"]), "has_tumor": _truthy(f["has_tumor"]),
-               "tumor_ml": _num(f["tumor_ml"]),
-               "fg_ml": _num(f["kidney_ml"]) + _num(f["tumor_ml"]) + _num(f["cyst_ml"]),
-               "mean_dice": _num(pc["mean_dice"]), "mean_sd": _num(pc["mean_sd"]),
-               "tumor_pred_ml": _num(pc["tumor_pred_ml"])}
-        for h in ("kidney_and_mass", "mass", "tumor"):
-            row[f"{h}_dice"] = _num(pc.get(f"{h}_dice_official", pc[f"{h}_dice"]))
+    for metrics in per_case:
+        feat = features_by_case[metrics["case_id"]]
+        row = {"case_id": metrics["case_id"], "cohort": feat["cohort"], "size_bin": feat["size_bin"],
+               "has_cyst": _truthy(feat["has_cyst"]), "has_tumor": _truthy(feat["has_tumor"]),
+               "tumor_ml": _num(feat["tumor_ml"]),
+               "fg_ml": _num(feat["kidney_ml"]) + _num(feat["tumor_ml"]) + _num(feat["cyst_ml"]),
+               "mean_dice": _num(metrics["mean_dice"]), "mean_sd": _num(metrics["mean_sd"]),
+               "tumor_pred_ml": _num(metrics["tumor_pred_ml"])}
+        for region in ("kidney_and_mass", "mass", "tumor"):
+            row[f"{region}_dice"] = _num(metrics.get(f"{region}_dice_official", metrics[f"{region}_dice"]))
         rows.append(row)
     fg = np.array([r["fg_ml"] for r in rows])
     cuts = np.quantile(fg, [0.25, 0.5, 0.75]) if len(rows) else []
@@ -54,18 +57,19 @@ def join_rows(per_case: list[dict], case_features: list[dict]) -> list[dict]:
 
 
 def group_table(rows: list[dict], factor: str, metric: str) -> list[dict]:
+    """n, mean, median and bootstrap CI of ``metric`` for each value of ``factor``."""
     groups = sorted({r[factor] for r in rows},
                     key=lambda g: SIZE_ORDER.index(g) if g in SIZE_ORDER else str(g))
     out = []
-    for g in groups:
-        vals = [r[metric] for r in rows if r[factor] == g]
-        d = describe(vals)
-        out.append({"group": str(g), "n": d["n"], "mean": d.get("mean"),
-                    "median": d.get("median"), "ci95": bootstrap_ci(vals)})
+    for group in groups:
+        values = [r[metric] for r in rows if r[factor] == group]
+        summary = describe(values)
+        out.append({"group": str(group), "n": summary["n"], "mean": summary.get("mean"),
+                    "median": summary.get("median"), "ci95": bootstrap_ci(values)})
     return out
 
 
-def spearman_with_ci(x, y, n_boot: int = 2000, seed: int = 42) -> dict:
+def spearman_with_ci(x: npt.ArrayLike, y: npt.ArrayLike, n_boot: int = 2000, seed: int = 42) -> dict:
     """Spearman correlation and a case-bootstrap 95% CI (None if under 10 pairs)."""
     x, y = np.asarray(x, float), np.asarray(y, float)
     ok = ~(np.isnan(x) | np.isnan(y))
@@ -76,15 +80,16 @@ def spearman_with_ci(x, y, n_boot: int = 2000, seed: int = 42) -> dict:
     rng = np.random.default_rng(seed)
     boots = []
     for _ in range(n_boot):
-        i = rng.integers(0, x.size, x.size)
-        r = sps.spearmanr(x[i], y[i]).statistic
-        if not np.isnan(r):
-            boots.append(r)
+        sample = rng.integers(0, x.size, x.size)
+        resampled_rho = sps.spearmanr(x[sample], y[sample]).statistic
+        if not np.isnan(resampled_rho):
+            boots.append(resampled_rho)
     lo, hi = np.percentile(boots, [2.5, 97.5])
     return {"n": int(x.size), "rho": rho, "ci95": [float(lo), float(hi)]}
 
 
 def analyse(rows: list[dict], n_worst: int = 10) -> dict:
+    """Group tables, the tumor-volume correlation, no-tumor false positives and the worst cases."""
     tables = {f: {m: group_table(rows, f, m) for m in METRICS} for f in FACTORS}
     tumor = [r for r in rows if r["has_tumor"]]
     no_tumor = [r for r in rows if not r["has_tumor"]]
@@ -103,16 +108,19 @@ def analyse(rows: list[dict], n_worst: int = 10) -> dict:
 
 def pick_examples(rows: list[dict], metric: str = "mean_dice") -> dict:
     """Best, median and worst case by ``metric`` (ties broken by case ID)."""
-    s = sorted(rows, key=lambda r: (r[metric], r["case_id"]))
-    return {"worst": s[0]["case_id"], "median": s[len(s) // 2]["case_id"], "best": s[-1]["case_id"]}
+    ranked = sorted(rows, key=lambda r: (r[metric], r["case_id"]))
+    return {"worst": ranked[0]["case_id"], "median": ranked[len(ranked) // 2]["case_id"],
+            "best": ranked[-1]["case_id"]}
 
 
 def to_markdown(result: dict) -> str:
-    def fmt(v):
-        return "–" if v is None else f"{v:.3f}"
+    """The ``analyse`` result as a Markdown report."""
 
-    def ci(c):
-        return "–" if c is None else f"{c[0]:.3f} to {c[1]:.3f}"
+    def fmt(value: float | None) -> str:
+        return "–" if value is None else f"{value:.3f}"
+
+    def ci(interval: list[float] | None) -> str:
+        return "–" if interval is None else f"{interval[0]:.3f} to {interval[1]:.3f}"
 
     lines = [f"# E-005 — Performance by case characteristics (n = {result['n_cases']})", "",
              "Descriptive only; groups are small and no significance test is made.", ""]

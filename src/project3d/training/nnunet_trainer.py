@@ -27,7 +27,8 @@ class nnUNetTrainer_100epochs_kaggle(nnUNetTrainer):
         self.save_every = 5
         self.skip_predicted = False
 
-    def do_split(self):
+    def do_split(self) -> tuple[list[str], list[str]]:
+        """nnU-Net's split, minus validation cases already predicted when resuming."""
         tr_keys, val_keys = super().do_split()
         if self.skip_predicted:
             folder = os.path.join(self.output_folder, "validation")
@@ -35,6 +36,7 @@ class nnUNetTrainer_100epochs_kaggle(nnUNetTrainer):
             print(f"final validation: {len(val_keys)} cases left to predict", flush=True)
         return tr_keys, val_keys
 
-    def perform_actual_validation(self, save_probabilities: bool = False):
+    def perform_actual_validation(self, save_probabilities: bool = False) -> None:
+        """Final validation that skips cases a previous session already predicted."""
         self.skip_predicted = True
         super().perform_actual_validation(save_probabilities)

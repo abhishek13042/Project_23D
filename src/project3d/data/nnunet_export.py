@@ -32,6 +32,7 @@ DATASET_JSON = {
 
 
 def dataset_folder_name(dataset_id: int = DATASET_ID, name: str = DATASET_NAME) -> str:
+    """nnU-Net's folder name for a dataset, e.g. ``Dataset220_KiTS2023``."""
     return f"Dataset{dataset_id:03d}_{name}"
 
 

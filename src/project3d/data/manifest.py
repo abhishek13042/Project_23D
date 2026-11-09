@@ -29,6 +29,8 @@ FAILING = {MISSING, SIZE_MISMATCH, HASH_MISMATCH, DUPLICATE}
 
 @dataclass(frozen=True)
 class Expected:
+    """One manifest row: the size and SHA-256 a downloaded file must have."""
+
     case_id: str
     kind: str
     size_bytes: int
@@ -63,11 +65,26 @@ def find_case_files(root: str | Path) -> dict[str, list[Path]]:
 
 
 def sha256_file(path: str | Path, chunk: int = 8 * 1024 * 1024) -> str:
-    h = hashlib.sha256()
+    """SHA-256 of a file, read in chunks so large scans don't fill memory."""
+    digest = hashlib.sha256()
     with open(path, "rb") as fh:
         while block := fh.read(chunk):
-            h.update(block)
-    return h.hexdigest()
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _check_file(path: Path, expected: Expected, check_hash: bool) -> dict:
+    """Status, size and hash of the one file found for a manifest entry."""
+    result = {"path": str(path), "status": OK, "size_bytes": path.stat().st_size, "sha256": ""}
+    if path.suffix != ".gz":
+        result["status"] = DECOMPRESSED
+    elif result["size_bytes"] != expected.size_bytes:
+        result["status"] = SIZE_MISMATCH
+    elif check_hash:
+        result["sha256"] = sha256_file(path)
+        if result["sha256"] != expected.sha256:
+            result["status"] = HASH_MISMATCH
+    return result
 
 
 def verify_kind(
@@ -83,8 +100,8 @@ def verify_kind(
     """
     found = find_case_files(root)
     rows = []
-    for (case_id, k), exp in sorted(manifest.items()):
-        if k != kind:
+    for (case_id, entry_kind), expected in sorted(manifest.items()):
+        if entry_kind != kind:
             continue
         paths = found.pop(case_id, [])
         row = {"case_id": case_id, "kind": kind, "path": "", "status": OK,
@@ -94,29 +111,20 @@ def verify_kind(
         elif len(paths) > 1:
             row.update(status=DUPLICATE, path=";".join(str(p) for p in paths))
         else:
-            path = paths[0]
-            row["path"] = str(path)
-            row["size_bytes"] = path.stat().st_size
-            if path.suffix != ".gz":
-                row["status"] = DECOMPRESSED
-            elif row["size_bytes"] != exp.size_bytes:
-                row["status"] = SIZE_MISMATCH
-            elif check_hash:
-                row["sha256"] = sha256_file(path)
-                if row["sha256"] != exp.sha256:
-                    row["status"] = HASH_MISMATCH
+            row.update(_check_file(paths[0], expected, check_hash))
         rows.append(row)
     for case_id, paths in sorted(found.items()):
-        for p in paths:
-            rows.append({"case_id": case_id, "kind": kind, "path": str(p),
-                         "status": "UNEXPECTED", "size_bytes": p.stat().st_size, "sha256": ""})
+        for path in paths:
+            rows.append({"case_id": case_id, "kind": kind, "path": str(path),
+                         "status": "UNEXPECTED", "size_bytes": path.stat().st_size, "sha256": ""})
     return rows
 
 
 def summarize(rows: list[dict]) -> dict[str, int]:
+    """Number of report rows per status."""
     counts: dict[str, int] = {}
-    for r in rows:
-        counts[r["status"]] = counts.get(r["status"], 0) + 1
+    for row in rows:
+        counts[row["status"]] = counts.get(row["status"], 0) + 1
     return counts
 
 
