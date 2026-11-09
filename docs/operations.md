@@ -17,7 +17,7 @@ Do these in order. Each one leaves the site working.
    git push -u origin main
    ```
 
-2. **Hugging Face model and gallery.** Create public repositories for the model and the sample
+2. **Hugging Face model and gallery.** Done 2026-11-09: [model](https://huggingface.co/abhishek1402/project23d-kits23-nnunet), [gallery](https://huggingface.co/datasets/abhishek1402/project23d-kits23-gallery). Create public repositories for the model and the sample
    cases. Upload the `model_package` output of `kits23-release` and the `gallery` output of
    `kits23-gallery`. Keep the model card and dataset card that come with them, because they state
    the license. Then replace the model repository's `README.md` with
