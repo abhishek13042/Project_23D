@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHead } from "@/components/PageHead";
 import { TryForm } from "@/components/TryForm";
-import { NOTEBOOK_PATH, REPO_URL } from "@/lib/site";
+import { NOTEBOOK_PATH, REPO_URL, SPACE_ID } from "@/lib/site";
 
 export const metadata: Metadata = { title: "Try a scan" };
 
@@ -37,8 +37,10 @@ export default function Try() {
           first. If you are not sure the scan is anonymized, don&apos;t upload it.
         </p>
         <p>
-          The result is for research only and must not guide any medical decision. Your file goes directly to the
-          model on Hugging Face and is deleted after processing.
+          The result is for research only and must not guide any medical decision.{" "}
+          {SPACE_ID
+            ? "Your file goes directly to the model on Hugging Face and is deleted after processing."
+            : "If you use the notebook, your scan stays in your own notebook session and never reaches this website."}
         </p>
       </div>
       <TryForm fallback={<Fallback />} />

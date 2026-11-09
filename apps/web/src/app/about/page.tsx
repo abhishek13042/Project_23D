@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHead } from "@/components/PageHead";
 import { score, speedOf } from "@/lib/results";
-import { LINKS, REPO_URL } from "@/lib/site";
+import { LINKS, REPO_URL, SPACE_ID } from "@/lib/site";
 
 export const metadata: Metadata = { title: "About" };
 
@@ -77,9 +77,9 @@ export default function About() {
       <section>
         <h2>Privacy</h2>
         <p style={{ marginTop: 12 }}>
-          Uploaded scans go straight from your browser to the model on Hugging Face and never touch this website.
-          They are deleted after processing. The database keeps run statistics and feedback only: no images, file
-          names or IP addresses.
+          {SPACE_ID
+            ? "Uploaded scans go straight from your browser to the model on Hugging Face and never touch this website. They are deleted after processing. The database keeps run statistics and feedback only: no images, file names or IP addresses."
+            : "Live upload is off for now, so this website never receives a scan. If you run the notebook, your scan stays in your own notebook session. The site keeps no images, file names or IP addresses."}
         </p>
       </section>
 
