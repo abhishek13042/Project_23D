@@ -31,8 +31,11 @@ extend-exclude = ["notebooks"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+# Every public function in src/, scripts/ and apps/ has a docstring and type hints, and stays short.
+extend-select = ["D103", "ANN001", "ANN201", "ANN202", "C901", "PLR0915"]
 ignore = ["RUF001"]  # en dashes in report text are intended
 
 [tool.ruff.lint.per-file-ignores]
 "scripts/**/*.py" = ["E402"]  # scripts add src/ to sys.path so they run as-is on Kaggle
 "src/project3d/training/nnunet_trainer.py" = ["B008"]  # same signature as nnU-Net's trainer
+"tests/**/*.py" = ["D103", "ANN001", "ANN201", "ANN202"]  # test names say what they check

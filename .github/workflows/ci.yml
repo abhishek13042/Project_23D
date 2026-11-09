@@ -23,6 +23,7 @@ jobs:
       - run: ruff check apps src scripts tests
       - run: pytest -q # includes the notebook freshness tests
       - run: python scripts/ops/scan_history.py
+      - run: python scripts/ops/check_links.py
 
   web:
     runs-on: ubuntu-latest
