@@ -15,7 +15,7 @@ Last updated: 2026-11-09.
 | 007 | Report and reproducibility | Done. See `reports/evaluation/results.md` |
 | 008 | Model release | Done. Public at huggingface.co/abhishek1402/project23d-kits23-nnunet, checksums verified |
 | 009 | Demo gallery | Done. Public at huggingface.co/datasets/abhishek1402/project23d-kits23-gallery |
-| 010 | Inference service | Code done. The Hugging Face account is now old enough; the ZeroGPU test is next |
+| 010 | Inference service | Code done. Not hosted: Spaces now need a paid plan (D-023). The notebook is the fallback |
 | 011 | Website and database | Code done. Runs locally. Needs Vercel and Neon |
 | 012 | Deployment and CI | Code done. Pushed to GitHub; next steps in [operations.md](operations.md) |
 | 013 | Frontend design | Code done. The survey-sheet look is on all six pages. See [DESIGN.md](../DESIGN.md) |
@@ -59,8 +59,8 @@ Scored once on the 73 test cases (`reports/evaluation/results.md`), 6.22 GPU hou
 
 ## What the owner needs to do
 
-See [deployment.md](deployment.md#what-only-the-owner-can-do). The Hugging Face account is now
-older than 30 days, so live upload no longer has to wait. Next: the ZeroGPU test, then Neon and Vercel.
+See [deployment.md](deployment.md#what-only-the-owner-can-do). Hugging Face no longer hosts free
+Spaces, so live upload waits on PRO or a grant (D-023). Next: Neon and Vercel.
 
 ## Decisions in force
 

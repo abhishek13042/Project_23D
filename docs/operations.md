@@ -33,7 +33,7 @@ Do these in order. Each one leaves the site working.
      `https://huggingface.co/datasets/<owner>/<name>/resolve/main` address.
 5. **GitHub Actions.** Under Settings → Secrets and variables → Actions, add the variables
    `SITE_URL` and `GALLERY_BASE_URL`. The health check starts once `SITE_URL` exists.
-6. **Live upload, later.** Once the Hugging Face account is 30 days old, run the ZeroGPU test in
+6. **Live upload, later.** With Hugging Face PRO or a community grant (D-023), run the ZeroGPU test in
    [zerogpu_spike.md](../reports/release/zerogpu_spike.md). If it passes, add the secret `HF_TOKEN`
    and the variables `HF_SPACE_ID` (GitHub) and `NEXT_PUBLIC_SPACE_ID` (Vercel), then redeploy.
 

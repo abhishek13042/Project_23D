@@ -1,7 +1,7 @@
 # ZeroGPU spike
 
-**Status: not run.** It needs a Hugging Face account older than 30 days with a verified email
-(`docs/deployment.md`), so no answer below has been measured on ZeroGPU yet.
+**Status: not run.** On 2026-11-09 Hugging Face refused to create the Space: free accounts can no
+longer host ZeroGPU or CPU Gradio Spaces. See D-023 in `docs/decisions.md`.
 
 The app in `apps/space/` doubles as the spike: deploying it runs every check in the table. It was
 built first so the spike is one deployment away. Locally, the real Gradio app was run with a fake

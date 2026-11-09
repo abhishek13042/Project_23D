@@ -276,3 +276,18 @@
   look had nothing that came from the data itself.
 - **Limits:** The contours between scans are smoothed estimates, and the page says so. A table
   of all 73 scans gives the same data as text, for screen readers and for checking.
+
+## D-023 — No live upload for now; visitors run the notebook instead
+
+- **Date:** 2026-11-09
+- **Decision:** The site launches without the live upload Space. The Try page sends visitors to
+  [notebooks/05_run_on_your_scan.ipynb](../notebooks/05_run_on_your_scan.ipynb), which now loads
+  the public model `abhishek1402/project23d-kits23-nnunet` by default (fallback B in SPEC 010).
+- **Reason:** Creating the Space was refused for a year-old account. For ZeroGPU, Hugging Face
+  replied that the account is "not eligible to host ZeroGPU Spaces for free", and that free CPU
+  Gradio Spaces need PRO too. Either way it costs money, which D-018 rules out.
+- **Kept:** The Space app in `apps/space/` and its tests. Turning it on later only needs a Space
+  ID, through PRO or a Hugging Face community grant (see
+  [operations.md](operations.md#first-launch), step 6).
+- **Limits:** Visitors need their own free Kaggle or Colab account to run the model. The ZeroGPU
+  questions in [zerogpu_spike.md](../reports/release/zerogpu_spike.md) stay unmeasured.

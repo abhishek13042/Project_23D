@@ -40,7 +40,7 @@ Browser
 |---|---|---|
 | Vercel Hobby | Non-commercial personal use; 100 GB data transfer, 1M function calls, 4 CPU-hours per month; functions up to 300 s | Fine for a portfolio. Scans must not pass through Vercel functions |
 | Neon Free | 100 CU-hours per project, 1 GB storage, scale to zero after 5 min, no card | Fine for small rows of statistics |
-| HF ZeroGPU hosting | Up to 2 Spaces on a free account that has a verified email and is **older than 30 days**; Gradio SDK only | Sets the earliest date for live upload |
+| HF ZeroGPU hosting | Refused for this free account on 2026-11-09: needs PRO or a community grant (D-023) | No live upload at launch |
 | HF ZeroGPU visitors | Daily GPU time: 2 min without an account, 5 min with a free account, 40 min with PRO | One scan may use most of a visitor's quota. Measured in SPEC 010 |
 | HF public repos | Best-effort free storage; large datasets need a dataset card | Fine for weights and about 10 cropped cases |
 | GitHub Actions | Free on public repos | CI only |
