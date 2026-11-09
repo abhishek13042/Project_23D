@@ -2,7 +2,7 @@ import preprocess_shard as ps
 import pytest
 
 
-def test_find_plans_dir(tmp_path):
+def test_find_plans_dir_needs_exactly_one_match(tmp_path):
     with pytest.raises(SystemExit):
         ps.find_plans_dir(tmp_path)
     d = tmp_path / "prep" / ps.DATASET

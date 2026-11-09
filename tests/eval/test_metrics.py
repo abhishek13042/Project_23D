@@ -8,7 +8,7 @@ from project3d.eval import metrics as m
 from project3d.eval import stats
 
 
-def test_empty_mask_rule():
+def test_empty_masks_follow_the_empty_mask_rule():
     e = np.zeros((4, 4, 4), bool)
     full = e.copy()
     full[1:3, 1:3, 1:3] = True
@@ -21,7 +21,7 @@ def test_empty_mask_rule():
     assert math.isnan(m.hd95(full, e, (1, 1, 1)))
 
 
-def test_overlap_formula():
+def test_overlap_scores_match_the_formulas():
     p = np.zeros(10, bool)
     r = np.zeros(10, bool)
     p[:4] = True  # 4 predicted
@@ -59,7 +59,7 @@ def test_hd95_matches_brute_force():
         assert m.hd95(p, r, sp) == pytest.approx(_brute_hd95(p, r, sp))
 
 
-def test_case_metrics_regions():
+def test_case_metrics_scores_each_region():
     ref = np.zeros((6, 6, 6), np.uint8)
     ref[1:5, 1:5, 1:5] = 1
     ref[2:4, 2:4, 2:4] = 2
@@ -74,7 +74,7 @@ def test_case_metrics_regions():
     assert set(m.HECS) < set(m.REGIONS)
 
 
-def test_bootstrap_ci():
+def test_bootstrap_ci_brackets_the_mean_and_is_seeded():
     vals = np.linspace(0.5, 1.0, 50)
     lo, hi = stats.bootstrap_ci(vals)
     assert lo < vals.mean() < hi

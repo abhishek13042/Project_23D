@@ -82,7 +82,7 @@ def test_benchmark_never_picks_a_test_case():
     assert len(set(cases)) == 6 and all(roles[c] == "val" for c in cases)
 
 
-def test_label_dice():
+def test_label_dice_averages_the_labels_present():
     a = np.array([0, 1, 1, 2])
     assert benchmark.label_dice(a, a) == 1.0
     assert benchmark.label_dice(a, np.array([0, 1, 0, 2])) == (2 / 3 + 1) / 2

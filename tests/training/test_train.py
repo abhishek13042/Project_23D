@@ -33,7 +33,7 @@ def make_preprocessed(root, shards):
     return cases
 
 
-def test_assemble_preprocessed(tmp_path):
+def test_assemble_preprocessed_links_every_shard(tmp_path):
     make_preprocessed(tmp_path / "in", [["case_00000", "case_00001"], ["case_00002"]])
     dest = tmp_path / "pre" / train.DATASET
     assert train.assemble_preprocessed(tmp_path / "in", dest, link=False) == 3
@@ -55,7 +55,7 @@ def test_assemble_preprocessed_rejects_overlapping_shards(tmp_path):
         train.assemble_preprocessed(tmp_path / "in", tmp_path / "pre", link=False)
 
 
-def test_find_previous(tmp_path):
+def test_find_previous_returns_the_latest_session_of_the_same_trainer(tmp_path):
     t = "nnUNetTrainer_100epochs_kaggle"
     assert train.find_previous(tmp_path, t) is None
     make_fold(tmp_path / "pilot", "nnUNetTrainer_5epochs", ["checkpoint_final.pth"])
@@ -67,7 +67,7 @@ def test_find_previous(tmp_path):
         train.find_previous(tmp_path, t)
 
 
-def test_state(tmp_path):
+def test_state_follows_the_checkpoints_on_disk(tmp_path):
     fold = tmp_path / "fold_0"
     assert train.state(fold) == "new"
     fold.mkdir()
@@ -82,7 +82,7 @@ def test_state(tmp_path):
     assert train.state(fold) == "done"
 
 
-def test_checkpoint_epoch(tmp_path):
+def test_checkpoint_epoch_prefers_the_final_checkpoint(tmp_path):
     torch = pytest.importorskip("torch")
     assert train.checkpoint_epoch(tmp_path) == 0
     torch.save({"current_epoch": 35, "network_weights": {}}, tmp_path / "checkpoint_latest.pth")
@@ -106,7 +106,7 @@ LOG = """
 """
 
 
-def test_parse_log():
+def test_parse_log_keeps_only_finished_epochs():
     epochs = train.parse_log(LOG)
     assert [e["epoch"] for e in epochs] == [0, 1]  # epoch 2 never finished
     assert epochs[0] == {"epoch": 0, "pseudo_dice": 0.6, "seconds": 300.5}
@@ -143,7 +143,7 @@ def test_main_done_session_writes_record(tmp_path, monkeypatch):
     assert json.loads(sessions.read_text())[0]["state_before"] == "done"
 
 
-def test_trainer_settings(monkeypatch):
+def test_trainer_uses_the_project_settings(monkeypatch):
     pytest.importorskip("nnunetv2")
     import torch
     from nnunetv2.training.nnUNetTrainer.nnUNetTrainer import nnUNetTrainer

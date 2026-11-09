@@ -42,7 +42,7 @@ def test_quartiles_and_examples():
     assert analysis.pick_examples(rows) == {"worst": "c0", "median": "c4", "best": "c7"}
 
 
-def test_spearman_ci():
+def test_spearman_ci_is_tight_for_a_monotone_relation():
     x = np.arange(30.0)
     s = analysis.spearman_with_ci(x, x ** 2)
     assert s["rho"] == pytest.approx(1.0)

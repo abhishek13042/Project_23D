@@ -61,7 +61,7 @@ def test_rejects_duplicates_and_bad_fractions():
         s.make_split(rows, fractions=(0.8, 0.15, 0.15))
 
 
-def test_summary_totals():
+def test_split_summary_counts_every_case_once():
     rows = synthetic_rows()
     roles = s.make_split(rows)
     summ = s.summary(rows, roles)

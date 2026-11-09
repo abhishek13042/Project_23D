@@ -15,7 +15,7 @@ def run(fake, *extra):
     return code, out, raw
 
 
-def test_end_to_end(fake_kits):
+def test_pipeline_writes_every_output_end_to_end(fake_kits):
     code, out, raw = run(fake_kits)
     assert code == 0
     for name in ("verify_report.csv", "case_features.csv", "split.json", "splits_final.json"):
@@ -58,7 +58,7 @@ def test_stops_on_missing_case_unless_subset(fake_kits):
     assert "case_00588" not in json.loads((out / "split.json").read_text())["roles"]
 
 
-def test_detect_roots(fake_kits, monkeypatch):
+def test_detect_roots_tells_images_from_labels_by_size(fake_kits, monkeypatch):
     monkeypatch.setattr(prepare_kits23, "IMAGE_MIN_BYTES", 1500)
     sizes = [p.stat().st_size for p in fake_kits["images"].iterdir()]
     seg_sizes = [p.stat().st_size for p in fake_kits["segs"].iterdir()]

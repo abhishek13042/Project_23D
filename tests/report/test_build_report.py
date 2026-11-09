@@ -20,7 +20,7 @@ def test_everything_pending_without_records(tmp_path):
     assert "n = *pending*" in text and "Split | *pending*" in text
 
 
-def test_report_from_records(fake_eval, fake_official):
+def test_report_is_built_from_the_run_records(fake_eval, fake_official):
     prep, train, ev, out = paths(fake_eval["tmp"])
     for tag in ("pp", "raw"):
         assert evaluate.main(["--pred-dir", str(fake_eval["pred"]), "--segs-root", str(fake_eval["segs"]),

@@ -4,7 +4,7 @@ import shutil
 from project3d.data import manifest as m
 
 
-def test_all_ok(fake_kits):
+def test_matching_files_all_verify_ok(fake_kits):
     exp = m.load_manifest(fake_kits["manifest"])
     rows = m.verify_kind(exp, "image", fake_kits["images"])
     assert m.summarize(rows) == {m.OK: 6}
@@ -44,7 +44,7 @@ def test_size_mismatch_duplicate_and_decompressed(fake_kits):
     assert status["case_00400"] == m.DECOMPRESSED
 
 
-def test_real_manifest_shape():
+def test_real_manifest_lists_every_case_twice():
     from pathlib import Path
 
     tsv = Path(__file__).resolve().parents[2] / "data" / "sources" / "kits23_v0.1.4_files.tsv"

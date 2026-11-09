@@ -5,7 +5,7 @@ import pytest
 from project3d.data import preprocess_plan as pp
 
 
-def test_resampled_mvox():
+def test_resampled_mvox_scales_with_the_target_spacing():
     assert pp.resampled_mvox((100, 512, 512), (2.0, 0.78125, 0.78125), (1.0, 0.78125, 0.78125)) == pytest.approx(
         200 * 512 * 512 / 1e6)
 
@@ -21,7 +21,7 @@ def test_select_cases_excludes_only_large_train_cases():
     assert pp.select_cases(roles, mvox, max_mvox=350) == (["b", "c"], ["a"])
 
 
-def test_filter_splits():
+def test_filter_splits_drops_the_given_cases():
     splits = [{"train": ["a", "b"], "val": ["c"]}]
     assert pp.filter_splits(splits, ["a"]) == [{"train": ["b"], "val": ["c"]}]
 
@@ -35,7 +35,7 @@ def test_plan_shards_covers_every_case_once_and_balances():
     assert max(totals) - min(totals) <= 2 * max(mvox.values())
 
 
-def test_write_plan(tmp_path):
+def test_write_plan_excludes_oversized_cases_and_saves_the_plan(tmp_path):
     roles = {f"case_{i:05d}": "train" for i in range(10)} | {"case_00010": "val", "case_00011": "test"}
     mvox = {c: 100 for c in roles} | {"case_00003": 600}
     plan = pp.write_plan(tmp_path / "plan.json", roles, mvox, n_shards=2)

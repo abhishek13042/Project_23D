@@ -14,7 +14,7 @@ def run(fx, *extra):
     return code, out
 
 
-def test_official_path(fake_eval, fake_official):
+def test_evaluate_scores_the_test_role_with_the_official_evaluator(fake_eval, fake_official):
     code, out = run(fake_eval)
     assert code == 0
     s = json.loads((out / "summary.json").read_text())

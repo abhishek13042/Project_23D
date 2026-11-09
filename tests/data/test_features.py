@@ -5,7 +5,7 @@ from helpers import make_seg, write_nifti
 from project3d.data import features as f
 
 
-def test_cohort_proxy():
+def test_cohort_is_read_from_the_case_number():
     assert f.cohort_of("case_00000") == "kits21"
     assert f.cohort_of("case_00299") == "kits21"
     assert f.cohort_of("case_00400") == "kits23_new"
@@ -43,7 +43,7 @@ def test_no_tumor_cases_only():
     assert np.isfinite(f.add_size_bins(rows)).all()
 
 
-def test_geometry_mismatch(tmp_path):
+def test_geometry_mismatch_spots_spacing_and_shape_changes(tmp_path):
     seg = make_seg(tumor=3)
     img = write_nifti(tmp_path / "img.nii.gz", seg.astype(np.float32))
     same = write_nifti(tmp_path / "same.nii.gz", seg)
