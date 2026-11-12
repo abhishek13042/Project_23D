@@ -5,6 +5,11 @@ export const GALLERY_BASE_URL = process.env.NEXT_PUBLIC_GALLERY_BASE_URL?.replac
 export const SPACE_ID = process.env.NEXT_PUBLIC_SPACE_ID || null;
 export const REPO_URL = process.env.NEXT_PUBLIC_REPO_URL?.replace(/\/$/, "") || null;
 
+// Where the site is served from, for example /Project_23D on GitHub Pages. Next.js adds it to <Link>,
+// but plain <a> tags (such as links inside an SVG) need it added by hand.
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
+export const caseHref = (id: string) => `${BASE_PATH}/case/${id}`;
+
 export const NOTEBOOK_PATH = "notebooks/05_run_on_your_scan.ipynb";
 
 export const LINKS = {

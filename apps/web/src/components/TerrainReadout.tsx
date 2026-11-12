@@ -2,6 +2,7 @@
 
 import { useState, type FocusEvent, type PointerEvent, type ReactNode } from "react";
 import { caseLabel, ml } from "@/lib/results";
+import { caseHref } from "@/lib/site";
 
 type Reading = { id: string; score: string; tumor: string; kidney: string; open: boolean };
 
@@ -32,7 +33,7 @@ export function TerrainReadout({ start, children, side }: { start: Reading; chil
             <div><dt>Tumor</dt><dd>{ml(Number(reading.tumor))} mL</dd></div>
             <div><dt>Kidney</dt><dd>{ml(Number(reading.kidney))} mL</dd></div>
           </dl>
-          <p className="reading-open">{reading.open ? <a href={`/case/${reading.id}`}>Open this scan</a> : "Not in the gallery"}</p>
+          <p className="reading-open">{reading.open ? <a href={caseHref(reading.id)}>Open this scan</a> : "Not in the gallery"}</p>
         </div>
         {side}
       </div>

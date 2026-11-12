@@ -1,4 +1,5 @@
 import { caseLabel, findCase, results, score } from "@/lib/results";
+import { caseHref } from "@/lib/site";
 import { LEVELS, terrain } from "@/lib/terrain";
 
 const BEST = "best";
@@ -121,7 +122,7 @@ export function ScoreTerrain({
             const place = `translate(${spot.x.toFixed(1)} ${spot.y.toFixed(1)})`;
             return item && !here ? (
               <g key={spot.case_id} transform={place}>
-                <a href={`/case/${spot.case_id}`} aria-label={label} {...data}>
+                <a href={caseHref(spot.case_id)} aria-label={label} {...data}>
                   {body}
                 </a>
               </g>

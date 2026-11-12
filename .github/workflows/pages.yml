@@ -1,0 +1,57 @@
+name: Pages
+
+# Publishes the website as static pages to https://abhishek13042.github.io/Project_23D/
+# The gallery and model files stay on Hugging Face; the database API is not part of this build.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - name: Leave out the database API, which needs a server
+        run: rm -rf src/app/api
+      - run: npm run build
+        env:
+          STATIC_EXPORT: "1"
+          BASE_PATH: /${{ github.event.repository.name }}
+          NEXT_PUBLIC_GALLERY_BASE_URL: https://huggingface.co/datasets/abhishek1402/project23d-kits23-gallery/resolve/main
+          NEXT_PUBLIC_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+      - run: node scripts/flatten-prefetch.mjs out
+      - name: Serve the files as they are, without Jekyll
+        run: touch out/.nojekyll
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: apps/web/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
